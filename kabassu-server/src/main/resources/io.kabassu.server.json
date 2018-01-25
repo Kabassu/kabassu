@@ -1,0 +1,8 @@
+{
+  "verticle": "io.kabassu.server.KabassuServerVerticle",
+  "options": {
+    "config": {
+      "port":8777
+    }
+  }
+}
