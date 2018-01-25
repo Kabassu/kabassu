@@ -31,7 +31,7 @@ public final class JsonObjectUtil {
 
           result.put(entry.getKey(),
               deepMerge(
-                  source.getJsonObject(entry.getKey()),
+                  source.getJsonObject(entry.getKey() ),
                   (JsonObject) entry.getValue()
               )
           );
