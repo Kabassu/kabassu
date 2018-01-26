@@ -46,8 +46,6 @@ subprojects {
     apply plugin: 'org.sonarqube'
     apply plugin: 'jacoco'
 
-
-
     targetCompatibility = 1.8
 
     tasks.withType(JavaCompile) {
@@ -77,13 +75,10 @@ subprojects {
                 'org.junit.platform:junit-platform-runner:1.0.3')
     }
     
-    jacocoTestReport {
-        reports {
-               xml.enabled = true
-               html.enabled = true
-        }
-    }
     junitPlatform {
+        jacoco {
+                 destinationFile = file(jacocoDestinationFile)
+        }
         details 'tree'
     }
 
@@ -102,7 +97,19 @@ subprojects {
                 property 'sonar.links.issue', 'https://github.com/Kabassu/kabassu/issues' 
        }
     }
-    project.tasks["sonarqube"].dependsOn(jacocoTestReport)
+    
+    jacoco {
+        toolVersion = '0.7.9'
+        applyTo junitPlatformTest
+     }
+
+     jacocoTestReport {
+         afterEvaluate {
+             classDirectories = files(classDirectories.files.collect {
+                  fileTree(dir: it, exclude: jacocoExclusions)
+              })
+          }
+      }
 
 }
 
