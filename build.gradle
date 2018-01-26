@@ -77,8 +77,10 @@ subprojects {
                 'org.junit.platform:junit-platform-runner:1.0.3')
     }
 
+    jacoco {
+        applyTo junitPlatform
+    }
     junitPlatform {
-        jacoco
         details 'tree'
     }
 
