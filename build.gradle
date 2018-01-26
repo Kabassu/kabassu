@@ -74,17 +74,31 @@ subprojects {
                 'org.junit.platform:junit-platform-runner:1.0.3')
     }
     
-    afterEvaluate {
-    val junitPlatformTest : JavaExec by tasks
+   apply plugin: 'jacoco'
+
+afterEvaluate {
+    def junitPlatformTestTask = (JavaExec) project.tasks.getByName('junitPlatformTest')
+
     jacoco {
-        applyTo(junitPlatformTest)
+        applyTo(junitPlatformTestTask)
     }
-    task<JacocoReport>("jacocoJunit5TestReport") {
-        executionData(junitPlatformTest)
-        sourceSets(java.sourceSets["main"])
-        sourceDirectories = files(java.sourceSets["main"].allSource.srcDirs)
-        classDirectories = files(java.sourceSets["main"].output)
+
+    project.task(type: JacocoReport, "jacocoJupTestReport") {
+        executionData(junitPlatformTestTask)
+        sourceSets(sourceSets.main)
+        sourceDirectories = files(sourceSets.main.allSource.srcDirs)
+        classDirectories = files(sourceSets.main.output)
+
+        reports {
+            xml.enabled true
+            xml.destination file("${buildDir}/jacoco/report.xml")
+            html.enabled true
+            html.destination file("${buildDir}/jacoco/html")
+        }
     }
+
+    sonarqube.dependsOn jacocoJupTestReport
+}
 }
     
     junitPlatform {
