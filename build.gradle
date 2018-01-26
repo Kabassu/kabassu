@@ -27,6 +27,8 @@ allprojects {
 
     apply plugin: "eclipse"
     apply plugin: "idea"
+    apply plugin: 'org.sonarqube'
+    apply plugin: 'jacoco'
 
 
     repositories {
@@ -42,8 +44,6 @@ subprojects {
     apply plugin: 'org.junit.platform.gradle.plugin'
     apply plugin: 'java'
     apply plugin: 'com.github.johnrengelman.shadow'
-    apply plugin: 'org.sonarqube'
-    apply plugin: 'jacoco'
 
     targetCompatibility = 1.8
 
@@ -74,39 +74,16 @@ subprojects {
                 'org.junit.platform:junit-platform-runner:1.0.3')
     }
     
-afterEvaluate {
-    def junitPlatformTestTask = (JavaExec) project.tasks.getByName('junitPlatformTest')
-
-    jacoco {
-        applyTo(junitPlatformTestTask)
-    }
-
-    project.task(type: JacocoReport, "jacocoJupTestReport") {
-        executionData(junitPlatformTestTask)
-        sourceSets(sourceSets.main)
-        sourceDirectories = files(sourceSets.main.allSource.srcDirs)
-        classDirectories = files(sourceSets.main.output)
-
-        reports {
-            xml.enabled true
-            xml.destination file("${buildDir}/jacoco/report.xml")
-            html.enabled true
-            html.destination file("${buildDir}/jacoco/html")
-        }
-    }
-
-    
-    project.tasks["sonarqube"].dependsOn jacocoJupTestReport
-}
-
-    
     junitPlatform {
         details 'tree'
     }
 
     jar.enabled = false
     build.dependsOn(shadowJar);
-    sonarqube {
+    
+}
+
+sonarqube {
         properties {
                 property 'sonar.java.source', sourceCompatibility
                 property 'sonar.projectKey', 'io.kabassu'
@@ -119,8 +96,6 @@ afterEvaluate {
                 property 'sonar.links.issue', 'https://github.com/Kabassu/kabassu/issues' 
        }
     }
-    
-}
 
 task aggregatedJavadocs(type: Javadoc, description: 'Generate javadocs from all child projects as if it was a single project', group: 'Documentation') {
     destinationDir = file("$buildDir/docs/javadoc")
