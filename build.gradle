@@ -39,7 +39,7 @@ allprojects {
 }
 
 subprojects {
-
+    
     apply plugin: 'org.junit.platform.gradle.plugin'
     apply plugin: 'java'
     apply plugin: 'com.github.johnrengelman.shadow'
@@ -47,6 +47,8 @@ subprojects {
     apply plugin: 'jacoco'
 
     targetCompatibility = 1.8
+    jacocoDestinationFile = "${buildDir}/jacoco/test.exec"
+    jacocoExclusions = ""
 
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
