@@ -78,7 +78,7 @@ subprojects {
     }
 
     jacoco {
-        applyTo run
+        applyTo junitPlatformTest
     }
     junitPlatform {
         details 'tree'
