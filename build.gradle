@@ -76,10 +76,6 @@ subprojects {
                 'org.junit.platform:junit-platform-launcher:1.0.3',
                 'org.junit.platform:junit-platform-runner:1.0.3')
     }
-
-    jacoco {
-        applyTo junitPlatformTest
-    }
     
     jacocoTestReport {
         reports {
@@ -106,7 +102,7 @@ subprojects {
                 property 'sonar.links.issue', 'https://github.com/Kabassu/kabassu/issues' 
        }
     }
-    sonarqube.dependsOn(jacocoTestReport)
+    junitPlatformTest.dependsOn(jacocoTestReport)
 
 }
 
