@@ -78,6 +78,12 @@ subprojects {
     jar.enabled = false
     build.dependsOn(shadowJar);
     
+    sonarqube {
+        properties {
+                property 'sonar.java.source', sourceCompatibility
+       }
+    }
+    
 }
 
 sonarqube {
