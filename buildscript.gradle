@@ -30,5 +30,5 @@ repositories {
 dependencies {
     classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.0'
     classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.3'
-    classpath 'gradle.plugin.argelbargel.gradle.plugins:sonarqube-multiproject-plugin:1.1'
+    classpath 'gradle.plugin.argelbargel.gradle.plugins:sonarqube-multiproject-plugin:1.3'
 }
