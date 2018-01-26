@@ -95,7 +95,8 @@ afterEvaluate {
         }
     }
 
-    sonarqube.dependsOn jacocoJupTestReport
+    
+    project.tasks["sonarqube"].dependsOn jacocoJupTestReport
 }
 
     
