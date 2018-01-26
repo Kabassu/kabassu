@@ -80,6 +80,13 @@ subprojects {
     jacoco {
         applyTo junitPlatformTest
     }
+    
+    jacocoTestReport {
+        reports {
+               xml.enabled = true
+               html.enabled = true
+        }
+    }
     junitPlatform {
         details 'tree'
     }
