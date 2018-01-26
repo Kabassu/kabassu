@@ -22,10 +22,6 @@ buildscript {
 description = "Kabassu"
 defaultTasks = ['clean','build','prepareRunningInstance']
 
-ext {
-    jacocoExclusions = ['']
-}
-
 allprojects {
     version '0.0.1-SNAPSHOT'
 
@@ -79,9 +75,6 @@ subprojects {
     }
     
     junitPlatform {
-        jacoco {
-                 reportsDir = file("$buildDir/customJacocoReportDir")
-        }
         details 'tree'
     }
 
@@ -101,19 +94,6 @@ subprojects {
        }
     }
     
-    jacoco {
-        toolVersion = '0.7.9'
-        applyTo junitPlatformTest
-     }
-
-     jacocoTestReport {
-         afterEvaluate {
-             classDirectories = files(classDirectories.files.collect {
-                  fileTree(dir: it, exclude: jacocoExclusions)
-              })
-          }
-      }
-
 }
 
 task aggregatedJavadocs(type: Javadoc, description: 'Generate javadocs from all child projects as if it was a single project', group: 'Documentation') {
