@@ -23,7 +23,6 @@ description = "Kabassu"
 defaultTasks = ['clean','build','prepareRunningInstance']
 
 ext {
-    jacocoDestinationFile = "${buildDir}/jacoco/test.exec"
     jacocoExclusions = ['']
 }
 
@@ -81,7 +80,7 @@ subprojects {
     
     junitPlatform {
         jacoco {
-                 destinationFile = file(jacocoDestinationFile)
+                 reportsDir = file("$buildDir/customJacocoReportDir")
         }
         details 'tree'
     }
