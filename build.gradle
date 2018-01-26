@@ -78,6 +78,7 @@ subprojects {
     }
 
     junitPlatform {
+        jacoco
         details 'tree'
     }
 
