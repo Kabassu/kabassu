@@ -76,6 +76,7 @@ subprojects {
     
     junitPlatform {
         details 'tree'
+        enableStandardTestTask true
     }
 
     jar.enabled = false
