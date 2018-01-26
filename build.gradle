@@ -102,7 +102,7 @@ subprojects {
                 property 'sonar.links.issue', 'https://github.com/Kabassu/kabassu/issues' 
        }
     }
-    junitPlatformTest.dependsOn(jacocoTestReport)
+    project.tasks["sonarqube"].dependsOn(jacocoTestReport)
 
 }
 
