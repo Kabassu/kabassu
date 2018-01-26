@@ -88,7 +88,6 @@ subprojects {
 
 sonarqube {
         properties {
-                property 'sonar.java.source', sourceCompatibility
                 property 'sonar.projectKey', 'io.kabassu'
                 property 'sonar.projectName', 'Kabassu'
                 property 'sonar.projectVersion', '0.0.1-SNAPSHOT'
