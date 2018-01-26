@@ -16,5 +16,4 @@ addons:
   sonarcloud:
     organization: "kabassu-github"
 script:
-  - gradle check
   - gradle sonarqube
