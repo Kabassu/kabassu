@@ -18,7 +18,7 @@ limitations under the License.
 buildscript {
     apply from: "$rootProject.projectDir/buildscript.gradle", to: buildscript
 }
-
+apply plugin: 'org.sonarqube'
 description = "Kabassu"
 defaultTasks = ['clean','build','prepareRunningInstance']
 
