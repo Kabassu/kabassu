@@ -106,6 +106,7 @@ subprojects {
                 property 'sonar.links.issue', 'https://github.com/Kabassu/kabassu/issues' 
        }
     }
+    sonarqube dependsOn jacocoTestReport
 
 }
 
