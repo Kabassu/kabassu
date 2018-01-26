@@ -74,8 +74,6 @@ subprojects {
                 'org.junit.platform:junit-platform-runner:1.0.3')
     }
     
-   apply plugin: 'jacoco'
-
 afterEvaluate {
     def junitPlatformTestTask = (JavaExec) project.tasks.getByName('junitPlatformTest')
 
@@ -99,7 +97,7 @@ afterEvaluate {
 
     sonarqube.dependsOn jacocoJupTestReport
 }
-}
+
     
     junitPlatform {
         details 'tree'
