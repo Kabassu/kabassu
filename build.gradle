@@ -72,11 +72,19 @@ subprojects {
                 'org.junit.jupiter:junit-jupiter-engine:5.0.3',
                 'org.junit.platform:junit-platform-launcher:1.0.3',
                 'org.junit.platform:junit-platform-runner:1.0.3')
+        testAgent("org.jacoco:org.jacoco.agent:0.7.9:runtime")
+    }
+    
+    tasks.withType(JavaExec) {
+        if (it.name == 'junitPlatformTest') {
+            doFirst {
+                jvmArgs "-javaagent:${configurations.testAgent.singleFile}=destfile=${project.buildDir.name}/jacoco/test.exec"
+            }
+        }
     }
     
     junitPlatform {
         details 'tree'
-        enableStandardTestTask true
     }
 
     jar.enabled = false
