@@ -11,3 +11,9 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+    
+addons:
+  sonarcloud:
+    organization: "kabassu-github"
+script:
+  - sonar-scanner
