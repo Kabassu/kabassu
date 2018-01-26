@@ -22,6 +22,10 @@ buildscript {
 description = "Kabassu"
 defaultTasks = ['clean','build','prepareRunningInstance']
 
+ext {
+    jacocoDestinationFile = "${buildDir}/jacoco/test.exec"
+    jacocoExclusions = ['']
+}
 
 allprojects {
     version '0.0.1-SNAPSHOT'
@@ -47,8 +51,6 @@ subprojects {
     apply plugin: 'jacoco'
 
     targetCompatibility = 1.8
-    jacocoDestinationFile = "${buildDir}/jacoco/test.exec"
-    jacocoExclusions = ""
 
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
