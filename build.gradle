@@ -19,6 +19,10 @@ buildscript {
     apply from: "$rootProject.projectDir/buildscript.gradle", to: buildscript
 }
 
+plugins {
+    id "argelbargel.gradle.plugins.sonarqube-multiproject-plugin" version "1.1"
+}
+
 description = "Kabassu"
 defaultTasks = ['clean','build','prepareRunningInstance']
 
@@ -43,6 +47,7 @@ subprojects {
     apply plugin: 'org.junit.platform.gradle.plugin'
     apply plugin: 'java'
     apply plugin: 'com.github.johnrengelman.shadow'
+    apply plugin: "argelbargel.gradle.plugins.sonarqube-multiproject-plugin"  
 
 
     targetCompatibility = 1.8
@@ -80,7 +85,18 @@ subprojects {
 
     jar.enabled = false
     build.dependsOn(shadowJar);
+    sonarqube {
+        properties {
+                property 'sonar.projectKey', 'io.kabassu'
+                property 'sonar.projectName', 'Kabassu'
+                property 'sonar.projectVersion', '0.0.1-SNAPSHOT'
 
+                property 'sonar.links.homepage', 'kabassu.io'
+                property 'sonar.links.ci', 'https://travis-ci.org/Kabassu/kabassu'
+                property 'sonar.links.scm', 'https://github.com/Kabassu/kabassu'
+                property 'sonar.links.issue', 'https://github.com/Kabassu/kabassu/issues' 
+       }
+    }
 
 }
 
