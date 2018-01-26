@@ -17,4 +17,4 @@ addons:
     organization: "kabassu-github"
 script:
   - gradle check
-  - sonar-scanner
+  - gradle sonarqube
