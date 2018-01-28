@@ -14,5 +14,7 @@ cache:
 addons:
   sonarcloud:
     organization: "kabassu-github"
+    branches:
+      - .?
 script:
   - gradle sonarqube
