@@ -88,7 +88,7 @@ public abstract class AbstractVerticleFactory implements VerticleFactory {
     return verticle;
   }
 
-  abstract protected boolean isWorker();
+  protected abstract boolean isWorker();
 
   private JsonObject readDescriptor(ClassLoader classLoader, String descriptorFile)
       throws IOException {

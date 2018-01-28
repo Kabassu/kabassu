@@ -16,14 +16,61 @@
 
 package io.kabassu.server;
 
+import io.kabassu.server.configuration.KabassuServerConfiguration;
+import io.kabassu.server.configuration.RoutingPath;
+import io.kabassu.server.handlers.DefaultServerRoutingHandler;
 import io.vertx.core.Context;
+import io.vertx.core.Future;
+import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 import io.vertx.reactivex.core.AbstractVerticle;
+import io.vertx.reactivex.ext.web.Router;
+import io.vertx.reactivex.ext.web.RoutingContext;
+import org.apache.commons.lang3.StringUtils;
 
-public class KabassuServerVerticle extends AbstractVerticle{
+public class KabassuServerVerticle extends AbstractVerticle {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(KabassuServerVerticle.class);
+
+  private KabassuServerConfiguration kabassuServerConfiguration;
 
   @Override
   public void init(Vertx vertx, Context context) {
     super.init(vertx, context);
+    kabassuServerConfiguration = new KabassuServerConfiguration(config());
   }
+
+  @Override
+  public void start(Future<Void> startFuture) throws Exception {
+
+    Router router = Router.router(vertx);
+    for (RoutingPath routingPath : kabassuServerConfiguration.getRoutingPath()) {
+      router.route(routingPath.getMethod(), routingPath.getPath())
+          .handler(createHandler(routingPath.getHandler(), routingPath.getAddress()));
+    }
+
+    vertx.createHttpServer().requestHandler(router::accept)
+        .rxListen(kabassuServerConfiguration.getPort()).subscribe(
+        ok -> {
+          LOGGER.info("Kabassu Main Server has started. Listening on port {}",
+              kabassuServerConfiguration.getPort());
+          startFuture.complete();
+        },
+        error -> {
+          LOGGER.error("Unable to start Kabassu Main Server.", error.getCause());
+          startFuture.fail(error);
+        }
+    );
+  }
+
+  private Handler<RoutingContext> createHandler(String handler, String address) {
+    if (StringUtils.isEmpty(handler) || handler.toLowerCase().equals("default")) {
+      return new DefaultServerRoutingHandler(vertx, address);
+    } else {
+      throw new IllegalArgumentException("Other handler are not supported yet");
+    }
+  }
+
 }

@@ -2,7 +2,15 @@
   "verticle": "io.kabassu.server.KabassuServerVerticle",
   "options": {
     "config": {
-      "port":8777
+      "port":8777,
+      "GET":[
+        {
+          "path": "/runner",
+          "address": "kabassu.test.dispatcher",
+          "handler": ""
+        }
+      ]
+
     }
   }
 }
