@@ -66,7 +66,7 @@ public class KabassuServerVerticle extends AbstractVerticle {
   }
 
   private Handler<RoutingContext> createHandler(String handler, String address) {
-    if (StringUtils.isEmpty(handler) || handler.toLowerCase().equals("default")) {
+    if (StringUtils.isEmpty(handler) || handler.equalsIgnoreCase("default")) {
       return new DefaultServerRoutingHandler(vertx, address);
     } else {
       throw new IllegalArgumentException("Other handler are not supported yet");
