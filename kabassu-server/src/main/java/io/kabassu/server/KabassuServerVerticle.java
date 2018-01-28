@@ -16,8 +16,14 @@
 
 package io.kabassu.server;
 
+import io.vertx.core.Context;
+import io.vertx.core.Vertx;
 import io.vertx.reactivex.core.AbstractVerticle;
 
 public class KabassuServerVerticle extends AbstractVerticle{
 
+  @Override
+  public void init(Vertx vertx, Context context) {
+    super.init(vertx, context);
+  }
 }
