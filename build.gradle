@@ -18,17 +18,17 @@ limitations under the License.
 buildscript {
     apply from: "$rootProject.projectDir/buildscript.gradle", to: buildscript
 }
-
 description = "Kabassu"
-defaultTasks = ['clean','build','prepareRunningInstance']
+defaultTasks = ['clean', 'build', 'prepareRunningInstance']
 
+apply plugin: 'org.sonarqube'
 
 allprojects {
     version '0.0.1-SNAPSHOT'
 
     apply plugin: "eclipse"
     apply plugin: "idea"
-
+    apply plugin: 'jacoco'
 
     repositories {
         mavenLocal()
@@ -40,10 +40,8 @@ allprojects {
 
 subprojects {
 
-    apply plugin: 'org.junit.platform.gradle.plugin'
     apply plugin: 'java'
     apply plugin: 'com.github.johnrengelman.shadow'
-
 
     targetCompatibility = 1.8
 
@@ -67,21 +65,44 @@ subprojects {
 
     dependencies {
         testCompile("org.junit.jupiter:junit-jupiter-api:5.0.3",
-                    group: 'org.hamcrest', name: 'hamcrest-junit', version: '2.0.0.0')
-        testRuntime(
+                group: 'org.hamcrest', name: 'hamcrest-junit', version: '2.0.0.0',
                 'org.junit.jupiter:junit-jupiter-engine:5.0.3',
                 'org.junit.platform:junit-platform-launcher:1.0.3',
                 'org.junit.platform:junit-platform-runner:1.0.3')
     }
 
-    junitPlatform {
-        details 'tree'
+    test {
+        beforeTest { descriptor ->
+            logger.lifecycle("Running test: " + descriptor)
+        }
+
+        onOutput { descriptor, event ->
+            logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message )
+        }
     }
 
     jar.enabled = false
     build.dependsOn(shadowJar);
 
+    sonarqube {
+        properties {
+            property 'sonar.java.source', sourceCompatibility
+        }
+    }
 
+}
+
+sonarqube {
+    properties {
+        property 'sonar.projectKey', 'io.kabassu'
+        property 'sonar.projectName', 'Kabassu'
+        property 'sonar.projectVersion', '0.0.1-SNAPSHOT'
+
+        property 'sonar.links.homepage', 'kabassu.io'
+        property 'sonar.links.ci', 'https://travis-ci.org/Kabassu/kabassu'
+        property 'sonar.links.scm', 'https://github.com/Kabassu/kabassu'
+        property 'sonar.links.issue', 'https://github.com/Kabassu/kabassu/issues'
+    }
 }
 
 task aggregatedJavadocs(type: Javadoc, description: 'Generate javadocs from all child projects as if it was a single project', group: 'Documentation') {
