@@ -16,4 +16,5 @@ limitations under the License.
 
 rootProject.name = 'kabassu-root'
 include 'kabassu-manager'
+include 'kabassu-server'
 

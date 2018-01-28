@@ -26,12 +26,12 @@
     </layout>
   </appender>
 
-  <logger name="io.kabassu" level="trace"
+  <logger name="io.kabassu" level="info"
           additivity="false">
     <appender-ref ref="STDOUT"/>
   </logger>
 
-  <root level="trace">
+  <root level="info">
     <appender-ref ref="STDOUT"/>
   </root>
 

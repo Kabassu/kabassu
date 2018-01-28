@@ -22,6 +22,8 @@ import io.vertx.core.Future;
 import io.vertx.core.Verticle;
 import io.vertx.core.json.DecodeException;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 import io.vertx.core.spi.VerticleFactory;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,6 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public abstract class AbstractVerticleFactory implements VerticleFactory {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(AbstractVerticleFactory.class);
 
   private static final String CONFIG_KEY = "config";
   private static final String OPTIONS_KEY = "options";
@@ -47,7 +50,7 @@ public abstract class AbstractVerticleFactory implements VerticleFactory {
     String descriptorFile = identifier + ".json";
     try {
       JsonObject descriptor = readDescriptor(classLoader, descriptorFile);
-      String main = retrieveVerticle(descriptor, descriptorFile);
+      String verticle = retrieveVerticle(descriptor, descriptorFile);
 
       // Any options specified in the module config will override anything specified at deployment time
       // Options and Config specified in separate file with configuration JSON will override those configurations
@@ -62,8 +65,11 @@ public abstract class AbstractVerticleFactory implements VerticleFactory {
       JsonObject serviceDescriptor = new JsonObject().put(OPTIONS_KEY, depOptions);
 
       deploymentOptions.fromJson(serviceDescriptor.getJsonObject(OPTIONS_KEY));
-      deploymentOptions.setWorker(isWorker());
-      resolution.complete(main);
+      if(isWorker()) {
+        deploymentOptions.setWorker(true);
+        LOGGER.info("{} is worker",verticle);
+      }
+      resolution.complete(verticle);
     } catch (Exception e) {
       resolution.fail(e);
     }
@@ -82,7 +88,7 @@ public abstract class AbstractVerticleFactory implements VerticleFactory {
     return verticle;
   }
 
-  abstract protected boolean isWorker();
+  protected abstract boolean isWorker();
 
   private JsonObject readDescriptor(ClassLoader classLoader, String descriptorFile)
       throws IOException {
