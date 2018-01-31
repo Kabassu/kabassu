@@ -1,0 +1,8 @@
+{
+  "verticle": "io.kabassu.testregister.KabassuTestRegisterVerticle",
+  "options": {
+    "config": {
+
+    }
+  }
+}

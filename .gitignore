@@ -3,3 +3,9 @@
 /.idea/
 /kabassu-manager/build/
 /kabassu-server/build/
+/kabassu-test-register/build/
+/kabassu-commons/build/
+/kabassu-mocks/build/
+
+
+
