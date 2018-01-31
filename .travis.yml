@@ -26,15 +26,14 @@ jobs:
     - stage: Build project with sonarqube
       script:
         - gradle sonarqube
-    - stage: Prepare docker file (for branch docker-deployment)    
+    - stage: Prepare docker file 
+      if: branch = docker-deployment
       script:
-      - if [ "$TRAVIS_BRANCH" == "docker-deployment" ]; then
-        wget https://github.com/openshift/source-to-image/releases/download/v1.1.8/source-to-image-v1.1.8-e3140d01-linux-amd64.tar.gz -O /tmp/s2i.tar.gz ;
-        tar -xvf /tmp/s2i.tar.gz ;
-        ls $PWD ;
-        export PATH=$PATH:$PWD ;
-        docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD";
-        docker pull kabassu/kabassu-s2i:latest;
-        s2i build https://github.com/Kabassu/kabassu kabassu/kabassu-s2i:latest kabassu/kabassu;
-        docker push kabassu/kabassu;
-        fi
+        - wget https://github.com/openshift/source-to-image/releases/download/v1.1.8/source-to-image-v1.1.8-e3140d01-linux-amd64.tar.gz -O /tmp/s2i.tar.gz ;
+          tar -xvf /tmp/s2i.tar.gz ;
+          ls $PWD ;
+          export PATH=$PATH:$PWD ;
+          docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD";
+          docker pull kabassu/kabassu-s2i:latest;
+          s2i build https://github.com/Kabassu/kabassu kabassu/kabassu-s2i:latest kabassu/kabassu;
+          docker push kabassu/kabassu;
