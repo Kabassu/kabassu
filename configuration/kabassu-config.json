@@ -3,6 +3,7 @@
 
   },
   "modules": [
-    "standard:io.kabassu.server"
+    "standard:io.kabassu.server",
+    "standard:io.kabassu.testregister"
   ]
 }
