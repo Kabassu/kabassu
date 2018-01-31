@@ -22,8 +22,7 @@ jobs:
       script:
         - gradle sonarqube
     - stage: Prepare docker file 
-      if: branch = docker-deployment
-      if: type IN (push)
+      if: (branch = docker-deployment) AND (type IN (push))
       sudo: required
 
       services:
