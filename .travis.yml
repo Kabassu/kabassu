@@ -1,35 +1,39 @@
-language: java
+jobs:
+  include:
+    - stage: Build project with sonarqube
+      
+      language: java
+      git:
+        depth: false
 
-sudo: required
-
-services:
-  - docker
-
-git:
-  depth: false
-
-before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-cache:
-  directories:
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
+      before_cache:
+        - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+        - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+      cache:
+        directories:
+          - $HOME/.gradle/caches/
+          - $HOME/.gradle/wrapper/
     
-addons:
-  sonarcloud:
-    organization: "kabassu-github"
-    branches:
-      - .?
-script:
-  - gradle sonarqube
-  - if [ "$TRAVIS_BRANCH" == "docker-deployment" ]; then
-    wget https://github.com/openshift/source-to-image/releases/download/v1.1.8/source-to-image-v1.1.8-e3140d01-linux-amd64.tar.gz -O /tmp/s2i.tar.gz ;
-    tar -xvf /tmp/s2i.tar.gz ;
-    ls $PWD ;
-    export PATH=$PATH:$PWD ;
-    docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD";
-    docker pull kabassu/kabassu-s2i:latest;
-    s2i build https://github.com/Kabassu/kabassu kabassu/kabassu-s2i:latest kabassu/kabassu;
-    docker push kabassu/kabassu;
-    fi
+      addons:
+        sonarcloud:
+          organization: "kabassu-github"
+          branches:
+            - .?
+      script:
+        - gradle sonarqube
+    - stage: Prepare docker file 
+      if: (branch = docker-deployment) AND (type IN (push))
+      sudo: required
+
+      services:
+        - docker
+
+      script:
+        - wget https://github.com/openshift/source-to-image/releases/download/v1.1.8/source-to-image-v1.1.8-e3140d01-linux-amd64.tar.gz -O /tmp/s2i.tar.gz ;
+          tar -xvf /tmp/s2i.tar.gz ;
+          ls $PWD ;
+          export PATH=$PATH:$PWD ;
+          docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD";
+          docker pull kabassu/kabassu-s2i:latest;
+          s2i build https://github.com/Kabassu/kabassu kabassu/kabassu-s2i:latest kabassu/kabassu;
+          docker push kabassu/kabassu;
