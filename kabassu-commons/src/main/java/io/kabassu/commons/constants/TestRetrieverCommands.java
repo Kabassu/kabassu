@@ -16,8 +16,11 @@
 
 package io.kabassu.commons.constants;
 
-public interface TestRetrieverCommands {
+public final class TestRetrieverCommands {
 
-  String RETURN_AVAILABLE_TESTS = "returnAvailableTests";
+  public static final String RETURN_AVAILABLE_TESTS = "returnAvailableTests";
 
+  private TestRetrieverCommands() {
+    //for constants
+  }
 }
