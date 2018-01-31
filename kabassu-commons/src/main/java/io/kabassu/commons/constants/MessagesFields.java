@@ -18,8 +18,8 @@ package io.kabassu.commons.constants;
 
 public interface MessagesFields {
 
-  String REQUEST = "request";
+  String REQUEST = "message_request";
 
-  String REPLY = "reply";
+  String REPLY = "message_reply";
 
 }
