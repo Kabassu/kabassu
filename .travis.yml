@@ -1,33 +1,33 @@
-language: java
-
-sudo: required
-
-services:
-  - docker
-
-git:
-  depth: false
-
-before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-cache:
-  directories:
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
-    
-addons:
-  sonarcloud:
-    organization: "kabassu-github"
-    branches:
-      - .?
 jobs:
   include:
     - stage: Build project with sonarqube
+      
+      language: java
+      git:
+        depth: false
+
+      before_cache:
+        - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+        - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+      cache:
+        directories:
+          - $HOME/.gradle/caches/
+          - $HOME/.gradle/wrapper/
+    
+      addons:
+        sonarcloud:
+          organization: "kabassu-github"
+          branches:
+            - .?
       script:
         - gradle sonarqube
     - stage: Prepare docker file 
       if: branch = docker-deployment
+      sudo: required
+
+      services:
+        - docker
+
       script:
         - wget https://github.com/openshift/source-to-image/releases/download/v1.1.8/source-to-image-v1.1.8-e3140d01-linux-amd64.tar.gz -O /tmp/s2i.tar.gz ;
           tar -xvf /tmp/s2i.tar.gz ;
