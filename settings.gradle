@@ -20,4 +20,5 @@ include 'kabassu-server'
 include 'kabassu-test-register'
 include 'kabassu-commons'
 include 'kabassu-mocks'
+include 'kabassu-test-dispatcher'
 
