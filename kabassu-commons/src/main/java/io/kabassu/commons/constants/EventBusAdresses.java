@@ -16,8 +16,13 @@
 
 package io.kabassu.commons.constants;
 
-public interface EventBusAdresses {
+public final class EventBusAdresses {
 
-  String KABASSU_TEST_RETRIEVER = "kabassu.test.retriever";
+  public static final String KABASSU_TEST_RETRIEVER = "kabassu.test.retriever";
 
+  public static final String KABASSU_TEST_DISPATCHER = "kabassu.test.dispatcher";
+
+  private EventBusAdresses() {
+    //for constants
+  }
 }

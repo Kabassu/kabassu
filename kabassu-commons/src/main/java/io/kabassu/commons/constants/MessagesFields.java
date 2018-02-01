@@ -16,10 +16,14 @@
 
 package io.kabassu.commons.constants;
 
-public interface MessagesFields {
+public final class MessagesFields {
 
-  String REQUEST = "message_request";
+  public static final String REQUEST = "message_request";
 
-  String REPLY = "message_reply";
+  public static final String REPLY = "message_reply";
+
+  private MessagesFields() {
+    //for constants
+  }
 
 }

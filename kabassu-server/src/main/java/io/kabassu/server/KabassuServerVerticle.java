@@ -18,17 +18,14 @@ package io.kabassu.server;
 
 import io.kabassu.server.configuration.KabassuServerConfiguration;
 import io.kabassu.server.configuration.RoutingPath;
-import io.kabassu.server.handlers.DefaultServerRoutingHandler;
+import io.kabassu.server.handlers.ServerRoutingHandlersFactory;
 import io.vertx.core.Context;
 import io.vertx.core.Future;
-import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.reactivex.core.AbstractVerticle;
 import io.vertx.reactivex.ext.web.Router;
-import io.vertx.reactivex.ext.web.RoutingContext;
-import org.apache.commons.lang3.StringUtils;
 
 public class KabassuServerVerticle extends AbstractVerticle {
 
@@ -36,10 +33,13 @@ public class KabassuServerVerticle extends AbstractVerticle {
 
   private KabassuServerConfiguration kabassuServerConfiguration;
 
+  private ServerRoutingHandlersFactory handlersFactory;
+
   @Override
   public void init(Vertx vertx, Context context) {
     super.init(vertx, context);
     kabassuServerConfiguration = new KabassuServerConfiguration(config());
+    handlersFactory = new ServerRoutingHandlersFactory(this.vertx);
   }
 
   @Override
@@ -48,7 +48,8 @@ public class KabassuServerVerticle extends AbstractVerticle {
     Router router = Router.router(vertx);
     for (RoutingPath routingPath : kabassuServerConfiguration.getRoutingPath()) {
       router.route(routingPath.getMethod(), routingPath.getPath())
-          .handler(createHandler(routingPath.getHandler(), routingPath.getAddress()));
+          .handler(handlersFactory
+              .createRoutingHandler(routingPath.getHandler(), routingPath.getAddress()));
     }
 
     vertx.createHttpServer().requestHandler(router::accept)
@@ -63,14 +64,6 @@ public class KabassuServerVerticle extends AbstractVerticle {
           startFuture.fail(error);
         }
     );
-  }
-
-  private Handler<RoutingContext> createHandler(String handler, String address) {
-    if (StringUtils.isEmpty(handler) || handler.equalsIgnoreCase("default")) {
-      return new DefaultServerRoutingHandler(vertx, address);
-    } else {
-      throw new IllegalArgumentException("Other handler are not supported yet");
-    }
   }
 
 }
