@@ -38,12 +38,12 @@ public class KabassuServerConfiguration {
 
   private void mapPaths(JsonArray paths, HttpMethod method) {
     if (paths != null) {
-      paths.stream().map(path -> (JsonObject) path).forEach(pathData -> {
-        routingPath.add(
-            new RoutingPath(method, pathData.getString("path"), pathData.getString("address"),
-                pathData.getString("handler",
-                    StringUtils.EMPTY)));
-      });
+      paths.stream().map(path -> (JsonObject) path).forEach(pathData ->
+          routingPath.add(
+              new RoutingPath(method, pathData.getString("path"), pathData.getString("address"),
+                  pathData.getString("handler",
+                      StringUtils.EMPTY)))
+      );
     }
   }
 

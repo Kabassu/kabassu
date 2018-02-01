@@ -3,3 +3,12 @@
 /.idea/
 /kabassu-manager/build/
 /kabassu-server/build/
+/kabassu-test-register/build/
+/kabassu-test-dispatcher/build/
+/kabassu-test-dispatcher/out/
+/kabassu-commons/build/
+/kabassu-mocks/build/
+/kabassu-mocks/out/
+
+
+
