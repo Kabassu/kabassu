@@ -25,7 +25,6 @@ public class AnotherSampleTest {
 
   @Test
   void myFirstTest() throws InterruptedException {
-    Thread.sleep(7000);
     assertEquals(2, 1 + 1);
   }
 
