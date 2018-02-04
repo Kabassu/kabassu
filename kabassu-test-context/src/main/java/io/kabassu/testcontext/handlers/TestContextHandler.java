@@ -22,15 +22,11 @@ import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.eventbus.Message;
 import java.util.Map;
 
 public class TestContextHandler implements Handler<Message<JsonObject>> {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(TestContextHandler.class);
 
   private final Vertx vertx;
 
@@ -51,7 +47,8 @@ public class TestContextHandler implements Handler<Message<JsonObject>> {
         )
         .flatMap(testInfoObject -> callRunner((JsonObject) testInfoObject).toObservable())
         .map(results -> mergeResults(testResults, results))
-        .doOnComplete(() -> vertx.eventBus().send(EventBusAdresses.KABASSU_RESULTS_DISPATCHER,testResults))
+        .doOnComplete(
+            () -> vertx.eventBus().send(EventBusAdresses.KABASSU_RESULTS_DISPATCHER, testResults))
         .subscribe();
   }
 

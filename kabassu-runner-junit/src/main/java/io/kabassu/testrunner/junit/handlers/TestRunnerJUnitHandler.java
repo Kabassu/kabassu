@@ -23,8 +23,6 @@ import io.kabassu.commons.dataobjects.TestResultsBuilder;
 import io.kabassu.testrunner.junit.listeners.TestResultsListener;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.eventbus.Message;
 import java.util.UUID;
@@ -64,7 +62,7 @@ public class TestRunnerJUnitHandler implements Handler<Message<String>> {
     JsonObject toReturn = new JsonObject();
     toReturn.put("resultsId", "" + UUID.randomUUID());
     toReturn.put("testClass", testClass);
-    toReturn.put("results",JsonObject.mapFrom(createResultsFromSummary(summary)));
+    toReturn.put("results", JsonObject.mapFrom(createResultsFromSummary(summary)));
     return toReturn;
   }
 
