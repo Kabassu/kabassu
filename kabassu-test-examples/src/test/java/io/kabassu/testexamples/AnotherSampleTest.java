@@ -14,17 +14,23 @@
  * limitations under the License.
  */
 
-package io.kabassu.commons.constants;
+package io.kabassu.testexamples;
 
-public final class EventBusAdresses {
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-  public static final String KABASSU_TEST_RETRIEVER = "kabassu.test.retriever";
+import org.junit.jupiter.api.Test;
 
-  public static final String KABASSU_TEST_DISPATCHER = "kabassu.test.dispatcher";
 
-  public static final String KABASSU_TEST_CONTEXT = "kabassu.test.context";
+public class AnotherSampleTest {
 
-  private EventBusAdresses() {
-    //for constants
+  @Test
+  void myFirstTest() throws InterruptedException {
+    assertEquals(2, 1 + 1);
+  }
+
+  @Test
+  void myFailureTest() {
+    assertEquals(3, 1 + 1);
+    assertEquals(3, 3);
   }
 }

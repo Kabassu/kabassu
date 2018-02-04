@@ -66,7 +66,11 @@ public abstract class AbstractVerticleFactory implements VerticleFactory {
 
       deploymentOptions.fromJson(serviceDescriptor.getJsonObject(OPTIONS_KEY));
       if(isWorker()) {
+        //TODO Configurable worker instances and pool size
         deploymentOptions.setWorker(true);
+        deploymentOptions.setWorkerPoolName(identifier);
+        deploymentOptions.setWorkerPoolSize(5);
+        deploymentOptions.setInstances(5);
         LOGGER.info("{} is worker",verticle);
       }
       resolution.complete(verticle);

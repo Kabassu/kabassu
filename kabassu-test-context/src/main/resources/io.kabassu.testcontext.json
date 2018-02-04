@@ -1,0 +1,13 @@
+{
+  "verticle": "io.kabassu.testcontext.KabassuTestContextVerticle",
+  "options": {
+    "config": {
+      "runners":[
+        {
+          "runner":"junit5",
+          "address":"kabassu.runner.junit5"
+        }
+      ]
+    }
+  }
+}

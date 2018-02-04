@@ -19,11 +19,14 @@ package io.kabassu.testregister;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.kabassu.mocks.TestClassesMocks;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import io.vertx.reactivex.core.Vertx;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,14 +50,39 @@ public class KabassuTestRegisterVerticleTest {
   }
 
   @Test
-  public void testAvailable(TestContext testContext){
+  public void testTestsToRun(TestContext testContext) {
     Async async = testContext.async();
     JsonObject message = new JsonObject();
-    message.put("message_request","returnAvailableTests");
-    vertx.eventBus().send("kabassu.test.retriever",message,event -> {
+    message.put("message_request", "runTests");
+    JsonArray testToRunJsonArray = createTestToRunJsonArray();
+    message.put("message_tests_to_run", testToRunJsonArray);
+    vertx.eventBus().send("kabassu.test.retriever", message, event -> {
+      JsonObject body = (JsonObject) event.result().body();
+      assertEquals(body.getJsonArray("message_reply").size(),testToRunJsonArray.size());
+      body.getJsonArray("message_reply").stream().forEach(entry->{
+        JsonObject testInfo = (JsonObject) entry;
+        assertEquals(testInfo,TestClassesMocks.getTestInfo(testInfo.getString("testClass")));
+      });
+      async.complete();
+    });
+  }
+
+  @Test
+  public void testAvailable(TestContext testContext) {
+    Async async = testContext.async();
+    JsonObject message = new JsonObject();
+    message.put("message_request", "returnAvailableTests");
+    vertx.eventBus().send("kabassu.test.retriever", message, event -> {
       JsonObject body = (JsonObject) event.result().body();
       assertEquals(body.getJsonArray("message_reply"), TestClassesMocks.getExistingTests());
       async.complete();
     });
+  }
+
+  private JsonArray createTestToRunJsonArray() {
+    List<String> testsToRun = new ArrayList<>();
+    testsToRun.add("io.kabassu.testexamples.SampleTest");
+    testsToRun.add("io.kabassu.testexamples.AnotherSampleTest");
+    return new JsonArray(testsToRun);
   }
 }

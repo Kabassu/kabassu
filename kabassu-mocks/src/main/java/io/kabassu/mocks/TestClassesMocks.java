@@ -21,7 +21,7 @@ import io.vertx.core.json.JsonObject;
 
 public class TestClassesMocks {
 
-  private static final String AVAILABLE_TESTS_JSON = "[\"io.kabassu.tests.SampleTest\",\"io.kabassu.tests.AnotherSampleTest\"]";
+  private static final String AVAILABLE_TESTS_JSON = "[\"io.kabassu.testexamples.SampleTest\",\"io.kabassu.testexamples.AnotherSampleTest\"]";
 
   private static final String TEST_CLASS = "testClass";
 
