@@ -24,4 +24,5 @@ include 'kabassu-test-dispatcher'
 include 'kabassu-test-context'
 include 'kabassu-runner-junit'
 include 'kabassu-test-examples'
+include 'kabassu-results-dispatcher'
 

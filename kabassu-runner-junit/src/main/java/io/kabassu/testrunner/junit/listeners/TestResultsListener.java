@@ -19,8 +19,6 @@ package io.kabassu.testrunner.junit.listeners;
 import static java.util.stream.Stream.concat;
 
 import io.kabassu.testrunner.junit.summary.TestsExecutionSummary;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
 import java.util.stream.Stream;
 import org.junit.platform.commons.util.PreconditionViolationException;
 import org.junit.platform.engine.TestExecutionResult;
@@ -30,8 +28,6 @@ import org.junit.platform.launcher.TestPlan;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
 
 public class TestResultsListener implements TestExecutionListener {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(TestResultsListener.class);
 
   private TestPlan testPlan;
 
@@ -82,15 +78,9 @@ public class TestResultsListener implements TestExecutionListener {
   @Override
   public void executionStarted(TestIdentifier testIdentifier) {
     if (testIdentifier.isContainer()) {
-      LOGGER.info(
-          "Container: " + testIdentifier.getDisplayName() + " id: " + testIdentifier.getUniqueId()
-              + " parent id: " + testIdentifier.getParentId());
       this.summary.incrementContainersStarted();
     }
     if (testIdentifier.isTest()) {
-      LOGGER.info(
-          "Test: " + testIdentifier.getDisplayName() + " id: " + testIdentifier.getUniqueId()
-              + " parent id: " + testIdentifier.getParentId());
       this.summary.incrementTestsStarted();
     }
   }

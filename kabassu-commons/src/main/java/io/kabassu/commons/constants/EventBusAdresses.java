@@ -24,6 +24,9 @@ public final class EventBusAdresses {
 
   public static final String KABASSU_TEST_CONTEXT = "kabassu.test.context";
 
+  public static final String KABASSU_RESULTS_DISPATCHER = "kabassu.results.dispatcher";
+
+
   private EventBusAdresses() {
     //for constants
   }

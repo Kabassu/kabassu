@@ -16,6 +16,7 @@
 
 package io.kabassu.testcontext.handlers;
 
+import io.kabassu.commons.constants.EventBusAdresses;
 import io.kabassu.commons.constants.MessagesFields;
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -50,7 +51,7 @@ public class TestContextHandler implements Handler<Message<JsonObject>> {
         )
         .flatMap(testInfoObject -> callRunner((JsonObject) testInfoObject).toObservable())
         .map(results -> mergeResults(testResults, results))
-        .doOnComplete(() -> LOGGER.info("After tests: " + testResults))
+        .doOnComplete(() -> vertx.eventBus().send(EventBusAdresses.KABASSU_RESULTS_DISPATCHER,testResults))
         .subscribe();
   }
 
@@ -60,7 +61,7 @@ public class TestContextHandler implements Handler<Message<JsonObject>> {
   }
 
   private JsonObject mergeResults(JsonObject testResults, Message<Object> results) {
-    return testResults.put(((JsonObject) results.body()).getString("results"), results.body());
+    return testResults.put(((JsonObject) results.body()).getString("resultsId"), results.body());
   }
 
 }
