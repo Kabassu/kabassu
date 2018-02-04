@@ -20,7 +20,6 @@ import io.kabassu.testrunner.junit5.configuration.KabassuTestRunnerJUnit5Configu
 import io.kabassu.testrunner.junit5.handlers.TestRunnerJUnit5Handler;
 import io.vertx.core.Context;
 import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.AbstractVerticle;
 import io.vertx.reactivex.core.eventbus.MessageConsumer;
 
