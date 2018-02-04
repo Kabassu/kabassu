@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.kabassu.testrunner.junit5.summary;
+package io.kabassu.testrunner.junit.summary;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;

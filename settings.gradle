@@ -22,6 +22,6 @@ include 'kabassu-commons'
 include 'kabassu-mocks'
 include 'kabassu-test-dispatcher'
 include 'kabassu-test-context'
-include 'kabassu-runner-junit5'
+include 'kabassu-runner-junit'
 include 'kabassu-test-examples'
 

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package io.kabassu.testrunner.junit5.listeners;
+package io.kabassu.testrunner.junit.listeners;
 
 import static java.util.stream.Stream.concat;
 
-import io.kabassu.testrunner.junit5.summary.TestsExecutionSummary;
+import io.kabassu.testrunner.junit.summary.TestsExecutionSummary;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import java.util.stream.Stream;

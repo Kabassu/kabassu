@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-package io.kabassu.testrunner.junit5;
+package io.kabassu.testrunner.junit;
 
-import io.kabassu.testrunner.junit5.configuration.KabassuTestRunnerJUnit5Configuration;
-import io.kabassu.testrunner.junit5.handlers.TestRunnerJUnit5Handler;
+import io.kabassu.testrunner.junit.configuration.KabassuTestRunnerJUnitConfiguration;
+import io.kabassu.testrunner.junit.handlers.TestRunnerJUnitHandler;
 import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.reactivex.core.AbstractVerticle;
 import io.vertx.reactivex.core.eventbus.MessageConsumer;
 
-public class KabassuTestRunnerJUnit5Verticle extends AbstractVerticle {
+public class KabassuTestRunnerJUnitVerticle extends AbstractVerticle {
 
-  private KabassuTestRunnerJUnit5Configuration configuration;
+  private KabassuTestRunnerJUnitConfiguration configuration;
 
   private MessageConsumer<String> consumer;
 
   @Override
   public void init(Vertx vertx, Context context) {
     super.init(vertx, context);
-    configuration = new KabassuTestRunnerJUnit5Configuration(config());
+    configuration = new KabassuTestRunnerJUnitConfiguration(config());
   }
 
   @Override
   public void start() throws Exception {
 
     consumer = vertx.eventBus()
-        .consumer(configuration.getAddress(), new TestRunnerJUnit5Handler(vertx));
+        .consumer(configuration.getAddress(), new TestRunnerJUnitHandler(vertx));
   }
 
   @Override

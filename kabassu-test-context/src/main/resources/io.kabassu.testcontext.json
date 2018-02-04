@@ -4,8 +4,8 @@
     "config": {
       "runners":[
         {
-          "runner":"junit5",
-          "address":"kabassu.runner.junit5"
+          "runner":"junit",
+          "address":"kabassu.runner.junit"
         }
       ]
     }

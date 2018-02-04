@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package io.kabassu.testrunner.junit5.handlers;
+package io.kabassu.testrunner.junit.handlers;
 
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 
-import io.kabassu.testrunner.junit5.listeners.TestResultsListener;
+import io.kabassu.testrunner.junit.listeners.TestResultsListener;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
@@ -31,13 +31,13 @@ import org.junit.platform.launcher.LauncherDiscoveryRequest;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
 
-public class TestRunnerJUnit5Handler implements Handler<Message<String>> {
+public class TestRunnerJUnitHandler implements Handler<Message<String>> {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(TestRunnerJUnit5Handler.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(TestRunnerJUnitHandler.class);
 
   private Vertx vertx;
 
-  public TestRunnerJUnit5Handler(Vertx vertx) {
+  public TestRunnerJUnitHandler(Vertx vertx) {
     this.vertx = vertx;
   }
 

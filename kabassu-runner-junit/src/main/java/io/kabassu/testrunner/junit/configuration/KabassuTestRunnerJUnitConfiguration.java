@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package io.kabassu.testrunner.junit5.configuration;
+package io.kabassu.testrunner.junit.configuration;
 
 import io.vertx.core.json.JsonObject;
 
-public class KabassuTestRunnerJUnit5Configuration {
+public class KabassuTestRunnerJUnitConfiguration {
 
   private String address;
 
-  public KabassuTestRunnerJUnit5Configuration(JsonObject configuration){
+  public KabassuTestRunnerJUnitConfiguration(JsonObject configuration){
     this.address = configuration.getString("address");
   }
 

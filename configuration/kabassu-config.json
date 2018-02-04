@@ -7,6 +7,6 @@
     "standard:io.kabassu.testregister",
     "standard:io.kabassu.testdispatcher",
     "worker:io.kabassu.testcontext",
-    "worker:io.kabassu.runner.junit5"
+    "worker:io.kabassu.runner.junit"
   ]
 }

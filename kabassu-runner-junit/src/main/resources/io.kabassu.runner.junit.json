@@ -1,0 +1,8 @@
+{
+  "verticle": "io.kabassu.testrunner.junit.KabassuTestRunnerJUnitVerticle",
+  "options": {
+    "config": {
+      "address": "kabassu.runner.junit"
+    }
+  }
+}
