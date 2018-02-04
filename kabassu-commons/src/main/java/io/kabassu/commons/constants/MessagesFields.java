@@ -22,6 +22,8 @@ public final class MessagesFields {
 
   public static final String REPLY = "message_reply";
 
+  public static final String TESTS_TO_RUN = "message_tests_to_run";
+
   private MessagesFields() {
     //for constants
   }

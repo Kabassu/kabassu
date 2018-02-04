@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package io.kabassu.commons.constants;
+package io.kabassu.testrunner.junit5.configuration;
 
-public final class EventBusAdresses {
+import io.vertx.core.json.JsonObject;
 
-  public static final String KABASSU_TEST_RETRIEVER = "kabassu.test.retriever";
+public class KabassuTestRunnerJUnit5Configuration {
 
-  public static final String KABASSU_TEST_DISPATCHER = "kabassu.test.dispatcher";
+  private String address;
 
-  public static final String KABASSU_TEST_CONTEXT = "kabassu.test.context";
+  public KabassuTestRunnerJUnit5Configuration(JsonObject configuration){
+    this.address = configuration.getString("address");
+  }
 
-  private EventBusAdresses() {
-    //for constants
+  public String getAddress() {
+    return address;
   }
 }
