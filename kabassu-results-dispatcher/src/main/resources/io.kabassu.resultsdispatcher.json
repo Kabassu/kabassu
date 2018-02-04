@@ -1,0 +1,9 @@
+{
+  "verticle": "io.kabassu.resultsdispatcher.KabassuResultsDispatcherVerticle",
+  "options": {
+    "config": {
+      "handlers":[
+      ]
+    }
+  }
+}

@@ -21,11 +21,11 @@ import io.vertx.core.json.JsonObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class KabassuTestComtextConfiguration {
+public class KabassuTestContextConfiguration {
 
   private Map<String, String> runnersMap = new HashMap<>();
 
-  public KabassuTestComtextConfiguration(JsonObject configuration) {
+  public KabassuTestContextConfiguration(JsonObject configuration) {
     JsonArray runners = configuration.getJsonArray("runners");
     runners.stream().forEach(runnerConfig -> {
       JsonObject runnerJson = (JsonObject) runnerConfig;

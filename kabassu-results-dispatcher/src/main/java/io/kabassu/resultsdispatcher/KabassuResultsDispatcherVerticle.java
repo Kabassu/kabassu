@@ -14,34 +14,35 @@
  * limitations under the License.
  */
 
-package io.kabassu.testcontext;
+package io.kabassu.resultsdispatcher;
 
 import io.kabassu.commons.constants.EventBusAdresses;
-import io.kabassu.testcontext.configuration.KabassuTestContextConfiguration;
-import io.kabassu.testcontext.handlers.TestContextHandler;
+import io.kabassu.resultsdispatcher.configuration.KabassuResultsDispatcherConfiguration;
+import io.kabassu.resultsdispatcher.handlers.ResultDispatchertHandler;
 import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.AbstractVerticle;
 import io.vertx.reactivex.core.eventbus.MessageConsumer;
 
-public class KabassuTestContextVerticle extends AbstractVerticle {
+public class KabassuResultsDispatcherVerticle extends AbstractVerticle {
 
   private MessageConsumer<JsonObject> consumer;
 
-  private KabassuTestContextConfiguration configuration;
+  private KabassuResultsDispatcherConfiguration configuration;
 
   @Override
   public void init(Vertx vertx, Context context) {
     super.init(vertx, context);
-    configuration = new KabassuTestContextConfiguration(config());
+    configuration = new KabassuResultsDispatcherConfiguration(config());
   }
 
   @Override
   public void start() throws Exception {
 
     consumer = vertx.eventBus()
-        .consumer(EventBusAdresses.KABASSU_TEST_CONTEXT, new TestContextHandler(vertx,configuration.getRunnersMap()));
+        .consumer(EventBusAdresses.KABASSU_RESULTS_DISPATCHER,
+            new ResultDispatchertHandler(vertx, configuration.getHandlers()));
   }
 
   @Override

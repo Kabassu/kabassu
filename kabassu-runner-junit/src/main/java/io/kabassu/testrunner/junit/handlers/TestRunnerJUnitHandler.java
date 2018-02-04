@@ -18,11 +18,11 @@ package io.kabassu.testrunner.junit.handlers;
 
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 
+import io.kabassu.commons.dataobjects.TestResults;
+import io.kabassu.commons.dataobjects.TestResultsBuilder;
 import io.kabassu.testrunner.junit.listeners.TestResultsListener;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.eventbus.Message;
 import java.util.UUID;
@@ -30,10 +30,9 @@ import org.junit.platform.launcher.Launcher;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
+import org.junit.platform.launcher.listeners.TestExecutionSummary;
 
 public class TestRunnerJUnitHandler implements Handler<Message<String>> {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(TestRunnerJUnitHandler.class);
 
   private Vertx vertx;
 
@@ -44,24 +43,33 @@ public class TestRunnerJUnitHandler implements Handler<Message<String>> {
   @Override
   public void handle(Message<String> event) {
 
-    LOGGER.info("Running test: " + event.body());
-
     LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
         .selectors(
             selectClass(event.body())
         )
         .build();
 
-    TestResultsListener testResultsListener =  new TestResultsListener();
+    TestResultsListener testResultsListener = new TestResultsListener();
 
     Launcher launcher = LauncherFactory.create();
     launcher.registerTestExecutionListeners(testResultsListener);
     launcher.execute(request);
-    LOGGER.info("Containers: " + testResultsListener.getSummary().getContainersStartedCount());
-    LOGGER.info("Run tests: " + testResultsListener.getSummary().getTestsStartedCount());
-    LOGGER.info("Successes: " + testResultsListener.getSummary().getTestsSucceededCount());
-    LOGGER.info("Failures: " + testResultsListener.getSummary().getTestsFailedCount());
-    event.reply(new JsonObject().put("results", ""+ UUID.randomUUID() +testResultsListener.getSummary().getTestsStartedCount()));
+    event.reply(generateResponse(testResultsListener.getSummary(), event.body()));
 
+  }
+
+  private JsonObject generateResponse(TestExecutionSummary summary, String testClass) {
+    JsonObject toReturn = new JsonObject();
+    toReturn.put("resultsId", "" + UUID.randomUUID());
+    toReturn.put("testClass", testClass);
+    toReturn.put("results", JsonObject.mapFrom(createResultsFromSummary(summary)));
+    return toReturn;
+  }
+
+  private TestResults createResultsFromSummary(TestExecutionSummary summary) {
+    return new TestResultsBuilder().setContainersStartedCount(summary.getContainersStartedCount())
+        .setTestsFailedCount(summary.getTestsFailedCount())
+        .setTestsStartedCount(summary.getTestsStartedCount())
+        .setTestsSucceededCount(summary.getTestsSucceededCount()).createTestResults();
   }
 }
