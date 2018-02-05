@@ -7,6 +7,7 @@
     "standard:io.kabassu.testregister",
     "standard:io.kabassu.testdispatcher",
     "standard:io.kabassu.resultsdispatcher",
+    "standard:io.kabassu.publisher.json",
     "worker:io.kabassu.testcontext",
     "worker:io.kabassu.runner.junit"
   ]

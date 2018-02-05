@@ -2,7 +2,11 @@
   "verticle": "io.kabassu.resultsdispatcher.KabassuResultsDispatcherVerticle",
   "options": {
     "config": {
-      "handlers":[
+      "publishers":[
+        {
+          "name":"standard",
+          "address":"kabassu.publisher.json"
+        }
       ]
     }
   }
