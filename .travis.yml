@@ -40,12 +40,12 @@ jobs:
           docker pull kabassu/kabassu-s2i:latest;
           s2i build https://github.com/Kabassu/kabassu kabassu/kabassu-s2i:latest kabassu/kabassu;
           echo $TRAVIS_TAG;
-          if [ -z "$TRAVIS_TAG" ];
-          then 
+          if [ -z "${TRAVIS_TAG}" ];
+          then          
+              docker push kabassu/kabassu;
+          else
               docker tag kabassu/kabassu kabassu/kabassu:$TRAVIS_TAG;
               docker push kabassu/kabassu:$TRAVIS_TAG;  
-          else
-              docker push kabassu/kabassu;
           fi;
           
           
