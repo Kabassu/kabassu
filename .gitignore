@@ -9,6 +9,8 @@
 /kabassu-commons/build/
 /kabassu-mocks/build/
 /kabassu-mocks/out/
-
-
-
+/kabassu-runner-junit/build/
+/kabassu-test-context/build/
+/kabassu-test-examples/build/
+/kabassu-test-register/out/
+/kabassu-results-dispatcher/build/

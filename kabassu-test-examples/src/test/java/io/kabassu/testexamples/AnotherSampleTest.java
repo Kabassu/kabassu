@@ -14,15 +14,23 @@
  * limitations under the License.
  */
 
-package io.kabassu.commons.constants;
+package io.kabassu.testexamples;
 
-public final class TestRetrieverCommands {
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-  public static final String RETURN_AVAILABLE_TESTS = "returnAvailableTests";
+import org.junit.jupiter.api.Test;
 
-  public static final String RUN_TESTS = "runTests";
 
-  private TestRetrieverCommands() {
-    //for constants
+public class AnotherSampleTest {
+
+  @Test
+  void myFirstTest() throws InterruptedException {
+    assertEquals(2, 1 + 1);
+  }
+
+  @Test
+  void myFailureTest() {
+    assertEquals(3, 1 + 1);
+    assertEquals(3, 3);
   }
 }

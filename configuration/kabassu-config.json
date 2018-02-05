@@ -5,6 +5,9 @@
   "modules": [
     "standard:io.kabassu.server",
     "standard:io.kabassu.testregister",
-    "standard:io.kabassu.testdispatcher"
+    "standard:io.kabassu.testdispatcher",
+    "standard:io.kabassu.resultsdispatcher",
+    "worker:io.kabassu.testcontext",
+    "worker:io.kabassu.runner.junit"
   ]
 }

@@ -21,13 +21,13 @@ import io.vertx.core.json.JsonObject;
 
 public class TestClassesMocks {
 
-  private static final String AVAILABLE_TESTS_JSON = "[\"io.kabassu.tests.SampleTest\",\"io.kabassu.tests.AnotherSampleTest\"]";
+  private static final String AVAILABLE_TESTS_JSON = "[\"io.kabassu.testexamples.SampleTest\",\"io.kabassu.testexamples.AnotherSampleTest\"]";
 
   private static final String TEST_CLASS = "testClass";
 
   private static final String RUNNER = "runner";
 
-  private static final String JUNIT_5_RUNNER = "junit5";
+  private static final String JUNIT_RUNNER = "junit";
 
   public static JsonArray getExistingTests() {
     return new JsonArray(AVAILABLE_TESTS_JSON);
@@ -36,7 +36,7 @@ public class TestClassesMocks {
   public static JsonObject getTestInfo(String testName) {
     JsonObject toReturn = new JsonObject();
     toReturn.put(TEST_CLASS, testName);
-    toReturn.put(RUNNER, JUNIT_5_RUNNER);
+    toReturn.put(RUNNER, JUNIT_RUNNER);
     return toReturn;
   }
 

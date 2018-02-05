@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package io.kabassu.commons.constants;
+package io.kabassu.testrunner.junit.configuration;
 
-public final class TestRetrieverCommands {
+import io.vertx.core.json.JsonObject;
 
-  public static final String RETURN_AVAILABLE_TESTS = "returnAvailableTests";
+public class KabassuTestRunnerJUnitConfiguration {
 
-  public static final String RUN_TESTS = "runTests";
+  private String address;
 
-  private TestRetrieverCommands() {
-    //for constants
+  public KabassuTestRunnerJUnitConfiguration(JsonObject configuration){
+    this.address = configuration.getString("address");
+  }
+
+  public String getAddress() {
+    return address;
   }
 }

@@ -28,7 +28,7 @@ public class TestDispatcherHandler implements Handler<Message<JsonObject>> {
 
   private final Vertx vertx;
 
-  Message<JsonObject> event;
+  private Message<JsonObject> event;
 
   public TestDispatcherHandler(Vertx vertx) {
     this.vertx = vertx;
@@ -46,7 +46,14 @@ public class TestDispatcherHandler implements Handler<Message<JsonObject>> {
         .equals(event.body().getString(MessagesFields.REQUEST))) {
       event.reply(retrieverMessage.body());
     }
-    event.reply(new JsonObject());
+    if (TestRetrieverCommands.RUN_TESTS.equals(event.body().getString(MessagesFields.REQUEST))) {
+      JsonObject testsToRun = new JsonObject();
+      testsToRun.put(MessagesFields.TESTS_TO_RUN,((JsonObject) retrieverMessage.body()).getJsonArray(MessagesFields.REPLY));
+      vertx.eventBus().send(EventBusAdresses.KABASSU_TEST_CONTEXT,testsToRun);
+      event.reply(new JsonObject().put(MessagesFields.REPLY,"Running tests"));
+    } else {
+      event.reply(new JsonObject());
+    }
   }
 
 

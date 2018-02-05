@@ -16,10 +16,18 @@
 
 package io.kabassu.server.handlers;
 
+import io.kabassu.commons.constants.MessagesFields;
+import io.kabassu.commons.constants.TestRetrieverCommands;
 import io.vertx.core.Handler;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.Vertx;
+import io.vertx.reactivex.core.http.HttpServerResponse;
 import io.vertx.reactivex.ext.web.RoutingContext;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 
 public class DefaultServerRoutingHandler implements Handler<RoutingContext> {
 
@@ -34,7 +42,24 @@ public class DefaultServerRoutingHandler implements Handler<RoutingContext> {
 
   @Override
   public void handle(RoutingContext routingContext) {
-    vertx.eventBus().rxSend(address, new JsonObject()).toObservable().subscribe();
-    routingContext.request().response().end();
+    String requestedTests = routingContext.request().getParam("tests");
+    if (StringUtils.isNotEmpty(requestedTests)) {
+      List<String> testsToRun = new ArrayList<>(
+          Arrays.asList(StringUtils.split(requestedTests, ";")));
+      runTests(testsToRun, routingContext.request().response());
+    } else {
+      routingContext.request().response().putHeader("content-type", "application/json")
+          .end(new JsonObject().put("response", "No tests to run").encodePrettily());
+    }
+
+  }
+
+  private void runTests(List<String> testsToRun, HttpServerResponse response) {
+    JsonObject message = new JsonObject();
+    message.put(MessagesFields.REQUEST, TestRetrieverCommands.RUN_TESTS);
+    message.put(MessagesFields.TESTS_TO_RUN, new JsonArray(testsToRun));
+    vertx.eventBus().rxSend(address, message).toObservable().doOnNext(eventResponse ->
+        response.end(((JsonObject) eventResponse.body()).encodePrettily())
+    ).subscribe();
   }
 }
