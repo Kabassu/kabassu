@@ -23,17 +23,17 @@ import java.util.Map;
 
 public class KabassuResultsDispatcherConfiguration {
 
-  private Map<String, String> handlers = new HashMap<>();
+  private Map<String, String> publishers = new HashMap<>();
 
   public KabassuResultsDispatcherConfiguration(JsonObject configuration) {
-    JsonArray runners = configuration.getJsonArray("handlers");
+    JsonArray runners = configuration.getJsonArray("publishers");
     runners.stream().forEach(runnerConfig -> {
       JsonObject runnerJson = (JsonObject) runnerConfig;
-      handlers.put(runnerJson.getString("name"), runnerJson.getString("address"));
+      publishers.put(runnerJson.getString("name"), runnerJson.getString("address"));
     });
   }
 
-  public Map<String, String> getHandlers() {
-    return handlers;
+  public Map<String, String> getPublishers() {
+    return publishers;
   }
 }
