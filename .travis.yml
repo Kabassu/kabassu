@@ -24,7 +24,7 @@ jobs:
         - gradle sonarqube
         
     - stage: Prepare docker file 
-      if: ((branch = docker-deployment) AND (type IN (push)) OR tag IS present)
+      if: ((branch = master) AND (type IN (push)) OR tag IS present)
       sudo: required
 
       services:
