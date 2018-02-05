@@ -42,7 +42,7 @@ public class KabassuResultsDispatcherVerticle extends AbstractVerticle {
 
     consumer = vertx.eventBus()
         .consumer(EventBusAdresses.KABASSU_RESULTS_DISPATCHER,
-            new ResultDispatchertHandler(vertx, configuration.getHandlers()));
+            new ResultDispatchertHandler(vertx, configuration.getPublishers()));
   }
 
   @Override

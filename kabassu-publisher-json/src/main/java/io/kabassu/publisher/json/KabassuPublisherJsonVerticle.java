@@ -14,30 +14,26 @@
  * limitations under the License.
  */
 
-package io.kabassu.resultsdispatcher.handlers;
+package io.kabassu.publisher.json;
 
-import io.vertx.core.Handler;
+import io.kabassu.publisher.json.handlers.PublisherJsontHandler;
 import io.vertx.core.json.JsonObject;
-import io.vertx.reactivex.core.Vertx;
-import io.vertx.reactivex.core.eventbus.Message;
-import java.util.Map;
+import io.vertx.reactivex.core.AbstractVerticle;
+import io.vertx.reactivex.core.eventbus.MessageConsumer;
 
-public class ResultDispatchertHandler implements Handler<Message<JsonObject>> {
+public class KabassuPublisherJsonVerticle extends AbstractVerticle {
 
-  private final Vertx vertx;
+  private MessageConsumer<JsonObject> consumer;
 
-  private Map<String, String> publishersMap;
-
-  public ResultDispatchertHandler(Vertx vertx,
-      Map<String, String> runnersMap) {
-    this.publishersMap = runnersMap;
-    this.vertx = vertx;
+  @Override
+  public void start() throws Exception {
+    consumer = vertx.eventBus()
+        .consumer("kabassu.publisher.json", new PublisherJsontHandler(vertx));
   }
 
   @Override
-  public void handle(Message<JsonObject> event) {
-    publishersMap.values().stream()
-        .forEach(address -> vertx.eventBus().publish(address, event.body()));
+  public void stop() throws Exception {
+    consumer.unregister();
   }
 
 }
