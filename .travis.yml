@@ -36,6 +36,7 @@ jobs:
           export PATH=$PATH:$PWD ;
           if [ -z ${tag+x} ];
           then $VERSION = $tag;
+          echo $VERSION;
           fi;
           docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD";
           docker pull kabassu/kabassu-s2i:latest;
