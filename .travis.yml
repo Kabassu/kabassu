@@ -39,10 +39,10 @@ jobs:
           docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD";
           docker pull kabassu/kabassu-s2i:latest;
           s2i build https://github.com/Kabassu/kabassu kabassu/kabassu-s2i:latest kabassu/kabassu;
-          if [ -z ${${TRAVIS_TAG}+x} ];
+          if [ -z ${TRAVIS_TAG}+x} ];
           then 
-              docker tag kabassu/kabassu kabassu/kabassu:${TRAVIS_TAG};
-              docker push kabassu/kabassu:${TRAVIS_TAG};  
+              docker tag kabassu/kabassu kabassu/kabassu:$TRAVIS_TAG;
+              docker push kabassu/kabassu:$TRAVIS_TAG;  
           else
               docker push kabassu/kabassu;
           fi;
