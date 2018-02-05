@@ -34,14 +34,17 @@ jobs:
         - wget https://github.com/openshift/source-to-image/releases/download/v1.1.8/source-to-image-v1.1.8-e3140d01-linux-amd64.tar.gz -O /tmp/s2i.tar.gz ;
           tar -xvf /tmp/s2i.tar.gz ;
           ls $PWD ;
-          VERSION = 'latest';
           export PATH=$PATH:$PWD ;
-          if [ -z ${tag+x} ];
-          then $VERSION = $tag;
-          echo $VERSION;
-          fi;
+   
           docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD";
           docker pull kabassu/kabassu-s2i:latest;
           s2i build https://github.com/Kabassu/kabassu kabassu/kabassu-s2i:latest kabassu/kabassu;
-          docker tag kabassu/kabassu kabassu/kabassu:$VERSION;
-          docker push kabassu/kabassu:$VERSION;
+          if [ -z ${${TRAVIS_TAG}+x} ];
+          then 
+              docker tag kabassu/kabassu kabassu/kabassu:${TRAVIS_TAG};
+              docker push kabassu/kabassu:${TRAVIS_TAG};  
+          else
+              docker push kabassu/kabassu;
+          fi;
+          
+          
