@@ -40,4 +40,5 @@ jobs:
           docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD";
           docker pull kabassu/kabassu-s2i:latest;
           s2i build https://github.com/Kabassu/kabassu kabassu/kabassu-s2i:latest kabassu/kabassu;
-          docker push kabassu/kabassu:VERSION;
+          docker tag kabassu/kabassu:$VERSION;
+          docker push kabassu/kabassu:$VERSION;
