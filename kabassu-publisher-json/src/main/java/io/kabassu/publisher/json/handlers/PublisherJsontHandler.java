@@ -42,7 +42,7 @@ public class PublisherJsontHandler implements Handler<Message<JsonObject>> {
     JsonObject testResults = event.body();
     try {
       FileUtils.forceMkdir(new File("reports-json"));
-      FileUtils.writeStringToFile(new File("reports-json/" + testResults.getString("taskId")),
+      FileUtils.writeStringToFile(new File("reports-json/" + testResults.getString("taskId")+".json"),
           testResults.encodePrettily(),
           Charset.defaultCharset());
     } catch (IOException e) {
