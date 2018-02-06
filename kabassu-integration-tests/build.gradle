@@ -34,16 +34,3 @@ dependencies {
     testCompileOnly project(path: ':kabassu-publisher-json', configuration: 'shadow')
 
 }
-
-test {
-    jacoco {
-        destinationFile = file("$buildDir/jacoco/jacocoITTest.exec")
-    }
-}
-
-sonarqube {
-    properties {
-        property "sonar.jacoco.itReportPath", "$buildDir/jacoco/jacocoITTest.exec"
-        property "sonar.jacoco.reportPath", ""
-    }
-}

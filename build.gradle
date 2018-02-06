@@ -101,6 +101,7 @@ subprojects {
     sonarqube {
         properties {
             property 'sonar.java.source', sourceCompatibility
+            property "sonar.jacoco.reportPaths", "${buildDir}/jacoco/test.exec"
         }
     }
 
