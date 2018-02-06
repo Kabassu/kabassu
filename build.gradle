@@ -73,6 +73,15 @@ subprojects {
         testCompile group: 'io.vertx', name: 'vertx-core', version: '3.5.0'
         testCompile group: 'io.vertx', name: 'vertx-rx-java2', version: '3.5.0'
         testCompile project(path: ':kabassu-mocks', configuration: 'shadow')
+        testCompile 'org.awaitility:awaitility:3.0.0'
+        testCompile group: 'commons-io', name: 'commons-io', version: '2.6'
+        testCompile project(path: ':kabassu-test-register', configuration: 'shadow')
+        testCompile project(path: ':kabassu-test-dispatcher', configuration: 'shadow')
+        testCompile project(path: ':kabassu-commons', configuration: 'shadow')
+        testCompile project(path: ':kabassu-test-context', configuration: 'shadow')
+        testCompile project(path: ':kabassu-runner-junit', configuration: 'shadow')
+        testCompile project(path: ':kabassu-results-dispatcher', configuration: 'shadow')
+        testCompile project(path: ':kabassu-publisher-json', configuration: 'shadow')
 
     }
 
