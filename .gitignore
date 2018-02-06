@@ -15,3 +15,10 @@
 /kabassu-test-register/out/
 /kabassu-results-dispatcher/build/
 /kabassu-publisher-json/build/
+/kabassu-integration-tests/out/
+/kabassu-commons/out/
+/kabassu-publisher-json/out/
+/kabassu-results-dispatcher/out/
+/kabassu-runner-junit/out/
+/kabassu-test-context/out/
+/kabassu-test-examples/out/

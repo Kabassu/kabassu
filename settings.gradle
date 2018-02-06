@@ -26,4 +26,5 @@ include 'kabassu-runner-junit'
 include 'kabassu-test-examples'
 include 'kabassu-results-dispatcher'
 include 'kabassu-publisher-json'
+include 'kabassu-integration-tests'
 
