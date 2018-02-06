@@ -35,9 +35,8 @@ dependencies {
 
 }
 
-test {
-    jacoco {
-        destinationFile = file("$buildDir/jacoco/test.exec")
-        classDumpDir = file("$buildDir/jacoco/classpathdumps")
+sonarqube {
+    properties {
+        property "sonar.jacoco.itReportPath", "$buildDir/jacoco/test.exec"
     }
 }
