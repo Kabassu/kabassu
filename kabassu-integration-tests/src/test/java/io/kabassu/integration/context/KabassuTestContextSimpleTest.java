@@ -80,11 +80,13 @@ public class KabassuTestContextSimpleTest {
   }
 
   @Test
-  public void testAvailable(TestContext testContext) {
+  public void testFromContextToJsonPublisher(TestContext testContext) {
     Async async = testContext.async();
     vertx.eventBus().send(EventBusAdresses.KABASSU_TEST_CONTEXT,
         new JsonObject().put("message_tests_to_run", createTestToRunJsonArray()));
-    await().atMost(10, SECONDS).until(RESULTS_DIRECTORY::exists);
+    await().atMost(10, SECONDS).until(() ->
+      RESULTS_DIRECTORY.exists() && RESULTS_DIRECTORY.list().length > 0
+    );
     testContext.assertEquals(RESULTS_DIRECTORY.list().length, 1);
     async.complete();
   }
