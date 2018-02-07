@@ -101,7 +101,12 @@ subprojects {
     sonarqube {
         properties {
             property 'sonar.java.source', sourceCompatibility
-            property "sonar.jacoco.reportPaths", "${buildDir}/jacoco/test.exec"
+        }
+    }
+
+    tasks.withType(Test) {
+        jacoco {
+            destinationFile = file("$rootProject.buildDir/jacoco/test.exec")
         }
     }
 
@@ -147,6 +152,8 @@ task copyStarters(type: Copy) {
     from 'starters'
     into 'build'
 }
+
+task cleanJacoco(dependsOn: 'clean') {  delete "$buildDir/jacoco" }
 
 task prepareRunningInstance {
 }
