@@ -20,6 +20,14 @@ buildscript {
 
 dependencies {
     compileOnly group: 'io.vertx', name: 'vertx-core', version: '3.5.0'
-    compileOnly project(path: ':kabassu-commons', configuration: 'shadow')
+    compileOnly group: 'io.vertx', name: 'vertx-rx-java2', version: '3.5.0'
     compileOnly group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
+    compileOnly group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.8'
+    compileOnly group: 'commons-io', name: 'commons-io', version: '2.6'
+    compileOnly project(path: ':kabassu-commons', configuration: 'shadow')
+    compileOnly project(path: ':kabassu-mocks', configuration: 'shadow')
+
+    testRuntime group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
+
+
 }

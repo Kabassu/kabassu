@@ -1,0 +1,7 @@
+{
+  "verticle": "io.kabassu.storage.memory.KabassuStorageMemoryVerticle",
+  "options": {
+    "config": {
+    }
+  }
+}
