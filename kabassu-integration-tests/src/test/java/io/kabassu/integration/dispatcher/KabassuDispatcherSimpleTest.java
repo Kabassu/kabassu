@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
-package io.kabassu.testregister;
+package io.kabassu.integration.dispatcher;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import io.kabassu.commons.constants.EventBusAdresses;
 import io.kabassu.mocks.TestClassesMocks;
+import io.kabassu.testdispatcher.KabassuTestDispatcherVerticle;
+import io.kabassu.testregister.KabassuTestRegisterVerticle;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.unit.Async;
@@ -31,7 +36,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(VertxUnitRunner.class)
-public class KabassuTestRegisterVerticleTest {
+public class KabassuDispatcherSimpleTest {
 
   private Vertx vertx;
 
@@ -39,6 +44,8 @@ public class KabassuTestRegisterVerticleTest {
   public void setUp(TestContext testContext) {
     vertx = Vertx.vertx();
     vertx.deployVerticle(KabassuTestRegisterVerticle.class.getName(),
+        testContext.asyncAssertSuccess());
+    vertx.deployVerticle(KabassuTestDispatcherVerticle.class.getName(),
         testContext.asyncAssertSuccess());
   }
 
@@ -49,20 +56,16 @@ public class KabassuTestRegisterVerticleTest {
 
   @Test
   public void testTestsToRun(TestContext testContext) {
-    Async async = testContext.async();
-    JsonObject message = new JsonObject();
-    message.put("message_request", "runTests");
-    JsonArray testToRunJsonArray = createTestToRunJsonArray();
-    message.put("message_tests_to_run", testToRunJsonArray);
-    vertx.eventBus().send("kabassu.test.retriever", message, event -> {
-      JsonObject body = (JsonObject) event.result().body();
-      testContext.assertEquals(body.getJsonArray("message_reply").size(),testToRunJsonArray.size());
-      body.getJsonArray("message_reply").stream().forEach(entry->{
-        JsonObject testInfo = (JsonObject) entry;
-        testContext.assertEquals(testInfo,TestClassesMocks.getTestInfo(testInfo.getString("testClass")));
+      Async async = testContext.async();
+      JsonObject message = new JsonObject();
+      message.put("message_request", "runTests");
+      JsonArray testToRunJsonArray = createTestToRunJsonArray();
+      message.put("message_tests_to_run", testToRunJsonArray);
+      vertx.eventBus().send(EventBusAdresses.KABASSU_TEST_DISPATCHER, message, event -> {
+        JsonObject body = (JsonObject) event.result().body();
+        testContext.assertEquals(body.getString("message_reply"), "Running tests");
+        async.complete();
       });
-      async.complete();
-    });
   }
 
   @Test
@@ -70,7 +73,7 @@ public class KabassuTestRegisterVerticleTest {
     Async async = testContext.async();
     JsonObject message = new JsonObject();
     message.put("message_request", "returnAvailableTests");
-    vertx.eventBus().send("kabassu.test.retriever", message, event -> {
+    vertx.eventBus().send(EventBusAdresses.KABASSU_TEST_DISPATCHER, message, event -> {
       JsonObject body = (JsonObject) event.result().body();
       testContext.assertEquals(body.getJsonArray("message_reply"), TestClassesMocks.getExistingTests());
       async.complete();
@@ -83,4 +86,5 @@ public class KabassuTestRegisterVerticleTest {
     testsToRun.add("io.kabassu.testexamples.AnotherSampleTest");
     return new JsonArray(testsToRun);
   }
+
 }
