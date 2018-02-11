@@ -28,6 +28,8 @@ public final class EventBusAdresses {
 
   public static final String KABASSU_MEMORY_STORAGE = "kabassu.memory.storage";
 
+  public static final String KABASSU_RESULTS_RETRIEVER = "kabassu.results.retriever";
+
 
   private EventBusAdresses() {
     //for constants

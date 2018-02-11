@@ -29,20 +29,17 @@ public class TestDispatcherHandler implements Handler<Message<JsonObject>> {
 
   private final Vertx vertx;
 
-  private Message<JsonObject> event;
-
   public TestDispatcherHandler(Vertx vertx) {
     this.vertx = vertx;
   }
 
   @Override
   public void handle(Message<JsonObject> event) {
-    this.event = event;
     vertx.eventBus().rxSend(EventBusAdresses.KABASSU_TEST_RETRIEVER, event.body()).toObservable()
-        .doOnNext(this::handleRetriverMessage).subscribe();
+        .doOnNext(retrieverMessage -> handleRetriverMessage(retrieverMessage, event)).subscribe();
   }
 
-  private void handleRetriverMessage(Message<Object> retrieverMessage) {
+  private void handleRetriverMessage(Message<Object> retrieverMessage, Message<JsonObject> event) {
     if (TestRetrieverCommands.RETURN_AVAILABLE_TESTS
         .equals(event.body().getString(MessagesFields.REQUEST))) {
       event.reply(retrieverMessage.body());
@@ -50,17 +47,18 @@ public class TestDispatcherHandler implements Handler<Message<JsonObject>> {
     if (TestRetrieverCommands.RUN_TESTS.equals(event.body().getString(MessagesFields.REQUEST))) {
 
       JsonObject reply = validateAndRun(
-          ((JsonObject) retrieverMessage.body()).getJsonArray(MessagesFields.REPLY));
+          ((JsonObject) retrieverMessage.body()).getJsonArray(MessagesFields.REPLY), event);
       event.reply(new JsonObject().put(MessagesFields.REPLY, reply));
     } else {
-      event.reply(new JsonObject().put(MessagesFields.REPLY, new JsonObject().put("wrong_command",event.body().getString(MessagesFields.REQUEST))));
+      event.reply(new JsonObject().put(MessagesFields.REPLY,
+          new JsonObject().put("wrong_command", event.body().getString(MessagesFields.REQUEST))));
     }
   }
 
-  private JsonObject validateAndRun(JsonArray testsToRun) {
+  private JsonObject validateAndRun(JsonArray testsToRun,
+      Message<JsonObject> event) {
     JsonObject reply = new JsonObject();
     if (testsToRun.size() != event.body().getJsonArray(MessagesFields.TESTS_TO_RUN).size()) {
-
       reply.put("description", "There are missing tests");
     } else {
       vertx.eventBus().send(EventBusAdresses.KABASSU_TEST_CONTEXT,

@@ -35,8 +35,13 @@ public class ServerRoutingHandlersFactory {
       return new DefaultServerRoutingHandler(vertx, address);
     }
 
-    if (StringUtils.isEmpty(routingHandlerType) || routingHandlerType.equalsIgnoreCase("available")) {
+    if (StringUtils.isEmpty(routingHandlerType) || routingHandlerType
+        .equalsIgnoreCase("available")) {
       return new AvailableServerRoutingHandler(vertx, address);
+    }
+
+    if (StringUtils.isEmpty(routingHandlerType) || routingHandlerType.equalsIgnoreCase("results")) {
+      return new ResultsServerRoutingHandler(vertx, address);
     }
 
     throw new IllegalArgumentException("Unknown type of handler: " + routingHandlerType);
