@@ -53,7 +53,7 @@ public class TestDispatcherHandler implements Handler<Message<JsonObject>> {
           ((JsonObject) retrieverMessage.body()).getJsonArray(MessagesFields.REPLY));
       event.reply(new JsonObject().put(MessagesFields.REPLY, reply));
     } else {
-      event.reply(new JsonObject());
+      event.reply(new JsonObject().put(MessagesFields.REPLY, new JsonObject().put("wrong_command",event.body().getString(MessagesFields.REQUEST))));
     }
   }
 

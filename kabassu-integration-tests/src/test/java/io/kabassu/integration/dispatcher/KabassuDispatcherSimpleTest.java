@@ -85,6 +85,18 @@ public class KabassuDispatcherSimpleTest {
   }
 
   @Test
+  public void testWrongCommand(TestContext testContext) {
+    Async async = testContext.async();
+    JsonObject message = new JsonObject();
+    message.put("message_request", "Wrong Command");
+    vertx.eventBus().send(EventBusAdresses.KABASSU_TEST_DISPATCHER, message, event -> {
+      JsonObject body = (JsonObject) event.result().body();
+      testContext.assertEquals(body.getJsonObject("message_reply"),new JsonObject().put("wrong_command","Wrong Command"));
+      async.complete();
+    });
+  }
+
+  @Test
   public void testAvailable(TestContext testContext) {
     Async async = testContext.async();
     JsonObject message = new JsonObject();

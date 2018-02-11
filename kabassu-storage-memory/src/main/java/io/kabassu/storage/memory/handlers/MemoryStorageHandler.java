@@ -54,8 +54,6 @@ public class MemoryStorageHandler implements Handler<Message<JsonObject>> {
       testsToRun.stream().map(test -> memoryStorage.getTestByIdAsJson(test.toString()))
           .filter(Objects::nonNull).forEach(requiredTestsInfo::add);
       reply.put(MessagesFields.REPLY, requiredTestsInfo);
-    } else {
-      reply.put(MessagesFields.REPLY, "");
     }
     event.reply(reply);
   }
