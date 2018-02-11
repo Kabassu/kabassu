@@ -23,3 +23,5 @@
 /kabassu-test-context/out/
 /kabassu-test-examples/out/
 /kabassu-integration-tests/build/
+/kabassu-storage-memory/out/
+/kabassu-storage-memory/build/

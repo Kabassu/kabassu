@@ -20,6 +20,7 @@ import io.kabassu.commons.constants.EventBusAdresses;
 import io.kabassu.commons.constants.MessagesFields;
 import io.kabassu.commons.constants.TestRetrieverCommands;
 import io.vertx.core.Handler;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.eventbus.Message;
@@ -47,13 +48,26 @@ public class TestDispatcherHandler implements Handler<Message<JsonObject>> {
       event.reply(retrieverMessage.body());
     }
     if (TestRetrieverCommands.RUN_TESTS.equals(event.body().getString(MessagesFields.REQUEST))) {
-      JsonObject testsToRun = new JsonObject();
-      testsToRun.put(MessagesFields.TESTS_TO_RUN,((JsonObject) retrieverMessage.body()).getJsonArray(MessagesFields.REPLY));
-      vertx.eventBus().send(EventBusAdresses.KABASSU_TEST_CONTEXT,testsToRun);
-      event.reply(new JsonObject().put(MessagesFields.REPLY,"Running tests"));
+
+      JsonObject reply = validateAndRun(
+          ((JsonObject) retrieverMessage.body()).getJsonArray(MessagesFields.REPLY));
+      event.reply(new JsonObject().put(MessagesFields.REPLY, reply));
     } else {
-      event.reply(new JsonObject());
+      event.reply(new JsonObject().put(MessagesFields.REPLY, new JsonObject().put("wrong_command",event.body().getString(MessagesFields.REQUEST))));
     }
+  }
+
+  private JsonObject validateAndRun(JsonArray testsToRun) {
+    JsonObject reply = new JsonObject();
+    if (testsToRun.size() != event.body().getJsonArray(MessagesFields.TESTS_TO_RUN).size()) {
+
+      reply.put("description", "There are missing tests");
+    } else {
+      vertx.eventBus().send(EventBusAdresses.KABASSU_TEST_CONTEXT,
+          new JsonObject().put(MessagesFields.TESTS_TO_RUN, testsToRun));
+      reply.put("description", "Running tests");
+    }
+    return reply;
   }
 
 

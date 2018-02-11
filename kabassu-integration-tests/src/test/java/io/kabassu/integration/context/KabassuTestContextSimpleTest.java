@@ -21,7 +21,7 @@ import static org.awaitility.Awaitility.await;
 
 import io.kabassu.commons.constants.EventBusAdresses;
 import io.kabassu.integration.configuration.DeploymentOptionsUtils;
-import io.kabassu.mocks.TestClassesMocks;
+import io.kabassu.mocks.TestStorageMocks;
 import io.kabassu.publisher.json.KabassuPublisherJsonVerticle;
 import io.kabassu.resultsdispatcher.KabassuResultsDispatcherVerticle;
 import io.kabassu.testcontext.KabassuTestContextVerticle;
@@ -85,7 +85,7 @@ public class KabassuTestContextSimpleTest {
     vertx.eventBus().send(EventBusAdresses.KABASSU_TEST_CONTEXT,
         new JsonObject().put("message_tests_to_run", createTestToRunJsonArray()));
     await().atMost(10, SECONDS).until(() ->
-      RESULTS_DIRECTORY.exists() && RESULTS_DIRECTORY.list().length > 0
+        RESULTS_DIRECTORY.exists() && RESULTS_DIRECTORY.list().length > 0
     );
     testContext.assertEquals(RESULTS_DIRECTORY.list().length, 1);
     async.complete();
@@ -93,7 +93,8 @@ public class KabassuTestContextSimpleTest {
 
   private JsonArray createTestToRunJsonArray() {
     List<JsonObject> testsToRun = new ArrayList<>();
-    testsToRun.add(TestClassesMocks.getTestInfo("io.kabassu.testexamples.SampleTest"));
+    testsToRun.add(JsonObject
+        .mapFrom(TestStorageMocks.createSingleTestInfo("0", "io.kabassu.testexamples.SampleTest")));
     return new JsonArray(testsToRun);
   }
 

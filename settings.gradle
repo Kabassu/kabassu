@@ -27,4 +27,5 @@ include 'kabassu-test-examples'
 include 'kabassu-results-dispatcher'
 include 'kabassu-publisher-json'
 include 'kabassu-integration-tests'
+include 'kabassu-storage-memory'
 
