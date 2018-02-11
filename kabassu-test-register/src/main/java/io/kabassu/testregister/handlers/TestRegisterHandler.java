@@ -16,11 +16,8 @@
 
 package io.kabassu.testregister.handlers;
 
-import io.kabassu.commons.constants.MessagesFields;
-import io.kabassu.commons.constants.TestRetrieverCommands;
-import io.kabassu.mocks.TestClassesMocks;
+import io.kabassu.commons.constants.EventBusAdresses;
 import io.vertx.core.Handler;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.eventbus.Message;
@@ -36,26 +33,7 @@ public class TestRegisterHandler implements Handler<Message<JsonObject>> {
 
   @Override
   public void handle(Message<JsonObject> event) {
-    JsonObject messageBody = event.body();
-    String request = messageBody
-        .getString(MessagesFields.REQUEST, TestRetrieverCommands.RETURN_AVAILABLE_TESTS);
-    parseRequest(request, event);
-  }
-
-  private void parseRequest(String request, Message<JsonObject> event) {
-    JsonObject reply = new JsonObject();
-    if (request.equals(TestRetrieverCommands.RETURN_AVAILABLE_TESTS)) {
-      reply.put(MessagesFields.REPLY, TestClassesMocks.getExistingTests());
-    } else if (request.equals(TestRetrieverCommands.RUN_TESTS)) {
-      JsonArray requiredTestsInfo = new JsonArray();
-      JsonArray testsToRun = event.body().getJsonArray(MessagesFields.TESTS_TO_RUN);
-      testsToRun.stream().forEach(test ->
-          requiredTestsInfo.add(TestClassesMocks.getTestInfo(test.toString()))
-      );
-      reply.put(MessagesFields.REPLY, requiredTestsInfo);
-    } else {
-      reply.put(MessagesFields.REPLY, "");
-    }
-    event.reply(reply);
+    vertx.eventBus().send(EventBusAdresses.KABASSU_MEMORY_STORAGE, event.body(),
+        response -> event.reply(response.result().body()));
   }
 }

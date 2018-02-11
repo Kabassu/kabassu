@@ -19,9 +19,12 @@ package io.kabassu.storage.memory.data;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import io.kabassu.commons.dataobjects.TestStorageInfo;
 import io.kabassu.commons.dataobjects.TestStorageInfoBuilder;
 import io.kabassu.mocks.TestStorageMocks;
 import io.vertx.core.json.JsonObject;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.runner.JUnitPlatform;
@@ -63,6 +66,16 @@ class MemoryStorageTest {
     instance.addTest(new TestStorageInfoBuilder().setId("1").createTestStorageInfo());
     instance.addTest(new TestStorageInfoBuilder().setId("2").createTestStorageInfo());
     instance.addTest(new TestStorageInfoBuilder().setId("3").createTestStorageInfo());
+    assertEquals(3, instance.getAllTests().size());
+  }
+
+  @Test
+  public void testAddTests() {
+    List<TestStorageInfo> testData = new ArrayList<>();
+    testData.add(new TestStorageInfoBuilder().setId("1").createTestStorageInfo());
+    testData.add(new TestStorageInfoBuilder().setId("2").createTestStorageInfo());
+    testData.add(new TestStorageInfoBuilder().setId("3").createTestStorageInfo());
+    instance.addTests(testData);
     assertEquals(3, instance.getAllTests().size());
   }
 

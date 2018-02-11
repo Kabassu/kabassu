@@ -39,6 +39,13 @@ public class TestStorageMocks {
             Collectors.toList());
   }
 
+  public static TestStorageInfo createSingleTestInfo(String id, String className) {
+    return new TestStorageInfoBuilder().setClassName(className).setId(id)
+        .setRunner(JUNIT_RUNNER).setName(
+            StringUtils.substringAfterLast(className, ".")).createTestStorageInfo();
+  }
+
+
   private TestStorageMocks() {
   }
 }

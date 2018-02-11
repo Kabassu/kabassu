@@ -19,6 +19,7 @@ package io.kabassu.storage.memory.data;
 import io.kabassu.commons.dataobjects.TestStorageInfo;
 import io.vertx.core.json.JsonObject;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,8 @@ public class MemoryStorage {
   }
 
   public JsonObject getTestByIdAsJson(String id) {
-    return JsonObject.mapFrom(storage.get(id));
+    TestStorageInfo testStorageInfo = storage.get(id);
+    return testStorageInfo != null ? JsonObject.mapFrom(testStorageInfo) : null;
   }
 
   public List<TestStorageInfo> getAllTests() {
@@ -53,6 +55,12 @@ public class MemoryStorage {
 
   public boolean addTest(TestStorageInfo testStorageInfo) {
     return storage.put(testStorageInfo.getId(), testStorageInfo) == null ? true : false;
+  }
+
+  public void addTests(Collection<TestStorageInfo> testStorageInfos) {
+    for (TestStorageInfo testStorageInfo : testStorageInfos) {
+      addTest(testStorageInfo);
+    }
   }
 
   public void removeTest(String id) {

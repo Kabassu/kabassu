@@ -32,5 +32,9 @@ dependencies {
     testCompile project(path: ':kabassu-test-examples', configuration: 'shadow')
     testCompileOnly project(path: ':kabassu-results-dispatcher', configuration: 'shadow')
     testCompileOnly project(path: ':kabassu-publisher-json', configuration: 'shadow')
+    testCompileOnly project(path: ':kabassu-storage-memory', configuration: 'shadow')
+    testRuntime group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
+    testRuntime project(path: ':kabassu-storage-memory', configuration: 'shadow')
+
 
 }

@@ -26,6 +26,8 @@ public final class EventBusAdresses {
 
   public static final String KABASSU_RESULTS_DISPATCHER = "kabassu.results.dispatcher";
 
+  public static final String KABASSU_MEMORY_STORAGE = "kabassu.memory.storage";
+
 
   private EventBusAdresses() {
     //for constants

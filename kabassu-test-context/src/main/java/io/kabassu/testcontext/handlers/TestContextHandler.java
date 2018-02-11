@@ -56,7 +56,7 @@ public class TestContextHandler implements Handler<Message<JsonObject>> {
 
   private Single<Message<Object>> callRunner(JsonObject message) {
     return vertx.eventBus()
-        .rxSend(runnersMap.get(message.getString("runner")), message.getString("testClass"));
+        .rxSend(runnersMap.get(message.getString("runner")), message.getString("className"));
   }
 
   private JsonObject mergeResults(JsonObject testResults, Message<Object> results) {

@@ -16,7 +16,8 @@
 
 package io.kabassu.testregister;
 
-import io.kabassu.mocks.TestClassesMocks;
+import io.kabassu.mocks.TestStorageMocks;
+import io.kabassu.storage.memory.KabassuStorageMemoryVerticle;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.unit.Async;
@@ -25,6 +26,7 @@ import io.vertx.ext.unit.junit.VertxUnitRunner;
 import io.vertx.reactivex.core.Vertx;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,6 +41,8 @@ public class KabassuTestRegisterVerticleTest {
   public void setUp(TestContext testContext) {
     vertx = Vertx.vertx();
     vertx.deployVerticle(KabassuTestRegisterVerticle.class.getName(),
+        testContext.asyncAssertSuccess());
+    vertx.deployVerticle(KabassuStorageMemoryVerticle.class.getName(),
         testContext.asyncAssertSuccess());
   }
 
@@ -59,7 +63,7 @@ public class KabassuTestRegisterVerticleTest {
       testContext.assertEquals(body.getJsonArray("message_reply").size(),testToRunJsonArray.size());
       body.getJsonArray("message_reply").stream().forEach(entry->{
         JsonObject testInfo = (JsonObject) entry;
-        testContext.assertEquals(testInfo,TestClassesMocks.getTestInfo(testInfo.getString("testClass")));
+        testContext.assertEquals(testInfo, JsonObject.mapFrom(TestStorageMocks.createSingleTestInfo(testInfo.getString("id"),testInfo.getString("className"))));
       });
       async.complete();
     });
@@ -72,15 +76,18 @@ public class KabassuTestRegisterVerticleTest {
     message.put("message_request", "returnAvailableTests");
     vertx.eventBus().send("kabassu.test.retriever", message, event -> {
       JsonObject body = (JsonObject) event.result().body();
-      testContext.assertEquals(body.getJsonArray("message_reply"), TestClassesMocks.getExistingTests());
+      testContext.assertEquals(body.getJsonArray("message_reply"),
+          new JsonArray(TestStorageMocks.createTestInfo().stream()
+              .map(JsonObject::mapFrom).collect(
+                  Collectors.toList())));
       async.complete();
     });
   }
 
   private JsonArray createTestToRunJsonArray() {
     List<String> testsToRun = new ArrayList<>();
-    testsToRun.add("io.kabassu.testexamples.SampleTest");
-    testsToRun.add("io.kabassu.testexamples.AnotherSampleTest");
+    testsToRun.add("0");
+    testsToRun.add("1");
     return new JsonArray(testsToRun);
   }
 }

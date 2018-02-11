@@ -16,9 +16,34 @@
 
 package io.kabassu.storage.memory;
 
+import io.kabassu.commons.constants.EventBusAdresses;
+import io.kabassu.mocks.TestStorageMocks;
+import io.kabassu.storage.memory.data.MemoryStorage;
+import io.kabassu.storage.memory.handlers.MemoryStorageHandler;
+import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.AbstractVerticle;
+import io.vertx.reactivex.core.eventbus.MessageConsumer;
 
-public class KabassuStorageMemoryVerticle extends AbstractVerticle{
+public class KabassuStorageMemoryVerticle extends AbstractVerticle {
 
+  private MessageConsumer<JsonObject> consumer;
+
+  @Override
+  public void start() throws Exception {
+
+    MemoryStorage memoryStorage = MemoryStorage.instance();
+    preload(memoryStorage);
+    consumer = vertx.eventBus()
+        .consumer(EventBusAdresses.KABASSU_MEMORY_STORAGE, new MemoryStorageHandler(vertx,memoryStorage));
+  }
+
+  private void preload(MemoryStorage memoryStorage) {
+    memoryStorage.addTests(TestStorageMocks.createTestInfo());
+  }
+
+  @Override
+  public void stop() throws Exception {
+    consumer.unregister();
+  }
 
 }

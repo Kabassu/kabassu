@@ -25,5 +25,7 @@ dependencies {
     compileOnly group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.8'
     compileOnly project(path: ':kabassu-commons', configuration: 'shadow')
     compileOnly project(path: ':kabassu-mocks', configuration: 'shadow')
+    testCompile project(path: ':kabassu-storage-memory', configuration: 'shadow')
+    testRuntime group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
 
 }
