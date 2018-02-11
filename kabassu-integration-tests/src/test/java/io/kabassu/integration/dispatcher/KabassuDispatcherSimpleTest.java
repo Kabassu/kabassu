@@ -65,7 +65,21 @@ public class KabassuDispatcherSimpleTest {
     message.put("message_tests_to_run", testToRunJsonArray);
     vertx.eventBus().send(EventBusAdresses.KABASSU_TEST_DISPATCHER, message, event -> {
       JsonObject body = (JsonObject) event.result().body();
-      testContext.assertEquals(body.getString("message_reply"), "Running tests");
+      testContext.assertEquals(body.getJsonObject("message_reply").getString("description"), "Running tests");
+      async.complete();
+    });
+  }
+
+  @Test
+  public void testMissingTestsToRun(TestContext testContext) {
+    Async async = testContext.async();
+    JsonObject message = new JsonObject();
+    message.put("message_request", "runTests");
+    JsonArray testToRunJsonArray = new JsonArray().add("error");
+    message.put("message_tests_to_run", testToRunJsonArray);
+    vertx.eventBus().send(EventBusAdresses.KABASSU_TEST_DISPATCHER, message, event -> {
+      JsonObject body = (JsonObject) event.result().body();
+      testContext.assertEquals(body.getJsonObject("message_reply").getString("description"), "There are missing tests");
       async.complete();
     });
   }
@@ -87,8 +101,8 @@ public class KabassuDispatcherSimpleTest {
 
   private JsonArray createTestToRunJsonArray() {
     List<String> testsToRun = new ArrayList<>();
-    testsToRun.add("io.kabassu.testexamples.SampleTest");
-    testsToRun.add("io.kabassu.testexamples.AnotherSampleTest");
+    testsToRun.add("0");
+    testsToRun.add("1");
     return new JsonArray(testsToRun);
   }
 
