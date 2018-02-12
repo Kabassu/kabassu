@@ -2,6 +2,7 @@
   "verticle": "io.kabassu.publisher.json.KabassuPublisherJsonVerticle",
   "options": {
     "config": {
+      "directory": "reports-json"
     }
   }
 }

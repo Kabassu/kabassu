@@ -41,7 +41,7 @@ public class KabassuResultsRetrieverVerticle extends AbstractVerticle {
   public void start() throws Exception {
 
     consumer = vertx.eventBus()
-        .consumer(EventBusAdresses.KABASSU_RESULTS_DISPATCHER,
+        .consumer(EventBusAdresses.KABASSU_RESULTS_RETRIEVER,
             new ResultsRetrieverHandler(vertx, configuration.getReaders()));
   }
 

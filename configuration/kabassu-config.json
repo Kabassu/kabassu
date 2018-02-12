@@ -9,7 +9,9 @@
     "standard:io.kabassu.resultsdispatcher",
     "standard:io.kabassu.publisher.json",
     "standard:io.kabassu.storage.memory",
+    "standard:io.kabassu.results.retriever",
     "worker:io.kabassu.testcontext",
-    "worker:io.kabassu.runner.junit"
+    "worker:io.kabassu.runner.junit",
+    "worker:io.kabassu.json.file.result"
   ]
 }

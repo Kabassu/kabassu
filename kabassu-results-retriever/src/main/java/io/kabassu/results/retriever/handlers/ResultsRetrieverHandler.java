@@ -49,8 +49,8 @@ public class ResultsRetrieverHandler implements Handler<Message<JsonObject>> {
   private void retrieveTestResults(Message<JsonObject> event) {
     JsonObject eventBody = event.body();
     vertx.eventBus().send(readersMap.get(eventBody.getString(MessagesFields.RESULTS_STORAGE)),
-        new JsonObject().put("id", eventBody.getString(MessagesFields.TEST_RUN_ID)),
-        response -> event.reply(response.result()));
+        new JsonObject().put(MessagesFields.TEST_RUN_ID, eventBody.getString(MessagesFields.TEST_RUN_ID)),
+        response -> event.reply(response.result().body()));
   }
 
 }

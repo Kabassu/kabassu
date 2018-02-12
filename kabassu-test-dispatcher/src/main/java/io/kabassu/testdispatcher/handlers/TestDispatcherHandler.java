@@ -24,6 +24,7 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.eventbus.Message;
+import java.util.UUID;
 
 public class TestDispatcherHandler implements Handler<Message<JsonObject>> {
 
@@ -61,9 +62,14 @@ public class TestDispatcherHandler implements Handler<Message<JsonObject>> {
     if (testsToRun.size() != event.body().getJsonArray(MessagesFields.TESTS_TO_RUN).size()) {
       reply.put("description", "There are missing tests");
     } else {
+      JsonObject sendToContext = new JsonObject();
+      sendToContext.put(MessagesFields.TESTS_TO_RUN, testsToRun);
+      String testRequestId = UUID.randomUUID().toString();
+      sendToContext.put(MessagesFields.TEST_RUN_ID, testRequestId);
       vertx.eventBus().send(EventBusAdresses.KABASSU_TEST_CONTEXT,
-          new JsonObject().put(MessagesFields.TESTS_TO_RUN, testsToRun));
+          sendToContext);
       reply.put("description", "Running tests");
+      reply.put("request_id:", testRequestId);
     }
     return reply;
   }

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package io.kabassu.publisher.json.handlers;
+package io.kabassu.json.file.result.handler;
 
 import io.kabassu.commons.constants.MessagesFields;
-import io.kabassu.publisher.json.configuration.KabassuPublisherJsonConfiguration;
+import io.kabassu.json.file.result.configuration.KabassuJsonFileResultConfiguration;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
@@ -29,32 +29,37 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import org.apache.commons.io.FileUtils;
 
-public class PublisherJsontHandler implements Handler<Message<JsonObject>> {
+public class JsonFileResultHandler implements Handler<Message<JsonObject>> {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(PublisherJsontHandler.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(JsonFileResultHandler.class);
 
   private final Vertx vertx;
 
   private final String directory;
 
-  public PublisherJsontHandler(Vertx vertx,
-      KabassuPublisherJsonConfiguration configuration) {
+  public JsonFileResultHandler(Vertx vertx,
+      KabassuJsonFileResultConfiguration configuration) {
     this.vertx = vertx;
     this.directory = configuration.getDirectory();
   }
 
   @Override
   public void handle(Message<JsonObject> event) {
-    JsonObject testResults = event.body();
+    String resultsId = event.body().getString(MessagesFields.TEST_RUN_ID);
+    JsonObject reply = new JsonObject();
     try {
-      FileUtils.forceMkdir(new File(directory));
-      FileUtils.writeStringToFile(
-          new File("reports-json/" + testResults.getString(MessagesFields.TEST_RUN_ID) + ".json"),
-          testResults.encodePrettily(),
-          Charset.defaultCharset());
+      File resultFile = new File(directory, resultsId + ".json");
+      if (resultFile.exists()) {
+        String result = FileUtils.readFileToString(resultFile, Charset.defaultCharset());
+        reply.put(MessagesFields.REPLY, new JsonObject(result));
+      } else {
+        reply.put(MessagesFields.REPLY, "Wrong result id: " + resultsId);
+      }
     } catch (IOException e) {
       LOGGER.error("Problem with creating report", e);
+      reply.put(MessagesFields.REPLY, "Error while reading result file");
     }
+    event.reply(reply);
   }
 
 }

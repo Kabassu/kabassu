@@ -69,7 +69,8 @@ public class KabassuTestContextSimpleTest {
                 + "          \"address\":\"kabassu.publisher.json\"\n"
                 + "        }]}"),
         testContext.asyncAssertSuccess());
-    vertx.deployVerticle(KabassuPublisherJsonVerticle.class.getName(),
+    vertx.deployVerticle(KabassuPublisherJsonVerticle.class.getName(), DeploymentOptionsUtils
+            .createDeploymentOptionsFromJson("{\"directory\":\"" + RESULTS_DIRECTORY + "\"}"),
         testContext.asyncAssertSuccess());
   }
 
