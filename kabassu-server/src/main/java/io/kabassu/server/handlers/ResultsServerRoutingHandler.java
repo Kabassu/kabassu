@@ -17,7 +17,6 @@
 package io.kabassu.server.handlers;
 
 import io.kabassu.commons.constants.MessagesFields;
-import io.kabassu.commons.constants.TestRetrieverCommands;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.Vertx;

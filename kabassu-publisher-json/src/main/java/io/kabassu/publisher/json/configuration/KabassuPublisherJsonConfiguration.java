@@ -16,20 +16,17 @@
 
 package io.kabassu.publisher.json.configuration;
 
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import java.util.HashMap;
-import java.util.Map;
 
 public class KabassuPublisherJsonConfiguration {
 
   private String directory;
 
   public KabassuPublisherJsonConfiguration(JsonObject configuration) {
-    directory = configuration.getString("directory","");
+    directory = configuration.getString("directory", "");
   }
 
-  public String getDirectory(){
+  public String getDirectory() {
     return directory;
   }
 }
