@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-package io.kabassu.publisher.json;
+package io.kabassu.json.file.result;
 
-import io.kabassu.publisher.json.configuration.KabassuPublisherJsonConfiguration;
-import io.kabassu.publisher.json.handlers.PublisherJsontHandler;
+import io.kabassu.json.file.result.configuration.KabassuJsonFileResultConfiguration;
+import io.kabassu.json.file.result.handler.JsonFileResultHandler;
 import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.AbstractVerticle;
 import io.vertx.reactivex.core.eventbus.MessageConsumer;
 
-public class KabassuPublisherJsonVerticle extends AbstractVerticle {
+public class KabassuJsonFileResultVerticle extends AbstractVerticle {
 
   private MessageConsumer<JsonObject> consumer;
 
-  private KabassuPublisherJsonConfiguration configuration;
+  private KabassuJsonFileResultConfiguration configuration;
 
   @Override
   public void init(Vertx vertx, Context context) {
     super.init(vertx, context);
-    configuration = new KabassuPublisherJsonConfiguration(config());
+    configuration = new KabassuJsonFileResultConfiguration(config());
   }
 
   @Override
   public void start() throws Exception {
     consumer = vertx.eventBus()
-        .consumer("kabassu.publisher.json", new PublisherJsontHandler(vertx, configuration));
+        .consumer(configuration.getAddress(), new JsonFileResultHandler(vertx, configuration));
   }
 
   @Override

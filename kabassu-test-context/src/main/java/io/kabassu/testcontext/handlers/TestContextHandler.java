@@ -25,7 +25,6 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.eventbus.Message;
 import java.util.Map;
-import java.util.UUID;
 
 public class TestContextHandler implements Handler<Message<JsonObject>> {
 
@@ -42,7 +41,7 @@ public class TestContextHandler implements Handler<Message<JsonObject>> {
   @Override
   public void handle(Message<JsonObject> event) {
     JsonObject testResults = new JsonObject();
-    testResults.put("taskId",UUID.randomUUID().toString());
+    testResults.put(MessagesFields.TEST_RUN_ID, event.body().getString(MessagesFields.TEST_RUN_ID));
     Observable.fromIterable((event.body().getJsonArray(MessagesFields.TESTS_TO_RUN)))
         .filter(testInfoObject ->
             runnersMap.containsKey(((JsonObject) testInfoObject).getString("runner"))

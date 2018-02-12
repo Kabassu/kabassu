@@ -13,6 +13,11 @@
           "path": "/available",
           "address": "kabassu.test.dispatcher",
           "handler": "available"
+        },
+        {
+          "path": "/results",
+          "address": "kabassu.results.retriever",
+          "handler": "results"
         }
       ]
 

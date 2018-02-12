@@ -14,32 +14,35 @@
  * limitations under the License.
  */
 
-package io.kabassu.publisher.json;
+package io.kabassu.results.retriever;
 
-import io.kabassu.publisher.json.configuration.KabassuPublisherJsonConfiguration;
-import io.kabassu.publisher.json.handlers.PublisherJsontHandler;
+import io.kabassu.commons.constants.EventBusAdresses;
+import io.kabassu.results.retriever.configuration.KabassuResultsRetrieverConfiguration;
+import io.kabassu.results.retriever.handlers.ResultsRetrieverHandler;
 import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.AbstractVerticle;
 import io.vertx.reactivex.core.eventbus.MessageConsumer;
 
-public class KabassuPublisherJsonVerticle extends AbstractVerticle {
+public class KabassuResultsRetrieverVerticle extends AbstractVerticle {
 
   private MessageConsumer<JsonObject> consumer;
 
-  private KabassuPublisherJsonConfiguration configuration;
+  private KabassuResultsRetrieverConfiguration configuration;
 
   @Override
   public void init(Vertx vertx, Context context) {
     super.init(vertx, context);
-    configuration = new KabassuPublisherJsonConfiguration(config());
+    configuration = new KabassuResultsRetrieverConfiguration(config());
   }
 
   @Override
   public void start() throws Exception {
+
     consumer = vertx.eventBus()
-        .consumer("kabassu.publisher.json", new PublisherJsontHandler(vertx, configuration));
+        .consumer(EventBusAdresses.KABASSU_RESULTS_RETRIEVER,
+            new ResultsRetrieverHandler(vertx, configuration.getReaders()));
   }
 
   @Override

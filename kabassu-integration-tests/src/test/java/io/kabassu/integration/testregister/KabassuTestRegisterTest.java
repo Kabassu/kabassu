@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package io.kabassu.testregister;
+package io.kabassu.integration.testregister;
 
 import io.kabassu.mocks.TestStorageMocks;
 import io.kabassu.storage.memory.KabassuStorageMemoryVerticle;
+import io.kabassu.testregister.KabassuTestRegisterVerticle;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.unit.Async;
@@ -33,7 +34,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(VertxUnitRunner.class)
-public class KabassuTestRegisterVerticleTest {
+public class KabassuTestRegisterTest {
 
   private Vertx vertx;
 

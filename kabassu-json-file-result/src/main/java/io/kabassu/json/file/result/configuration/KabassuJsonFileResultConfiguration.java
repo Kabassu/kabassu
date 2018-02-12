@@ -14,22 +14,26 @@
  * limitations under the License.
  */
 
-package io.kabassu.commons.constants;
+package io.kabassu.json.file.result.configuration;
 
-public final class MessagesFields {
+import io.vertx.core.json.JsonObject;
 
-  public static final String REQUEST = "message_request";
+public class KabassuJsonFileResultConfiguration {
 
-  public static final String REPLY = "message_reply";
+  private String directory;
 
-  public static final String TESTS_TO_RUN = "message_tests_to_run";
+  private String address;
 
-  public static final String RESULTS_STORAGE = "results_storage";
-
-  public static final String TEST_RUN_ID = "test_run_id";
-
-  private MessagesFields() {
-    //for constants
+  public KabassuJsonFileResultConfiguration(JsonObject configuration) {
+    directory = configuration.getString("directory", "");
+    address = configuration.getString("address", "");
   }
 
+  public String getDirectory() {
+    return directory;
+  }
+
+  public String getAddress() {
+    return address;
+  }
 }

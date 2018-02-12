@@ -28,4 +28,6 @@ include 'kabassu-results-dispatcher'
 include 'kabassu-publisher-json'
 include 'kabassu-integration-tests'
 include 'kabassu-storage-memory'
+include 'kabassu-results-retriever'
+include 'kabassu-json-file-result'
 
