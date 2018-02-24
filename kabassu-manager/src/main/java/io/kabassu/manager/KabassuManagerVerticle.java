@@ -70,13 +70,15 @@ public class KabassuManagerVerticle extends AbstractVerticle {
 
   private DeploymentOptions getModuleOptions(final String module) {
     DeploymentOptions deploymentOptions = new DeploymentOptions();
+    //TODO: Other way for providing custom configuration
     if (config().containsKey(CONFIG_OVERRIDE) && config().getJsonObject(CONFIG_OVERRIDE)
         .containsKey(module)) {
-      //TODO: Other way for providing custom configuration
       JsonObject moduleConfig = config().getJsonObject(CONFIG_OVERRIDE).getJsonObject(module);
       if (moduleConfig.containsKey(MODULE_OPTIONS)) {
         deploymentOptions.fromJson(moduleConfig.getJsonObject(MODULE_OPTIONS));
       }
+    } else {
+       deploymentOptions.fromJson(config());
     }
     return deploymentOptions;
   }

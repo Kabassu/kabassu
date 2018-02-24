@@ -62,16 +62,19 @@ public abstract class AbstractVerticleFactory implements VerticleFactory {
       depOptions.mergeIn(verticleOptions);
       depOptions.put(CONFIG_KEY, JsonObjectUtil.deepMerge(verticleConfig, depConfig));
 
+      updateOption(depOptions, "runmode", System.getProperty("runmode"));
+      updateOption(depOptions, "security", System.getProperty("security"));
+
       JsonObject serviceDescriptor = new JsonObject().put(OPTIONS_KEY, depOptions);
 
       deploymentOptions.fromJson(serviceDescriptor.getJsonObject(OPTIONS_KEY));
-      if(isWorker()) {
+      if (isWorker()) {
         //TODO Configurable worker instances and pool size
         deploymentOptions.setWorker(true);
         deploymentOptions.setWorkerPoolName(identifier);
         deploymentOptions.setWorkerPoolSize(5);
         deploymentOptions.setInstances(5);
-        LOGGER.info("{} is worker",verticle);
+        LOGGER.info("{} is worker", verticle);
       }
       resolution.complete(verticle);
     } catch (Exception e) {
@@ -93,6 +96,12 @@ public abstract class AbstractVerticleFactory implements VerticleFactory {
   }
 
   protected abstract boolean isWorker();
+
+  private void updateOption(JsonObject depOptions, String optionName, String option) {
+    if (StringUtils.isNotEmpty(option)) {
+      depOptions.getJsonObject(CONFIG_KEY).put(optionName, option);
+    }
+  }
 
   private JsonObject readDescriptor(ClassLoader classLoader, String descriptorFile)
       throws IOException {

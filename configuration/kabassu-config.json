@@ -1,6 +1,7 @@
 {
   "config": {
-
+      "runmode":"NORMAL",
+      "security":"NONE"
   },
   "modules": [
     "standard:io.kabassu.server",
