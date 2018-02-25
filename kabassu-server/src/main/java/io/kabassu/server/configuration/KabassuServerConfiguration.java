@@ -29,8 +29,11 @@ public class KabassuServerConfiguration {
 
   private List<RoutingPath> routingPath = new ArrayList<>();
 
+  private String mainSecurityMode;
+
   public KabassuServerConfiguration(JsonObject configuration) {
     this.port = configuration.getInteger("port");
+    this.mainSecurityMode = configuration.getString("security");
     mapPaths(configuration.getJsonArray("GET"), HttpMethod.GET);
     mapPaths(configuration.getJsonArray("POST"), HttpMethod.POST);
   }
@@ -42,7 +45,7 @@ public class KabassuServerConfiguration {
           routingPath.add(
               new RoutingPath(method, pathData.getString("path"), pathData.getString("address"),
                   pathData.getString("handler",
-                      StringUtils.EMPTY)))
+                      StringUtils.EMPTY), pathData.getString("security", mainSecurityMode)))
       );
     }
   }

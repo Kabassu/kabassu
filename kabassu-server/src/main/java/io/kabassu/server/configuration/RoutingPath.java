@@ -16,9 +16,14 @@
 
 package io.kabassu.server.configuration;
 
+import io.kabassu.commons.modes.SecurityMode;
 import io.vertx.core.http.HttpMethod;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 
 public class RoutingPath {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(RoutingPath.class);
 
   private HttpMethod method;
 
@@ -28,11 +33,28 @@ public class RoutingPath {
 
   private String handler;
 
-  public RoutingPath(HttpMethod method, String path, String address, String handler) {
+  private SecurityMode securityMode;
+
+  public RoutingPath(HttpMethod method, String path, String address, String handler,
+      String securityMode) {
     this.method = method;
     this.path = path;
     this.address = address;
     this.handler = handler;
+    this.securityMode = translateSecurity(securityMode);
+  }
+
+  private SecurityMode translateSecurity(String securityMode) {
+    try {
+      return SecurityMode.valueOf(securityMode.toUpperCase());
+    } catch (IllegalArgumentException e) {
+      LOGGER.error("Security mode \"{}\" for path \"{}\" is not valid!", securityMode, this.path);
+      return SecurityMode.NONE;
+    }
+  }
+
+  public SecurityMode getSecurityMode() {
+    return securityMode;
   }
 
   public HttpMethod getMethod() {

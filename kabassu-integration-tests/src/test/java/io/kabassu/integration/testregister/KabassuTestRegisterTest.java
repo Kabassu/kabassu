@@ -16,6 +16,7 @@
 
 package io.kabassu.integration.testregister;
 
+import io.kabassu.integration.configuration.DeploymentOptionsUtils;
 import io.kabassu.mocks.TestStorageMocks;
 import io.kabassu.storage.memory.KabassuStorageMemoryVerticle;
 import io.kabassu.testregister.KabassuTestRegisterVerticle;
@@ -43,7 +44,8 @@ public class KabassuTestRegisterTest {
     vertx = Vertx.vertx();
     vertx.deployVerticle(KabassuTestRegisterVerticle.class.getName(),
         testContext.asyncAssertSuccess());
-    vertx.deployVerticle(KabassuStorageMemoryVerticle.class.getName(),
+    vertx.deployVerticle(KabassuStorageMemoryVerticle.class.getName(), DeploymentOptionsUtils
+            .createDeploymentOptionsFromJson("{      \"runmode\": \"demo\"\n}"),
         testContext.asyncAssertSuccess());
   }
 
@@ -61,10 +63,12 @@ public class KabassuTestRegisterTest {
     message.put("message_tests_to_run", testToRunJsonArray);
     vertx.eventBus().send("kabassu.test.retriever", message, event -> {
       JsonObject body = (JsonObject) event.result().body();
-      testContext.assertEquals(body.getJsonArray("message_reply").size(),testToRunJsonArray.size());
-      body.getJsonArray("message_reply").stream().forEach(entry->{
+      testContext
+          .assertEquals(body.getJsonArray("message_reply").size(), testToRunJsonArray.size());
+      body.getJsonArray("message_reply").stream().forEach(entry -> {
         JsonObject testInfo = (JsonObject) entry;
-        testContext.assertEquals(testInfo, JsonObject.mapFrom(TestStorageMocks.createSingleTestInfo(testInfo.getString("id"),testInfo.getString("className"))));
+        testContext.assertEquals(testInfo, JsonObject.mapFrom(TestStorageMocks
+            .createSingleTestInfo(testInfo.getString("id"), testInfo.getString("className"))));
       });
       async.complete();
     });

@@ -7,17 +7,20 @@
         {
           "path": "/runner",
           "address": "kabassu.test.dispatcher",
-          "handler": ""
+          "handler": "",
+          "security": "none"
         },
         {
           "path": "/available",
           "address": "kabassu.test.dispatcher",
-          "handler": "available"
+          "handler": "available",
+          "security": "none"
         },
         {
           "path": "/results",
           "address": "kabassu.results.retriever",
-          "handler": "results"
+          "handler": "results",
+          "security": "none"
         }
       ]
 

@@ -25,6 +25,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.reactivex.core.AbstractVerticle;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 
@@ -33,9 +34,13 @@ public class KabassuManagerVerticle extends AbstractVerticle {
   private static final String CONFIG_OVERRIDE = "config";
   private static final String MODULE_OPTIONS = "options";
   private static final Logger LOGGER = LoggerFactory.getLogger(KabassuManagerVerticle.class);
+  private static final String RUNMODE = "runmode";
 
   @Override
   public void start(Future<Void> startFuture) throws Exception {
+
+    updateOption(config(), RUNMODE, System.getProperty(RUNMODE));
+    updateOption(config(), "security", System.getProperty("security"));
 
     Observable.fromIterable(config().getJsonArray("modules"))
         .flatMap(module -> deployVerticle(module)
@@ -47,6 +52,9 @@ public class KabassuManagerVerticle extends AbstractVerticle {
         .subscribe(
             message -> {
               LOGGER.info("Kabassu STARTED {}", message);
+              if(config().getJsonObject(CONFIG_OVERRIDE).getString(RUNMODE,"normal").equalsIgnoreCase("demo")){
+                LOGGER.info("Kabassu is running in DEMO Mode");
+              }
               startFuture.complete();
             },
             error -> {
@@ -70,13 +78,15 @@ public class KabassuManagerVerticle extends AbstractVerticle {
 
   private DeploymentOptions getModuleOptions(final String module) {
     DeploymentOptions deploymentOptions = new DeploymentOptions();
+    //TODO: Other way for providing custom configuration
     if (config().containsKey(CONFIG_OVERRIDE) && config().getJsonObject(CONFIG_OVERRIDE)
         .containsKey(module)) {
-      //TODO: Other way for providing custom configuration
       JsonObject moduleConfig = config().getJsonObject(CONFIG_OVERRIDE).getJsonObject(module);
       if (moduleConfig.containsKey(MODULE_OPTIONS)) {
         deploymentOptions.fromJson(moduleConfig.getJsonObject(MODULE_OPTIONS));
       }
+    } else {
+      deploymentOptions.fromJson(config());
     }
     return deploymentOptions;
   }
@@ -95,5 +105,11 @@ public class KabassuManagerVerticle extends AbstractVerticle {
         .append(
             String.format("\t\tDeployed %s [%s]", deploymentId.getRight(), deploymentId.getLeft()))
         .append(System.lineSeparator());
+  }
+
+  private void updateOption(JsonObject depOptions, String optionName, String option) {
+    if (StringUtils.isNotEmpty(option)) {
+      depOptions.getJsonObject(CONFIG_OVERRIDE).put(optionName, option);
+    }
   }
 }

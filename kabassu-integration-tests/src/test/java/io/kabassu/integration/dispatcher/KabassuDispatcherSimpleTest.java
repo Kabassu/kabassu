@@ -17,6 +17,7 @@
 package io.kabassu.integration.dispatcher;
 
 import io.kabassu.commons.constants.EventBusAdresses;
+import io.kabassu.integration.configuration.DeploymentOptionsUtils;
 import io.kabassu.mocks.TestStorageMocks;
 import io.kabassu.storage.memory.KabassuStorageMemoryVerticle;
 import io.kabassu.testdispatcher.KabassuTestDispatcherVerticle;
@@ -47,7 +48,8 @@ public class KabassuDispatcherSimpleTest {
         testContext.asyncAssertSuccess());
     vertx.deployVerticle(KabassuTestDispatcherVerticle.class.getName(),
         testContext.asyncAssertSuccess());
-    vertx.deployVerticle(KabassuStorageMemoryVerticle.class.getName(),
+    vertx.deployVerticle(KabassuStorageMemoryVerticle.class.getName(), DeploymentOptionsUtils
+            .createDeploymentOptionsFromJson("{      \"runmode\": \"demo\"\n}"),
         testContext.asyncAssertSuccess());
   }
 
