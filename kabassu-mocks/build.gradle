@@ -19,7 +19,7 @@ buildscript {
 }
 
 dependencies {
-    compileOnly group: 'io.vertx', name: 'vertx-core', version: '3.5.0'
+    compileOnly group: 'io.vertx', name: 'vertx-core', version: '3.5.1'
     compileOnly project(path: ':kabassu-commons', configuration: 'shadow')
     compileOnly group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
 }

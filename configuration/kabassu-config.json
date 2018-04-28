@@ -1,18 +1,17 @@
 {
   "config": {
-      "runmode":"NORMAL",
-      "security":"NONE"
+    "runmode": "NORMAL",
+    "security": "NONE"
   },
-  "modules": [
-    "standard:io.kabassu.server",
-    "standard:io.kabassu.testregister",
-    "standard:io.kabassu.testdispatcher",
-    "standard:io.kabassu.resultsdispatcher",
-    "standard:io.kabassu.publisher.json",
-    "standard:io.kabassu.storage.memory",
-    "standard:io.kabassu.results.retriever",
-    "worker:io.kabassu.testcontext",
-    "worker:io.kabassu.runner.junit",
-    "worker:io.kabassu.json.file.result"
-  ]
+  "modules": {
+    "stores": [
+      {
+        "type":"kabbasu-modules",
+        "optional":false,
+        "config":{
+          "path":"./modules"
+        }
+      }
+    ]
+  }
 }

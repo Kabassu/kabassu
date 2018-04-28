@@ -19,9 +19,10 @@ buildscript {
 }
 
 dependencies {
-    compile group: 'io.vertx', name: 'vertx-core', version: '3.5.0'
-    compile group: 'io.vertx', name: 'vertx-rx-java2', version: '3.5.0'
-    compile group: 'io.vertx', name: 'vertx-web', version: '3.5.0'
+    compile group: 'io.vertx', name: 'vertx-core', version: '3.5.1'
+    compile group: 'io.vertx', name: 'vertx-config', version: '3.5.1'
+    compile group: 'io.vertx', name: 'vertx-rx-java2', version: '3.5.1'
+    compile group: 'io.vertx', name: 'vertx-web', version: '3.5.1'
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
     compile group: 'commons-io', name: 'commons-io', version: '2.6'
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.8'
@@ -35,5 +36,6 @@ shadowJar {
     }
     mergeServiceFiles {
         include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
+        include 'META-INF/services/io.vertx.config.spi.ConfigStoreFactory'
     }
 }
