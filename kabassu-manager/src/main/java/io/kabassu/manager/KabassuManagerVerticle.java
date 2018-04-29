@@ -143,6 +143,7 @@ public class KabassuManagerVerticle extends AbstractVerticle {
   private Observable<Pair<String, String>> verticleCouldNotBeDeployed(Object module,
       Throwable throwable) {
     LOGGER.warn("Can't deploy {}: {}", module, throwable.getMessage());
+    deploymentManager.getDeployedModules().remove(module);
     return Observable.empty();
   }
 
