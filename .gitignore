@@ -27,3 +27,5 @@
 /kabassu-storage-memory/build/
 /kabassu-results-retriever/build/
 /kabassu-json-file-result/build/
+/kabassu-manager/out/
+

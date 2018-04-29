@@ -17,6 +17,7 @@
 
 package io.kabassu.manager;
 
+import io.kabassu.manager.deployment.DeploymentManager;
 import io.reactivex.Observable;
 import io.reactivex.ObservableTransformer;
 import io.vertx.config.ConfigRetrieverOptions;
@@ -34,11 +35,14 @@ import org.apache.commons.lang3.tuple.Pair;
 public class KabassuManagerVerticle extends AbstractVerticle {
 
   private static final String CONFIG_OVERRIDE = "config";
+
   private static final String MODULE_OPTIONS = "options";
+
   private static final Logger LOGGER = LoggerFactory.getLogger(KabassuManagerVerticle.class);
+
   private static final String RUNMODE = "runmode";
 
-  private ConfigRetriever configRetriever;
+  private DeploymentManager deploymentManager;
 
   @Override
   public void start(Future<Void> startFuture) throws Exception {
@@ -46,65 +50,50 @@ public class KabassuManagerVerticle extends AbstractVerticle {
     updateOption(config(), RUNMODE, System.getProperty(RUNMODE));
     updateOption(config(), "security", System.getProperty("security"));
 
-    configRetriever = ConfigRetriever.create(vertx, new ConfigRetrieverOptions(config().getJsonObject("modules")));
-
-//    configRetriever.listen(conf -> {
-//      if (!deployedModules.isEmpty()) {
-//        LOGGER.warn("Configuration changed - Re-deploying Knot.x");
-//        Observable.fromIterable(deployedModules)
-//            .flatMap(item -> vertx.rxUndeploy(item.getDeploymentId()).toObservable())
-//            .collect(() -> Lists.newArrayList(),
-//                (collector, result) -> collector.add(result))
-//            .subscribe(
-//                success -> {
-//                  LOGGER.warn("Knot.x STOPPED.");
-//                  deployVerticles(conf.getNewConfiguration(), null);
-//                },
-//                error -> {
-//                  LOGGER.error("Unable to undeploy verticles", error);
-//                  startFuture.fail(error);
-//                }
-//            );
-//      }
-//    });
-
-    configRetriever.listen(conf->{
-      LOGGER.info(conf.getNewConfiguration());
-    });
+    ConfigRetriever configRetriever = ConfigRetriever
+        .create(vertx, new ConfigRetrieverOptions(config().getJsonObject("modules")));
 
     configRetriever.getConfig(ar -> {
       if (ar.succeeded()) {
         JsonObject configuration = ar.result();
-        LOGGER.info(configuration);
-        //deployVerticles(configuration, startFuture);
+        deploymentManager = new DeploymentManager(configuration.getJsonArray("modules"));
+        deployVerticles(startFuture);
       } else {
-        LOGGER.fatal("Unable to start Knot.x", ar.cause());
+        LOGGER.fatal("Unable to start Kabbasu", ar.cause());
         startFuture.fail(ar.cause());
       }
     });
 
+    configRetriever.listen(conf -> {
+      LOGGER.info(conf.getNewConfiguration());
+    });
+  }
 
-//    Observable.fromIterable(config().getJsonArray("modules"))
-//        .flatMap(module -> deployVerticle(module)
-//            .onErrorResumeNext(
-//                throwable -> (Observable<Pair<String, String>>) verticleCouldNotBeDeployed(module,
-//                    throwable))
-//        )
-//        .compose(joinDeployments())
-//        .subscribe(
-//            message -> {
-//              LOGGER.info("Kabassu STARTED {}", message);
-//              if(config().getJsonObject(CONFIG_OVERRIDE).getString(RUNMODE,"normal").equalsIgnoreCase("demo")){
-//                LOGGER.info("Kabassu is running in DEMO Mode");
-//              }
-//              startFuture.complete();
-//            },
-//            error -> {
-//              LOGGER.error("Verticle could not be deployed", error);
-//              startFuture.fail(error);
-//            }
-//        );
- }
+  private void deployVerticles(Future<Void> startFuture) {
+    deploymentManager.getDeployedModules().keySet();
+    Observable.fromIterable(deploymentManager.getDeployedModules().keySet())
+        .flatMap(module -> deployVerticle(module)
+            .onErrorResumeNext(
+                throwable -> (Observable<Pair<String, String>>) verticleCouldNotBeDeployed(module,
+                    throwable))
+        )
+        .compose(joinDeployments())
+        .subscribe(
+            message -> {
+              LOGGER.info("Kabassu STARTED {}", message);
+              if (config().getJsonObject(CONFIG_OVERRIDE).getString(RUNMODE, "normal")
+                  .equalsIgnoreCase("demo")) {
+                LOGGER.info("Kabassu is running in DEMO Mode");
+              }
+              startFuture.complete();
+            },
+            error -> {
+              LOGGER.error("Verticle could not be deployed", error);
+              startFuture.fail(error);
+            }
+        );
+
+  }
 
   private Observable<Pair<String, String>> verticleCouldNotBeDeployed(Object module,
       Throwable throwable) {
@@ -120,13 +109,9 @@ public class KabassuManagerVerticle extends AbstractVerticle {
 
   private DeploymentOptions getModuleOptions(final String module) {
     DeploymentOptions deploymentOptions = new DeploymentOptions();
-    //TODO: Other way for providing custom configuration
-    if (config().containsKey(CONFIG_OVERRIDE) && config().getJsonObject(CONFIG_OVERRIDE)
-        .containsKey(module)) {
-      JsonObject moduleConfig = config().getJsonObject(CONFIG_OVERRIDE).getJsonObject(module);
-      if (moduleConfig.containsKey(MODULE_OPTIONS)) {
-        deploymentOptions.fromJson(moduleConfig.getJsonObject(MODULE_OPTIONS));
-      }
+    if (!deploymentManager.getDeployedModules().get(module).equals(new JsonObject())) {
+      deploymentOptions.fromJson(
+          new JsonObject().put(CONFIG_OVERRIDE, deploymentManager.getDeployedModules().get(module)));
     } else {
       deploymentOptions.fromJson(config());
     }

@@ -84,7 +84,7 @@ public class ModulesConfigStore implements ConfigStore {
     );
   }
 
-  public void buildConfiguration(List<File> files, Handler<AsyncResult<JsonArray>> handler) {
+  private void buildConfiguration(List<File> files, Handler<AsyncResult<JsonArray>> handler) {
     List<Future> futures = new ArrayList<>();
     files.stream()
         .forEach(file -> {
