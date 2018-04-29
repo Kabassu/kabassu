@@ -16,20 +16,18 @@
 
 package io.kabassu.manager.deployment;
 
-import io.vertx.core.json.JsonObject;
-
 public class ModuleDeployInfo {
 
   private String name;
 
   private DeployStatus deployStatus;
 
-  private JsonObject config;
+  private String deploymentId;
 
-  public ModuleDeployInfo(String name, DeployStatus deployStatus, JsonObject config) {
+  public ModuleDeployInfo(String name, DeployStatus deployStatus, String deploymentId) {
     this.name = name;
     this.deployStatus = deployStatus;
-    this.config = config;
+    this.deploymentId = deploymentId;
   }
 
   public String getName() {
@@ -40,7 +38,7 @@ public class ModuleDeployInfo {
     return deployStatus;
   }
 
-  public JsonObject getConfig() {
-    return config;
+  public String getDeploymentId() {
+    return deploymentId;
   }
 }

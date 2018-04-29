@@ -16,27 +16,18 @@
  */
 package io.kabassu.manager.factory;
 
-import io.kabassu.manager.utils.JsonObjectUtil;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Future;
 import io.vertx.core.Verticle;
-import io.vertx.core.json.DecodeException;
-import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.core.spi.VerticleFactory;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
+import java.util.Arrays;
 import org.apache.commons.lang3.StringUtils;
 
 public abstract class AbstractVerticleFactory implements VerticleFactory {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(AbstractVerticleFactory.class);
-
-  private static final String CONFIG_KEY = "config";
-  private static final String OPTIONS_KEY = "options";
 
   @Override
   public boolean requiresResolve() {
@@ -47,32 +38,18 @@ public abstract class AbstractVerticleFactory implements VerticleFactory {
   public void resolve(String id, DeploymentOptions deploymentOptions, ClassLoader classLoader,
       Future<String> resolution) {
     String identifier = VerticleFactory.removePrefix(id);
-    String descriptorFile = identifier + ".json";
     try {
-      JsonObject descriptor = readDescriptor(classLoader, descriptorFile);
-      String verticle = retrieveVerticle(descriptor, descriptorFile);
+      String verticle = retrieveVerticle(deploymentOptions, identifier);
 
-      // Any options specified in the module config will override anything specified at deployment time
-      // Options and Config specified in separate file with configuration JSON will override those configurations
-      JsonObject depOptions = deploymentOptions.toJson();
-      JsonObject depConfig = depOptions.getJsonObject(CONFIG_KEY, new JsonObject());
-
-      JsonObject verticleOptions = descriptor.getJsonObject(OPTIONS_KEY, new JsonObject());
-      JsonObject verticleConfig = verticleOptions.getJsonObject(CONFIG_KEY, new JsonObject());
-      depOptions.mergeIn(verticleOptions);
-      depOptions.put(CONFIG_KEY, JsonObjectUtil.deepMerge(verticleConfig, depConfig));
-
-      JsonObject serviceDescriptor = new JsonObject().put(OPTIONS_KEY, depOptions);
-
-      deploymentOptions.fromJson(serviceDescriptor.getJsonObject(OPTIONS_KEY));
       if (isWorker()) {
-        //TODO Configurable worker instances and pool size
         deploymentOptions.setWorker(true);
         deploymentOptions.setWorkerPoolName(identifier);
         deploymentOptions.setWorkerPoolSize(5);
         deploymentOptions.setInstances(5);
         LOGGER.info("{} is worker", verticle);
       }
+      deploymentOptions.setIsolationGroup("test");
+      deploymentOptions.setExtraClasspath(Arrays.asList(StringUtils.substringBefore(System.getProperty("java.class.path"),"/")+"/*"));
       resolution.complete(verticle);
     } catch (Exception e) {
       resolution.fail(e);
@@ -84,35 +61,14 @@ public abstract class AbstractVerticleFactory implements VerticleFactory {
     throw new IllegalStateException("Shouldn't be called");
   }
 
-  protected String retrieveVerticle(JsonObject descriptor, String descriptorFile) {
-    String verticle = descriptor.getString("verticle");
+  protected String retrieveVerticle(DeploymentOptions deploymentOptions, String id) {
+    String verticle = deploymentOptions.getConfig().getString("verticle");
     if (StringUtils.isEmpty(verticle)) {
-      throw new IllegalArgumentException("There is no verticle name in: " + descriptorFile);
+      throw new IllegalArgumentException("There is no verticle cconnected to: " + id);
     }
     return verticle;
   }
 
   protected abstract boolean isWorker();
-
-  private JsonObject readDescriptor(ClassLoader classLoader, String descriptorFile)
-      throws IOException {
-    JsonObject descriptor;
-    try (InputStream is = classLoader.getResourceAsStream(descriptorFile)) {
-      if (is == null) {
-        throw new IllegalArgumentException(
-            "Cannot find module descriptor file " + descriptorFile + " on classpath");
-      }
-      try (Scanner scanner = new Scanner(is, "UTF-8").useDelimiter("\\A")) {
-        String conf = scanner.next();
-        descriptor = new JsonObject(conf);
-      } catch (NoSuchElementException e) {
-        throw new IllegalArgumentException(descriptorFile + " is empty", e);
-      } catch (DecodeException e) {
-        throw new IllegalArgumentException(descriptorFile + " contains invalid json", e);
-      }
-    }
-
-    return descriptor;
-  }
 
 }

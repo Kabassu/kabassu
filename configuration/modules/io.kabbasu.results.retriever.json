@@ -1,3 +1,13 @@
 {
-    "name": "standard:io.kabassu.results.retriever"
+  "name": "standard:io.kabassu.results.retriever",
+  "config": {
+    "verticle": "io.kabassu.results.retriever.KabassuResultsRetrieverVerticle",
+    "readers": [
+      {
+        "name": "json-file",
+        "address": "kabassu.results.file.json"
+      }
+    ]
+  }
 }
+

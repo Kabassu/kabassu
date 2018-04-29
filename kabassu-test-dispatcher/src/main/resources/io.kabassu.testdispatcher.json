@@ -1,7 +1,0 @@
-{
-  "verticle": "io.kabassu.testdispatcher.KabassuTestDispatcherVerticle",
-  "options": {
-    "config": {
-    }
-  }
-}

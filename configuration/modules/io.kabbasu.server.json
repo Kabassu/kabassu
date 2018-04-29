@@ -1,3 +1,27 @@
 {
-    "name": "standard:io.kabassu.server"
+  "name": "standard:io.kabassu.server",
+  "config": {
+    "verticle": "io.kabassu.server.KabassuServerVerticle",
+    "port": 8080,
+    "GET": [
+      {
+        "path": "/runner",
+        "address": "kabassu.test.dispatcher",
+        "handler": "",
+        "security": "none"
+      },
+      {
+        "path": "/available",
+        "address": "kabassu.test.dispatcher",
+        "handler": "available",
+        "security": "none"
+      },
+      {
+        "path": "/results",
+        "address": "kabassu.results.retriever",
+        "handler": "results",
+        "security": "none"
+      }
+    ]
+  }
 }

@@ -1,3 +1,8 @@
 {
-    "name": "standard:io.kabassu.publisher.json"
+  "name": "standard:io.kabassu.publisher.json",
+  "config": {
+    "verticle": "io.kabassu.publisher.json.KabassuPublisherJsonVerticle",
+    "directory": "reports-json"
+  }
 }
+

@@ -24,8 +24,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
 
 public class DeploymentManager {
+
+  public static final String DEPLOYMENT_ID = "deploymentId";
+
+  private static final String CONFIG = "config";
 
   private Map<String, JsonObject> deployedModules = new HashMap<>();
 
@@ -40,7 +45,8 @@ public class DeploymentManager {
     deployments.iterator().forEachRemaining(deployment -> {
       JsonObject module = (JsonObject) deployment;
       refreshedModules
-          .put(module.getString("name"), module.getJsonObject("config", new JsonObject()));
+          .put(module.getString("name"),
+              new JsonObject().put(CONFIG, module.getJsonObject(CONFIG, new JsonObject())));
     });
     prepareModulesForUndeploy(toReturn, refreshedModules);
     prepareModulesForDeploy(toReturn, refreshedModules);
@@ -56,15 +62,17 @@ public class DeploymentManager {
       Map<String, JsonObject> refreshedModules) {
     refreshedModules.keySet().stream().forEach(module -> {
       if (deployedModules.keySet().contains(module)) {
-        if (!deployedModules.get(module)
-            .equals(refreshedModules.get(module))) {
+        if (!deployedModules.get(module).getJsonObject(CONFIG)
+            .equals(refreshedModules.get(module).getJsonObject(CONFIG))) {
+          refreshedModules.get(module)
+              .put(DEPLOYMENT_ID,
+                  deployedModules.get(module).getString(DEPLOYMENT_ID, StringUtils.EMPTY));
           toReturn
-              .add(new ModuleDeployInfo(module, DeployStatus.REDEPLOY,
-                  refreshedModules.get(module)));
+              .add(new ModuleDeployInfo(module, DeployStatus.REDEPLOY,deployedModules.get(module).getString(DEPLOYMENT_ID, StringUtils.EMPTY)));
         }
       } else {
         toReturn
-            .add(new ModuleDeployInfo(module, DeployStatus.DEPLOY, refreshedModules.get(module)));
+            .add(new ModuleDeployInfo(module, DeployStatus.DEPLOY, StringUtils.EMPTY));
       }
     });
   }
@@ -73,15 +81,19 @@ public class DeploymentManager {
       Map<String, JsonObject> refreshedModules) {
     Set<String> existingModules = new HashSet<>(deployedModules.keySet());
     existingModules.removeAll(refreshedModules.keySet());
-    existingModules.stream().forEach(module ->
-        toReturn.add(new ModuleDeployInfo(module, DeployStatus.UNDEPLOY, null))
+    existingModules.stream().forEach(module -> {
+          toReturn
+              .add(new ModuleDeployInfo(module, DeployStatus.UNDEPLOY, deployedModules.get(module).getString(DEPLOYMENT_ID, StringUtils.EMPTY)));
+
+        }
     );
   }
 
 
   private void addModule(Object entry) {
     JsonObject module = (JsonObject) entry;
-    deployedModules.put(module.getString("name"), module.getJsonObject("config", new JsonObject()));
+    deployedModules.put(module.getString("name"),
+        new JsonObject().put(CONFIG, module.getJsonObject(CONFIG, new JsonObject())));
   }
 
 

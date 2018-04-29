@@ -1,3 +1,13 @@
 {
-    "name": "worker:io.kabassu.testcontext"
+  "name": "worker:io.kabassu.testcontext",
+  "config": {
+    "verticle": "io.kabassu.testcontext.KabassuTestContextVerticle",
+    "runners": [
+      {
+        "runner": "junit",
+        "address": "kabassu.runner.junit"
+      }
+    ]
+  }
 }
+

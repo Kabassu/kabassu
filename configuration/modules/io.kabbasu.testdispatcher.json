@@ -1,3 +1,6 @@
 {
-    "name": "standard:io.kabassu.testdispatcher"
+    "name": "standard:io.kabassu.testdispatcher",
+    "config": {
+        "verticle": "io.kabassu.testdispatcher.KabassuTestDispatcherVerticle"
+    }
 }

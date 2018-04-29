@@ -35,23 +35,26 @@ class DeploymentManagerTest {
     DeploymentManager deploymentManager = new DeploymentManager(getDeployments());
     List<ModuleDeployInfo> moduleDeployInfos = deploymentManager
         .refreshDeploys(getRefreshedDeployments());
-    assertThat(moduleDeployInfos.size(),is(3));
-    moduleDeployInfos.stream().forEach(deployInfo->{
-      if(deployInfo.getName().equals("deploymentB")){
+    assertThat(moduleDeployInfos.size(), is(3));
+    moduleDeployInfos.stream().forEach(deployInfo -> {
+      if (deployInfo.getName().equals("deploymentB")) {
         assertThat(deployInfo.getDeployStatus(), is(DeployStatus.REDEPLOY));
-        assertThat(deployInfo.getConfig().getString("test"),is("new2"));
       }
-      if(deployInfo.getName().equals("deploymentC")){
+      if (deployInfo.getName().equals("deploymentC")) {
         assertThat(deployInfo.getDeployStatus(), is(DeployStatus.UNDEPLOY));
       }
-      if(deployInfo.getName().equals("deploymentD")){
+      if (deployInfo.getName().equals("deploymentD")) {
         assertThat(deployInfo.getDeployStatus(), is(DeployStatus.DEPLOY));
       }
     });
-    assertThat(deploymentManager.getDeployedModules().keySet().size(),is(3));
-    assertThat(deploymentManager.getDeployedModules().get("deploymentA"),is(new JsonObject()));
-    assertThat(deploymentManager.getDeployedModules().get("deploymentB"),is(new JsonObject().put("test", "new2")));
-    assertThat(deploymentManager.getDeployedModules().get("deploymentD"),is(new JsonObject()));
+    assertThat(deploymentManager.getDeployedModules().keySet().size(), is(3));
+    assertThat(deploymentManager.getDeployedModules().get("deploymentA"),
+        is(new JsonObject().put("config", new JsonObject())));
+    assertThat(deploymentManager.getDeployedModules().get("deploymentB"),
+        is(new JsonObject().put("deploymentId", "")
+            .put("config", new JsonObject().put("test", "new2"))));
+    assertThat(deploymentManager.getDeployedModules().get("deploymentD"),
+        is(new JsonObject().put("config", new JsonObject())));
     assertNull(deploymentManager.getDeployedModules().get("deploymentC"));
   }
 
