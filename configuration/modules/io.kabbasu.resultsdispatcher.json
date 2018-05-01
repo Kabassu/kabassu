@@ -1,0 +1,12 @@
+{
+  "name": "standard:io.kabassu.resultsdispatcher",
+  "config": {
+    "verticle": "io.kabassu.resultsdispatcher.KabassuResultsDispatcherVerticle",
+    "publishers": [
+      {
+        "name": "standard",
+        "address": "kabassu.publisher.json"
+      }
+    ]
+  }
+}

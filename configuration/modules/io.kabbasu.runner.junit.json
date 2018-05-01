@@ -1,0 +1,7 @@
+{
+  "name": "worker:io.kabassu.runner.junit",
+  "config": {
+    "verticle": "io.kabassu.testrunner.junit.KabassuTestRunnerJUnitVerticle",
+    "address": "kabassu.runner.junit"
+  }
+}

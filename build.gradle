@@ -66,12 +66,12 @@ subprojects {
     dependencies {
         testCompile("org.junit.jupiter:junit-jupiter-api:5.0.3",
                 group: 'org.hamcrest', name: 'hamcrest-junit', version: '2.0.0.0',
-                'io.vertx:vertx-unit:3.5.0',
+                'io.vertx:vertx-unit:3.5.1',
                 'org.junit.jupiter:junit-jupiter-engine:5.0.3',
                 'org.junit.platform:junit-platform-launcher:1.0.3',
                 'org.junit.platform:junit-platform-runner:1.0.3')
-        testCompile group: 'io.vertx', name: 'vertx-core', version: '3.5.0'
-        testCompile group: 'io.vertx', name: 'vertx-rx-java2', version: '3.5.0'
+        testCompile group: 'io.vertx', name: 'vertx-core', version: '3.5.1'
+        testCompile group: 'io.vertx', name: 'vertx-rx-java2', version: '3.5.1'
         testCompile project(path: ':kabassu-mocks', configuration: 'shadow')
         testCompile 'org.awaitility:awaitility:3.0.0'
         testCompile group: 'commons-io', name: 'commons-io', version: '2.6'

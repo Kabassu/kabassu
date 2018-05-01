@@ -1,9 +1,0 @@
-{
-  "verticle": "io.kabassu.json.file.result.KabassuJsonFileResultVerticle",
-  "options": {
-    "config": {
-      "directory": "reports-json",
-      "address": "kabassu.results.file.json"
-    }
-  }
-}

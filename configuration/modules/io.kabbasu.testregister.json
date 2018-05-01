@@ -1,0 +1,7 @@
+{
+    "name": "standard:io.kabassu.testregister",
+    "config": {
+        "verticle": "io.kabassu.testregister.KabassuTestRegisterVerticle"
+    }
+}
+
