@@ -1,7 +1,8 @@
 {
   "config": {
     "runmode": "NORMAL",
-    "security": "NONE"
+    "security": "NONE",
+    "modules_directory": "libs/"
   },
   "modules": {
     "stores": [

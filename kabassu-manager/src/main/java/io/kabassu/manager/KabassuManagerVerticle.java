@@ -55,8 +55,10 @@ public class KabassuManagerVerticle extends AbstractVerticle {
   @Override
   public void start(Future<Void> startFuture) throws Exception {
 
-    updateOption(config().getJsonObject(CONFIG_OVERRIDE), RUNMODE, System.getProperty(RUNMODE), true);
-    updateOption(config().getJsonObject(CONFIG_OVERRIDE), SECURITY, System.getProperty(SECURITY), true);
+    updateOption(config().getJsonObject(CONFIG_OVERRIDE), RUNMODE, System.getProperty(RUNMODE),
+        true);
+    updateOption(config().getJsonObject(CONFIG_OVERRIDE), SECURITY, System.getProperty(SECURITY),
+        true);
 
     ConfigRetriever configRetriever = ConfigRetriever
         .create(vertx, new ConfigRetrieverOptions(config().getJsonObject(MODULE_KEY)));
@@ -155,6 +157,8 @@ public class KabassuManagerVerticle extends AbstractVerticle {
         config().getJsonObject(CONFIG_OVERRIDE).getString(RUNMODE), false);
     updateOption(deploymentOptions.getConfig(), SECURITY,
         config().getJsonObject(CONFIG_OVERRIDE).getString(SECURITY), false);
+    updateOption(deploymentOptions.getConfig(), "modules_directory",
+        config().getJsonObject(CONFIG_OVERRIDE).getString("modules_directory"), true);
     return vertx.rxDeployVerticle((String) module, deploymentOptions)
         .map(deploymentID -> Pair.of((String) module, deploymentID))
         .toObservable();
