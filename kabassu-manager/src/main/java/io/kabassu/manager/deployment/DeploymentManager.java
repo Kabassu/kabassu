@@ -68,7 +68,8 @@ public class DeploymentManager {
               .put(DEPLOYMENT_ID,
                   deployedModules.get(module).getString(DEPLOYMENT_ID, StringUtils.EMPTY));
           toReturn
-              .add(new ModuleDeployInfo(module, DeployStatus.REDEPLOY,deployedModules.get(module).getString(DEPLOYMENT_ID, StringUtils.EMPTY)));
+              .add(new ModuleDeployInfo(module, DeployStatus.REDEPLOY,
+                  deployedModules.get(module).getString(DEPLOYMENT_ID, StringUtils.EMPTY)));
         }
       } else {
         toReturn
@@ -81,11 +82,11 @@ public class DeploymentManager {
       Map<String, JsonObject> refreshedModules) {
     Set<String> existingModules = new HashSet<>(deployedModules.keySet());
     existingModules.removeAll(refreshedModules.keySet());
-    existingModules.stream().forEach(module -> {
-          toReturn
-              .add(new ModuleDeployInfo(module, DeployStatus.UNDEPLOY, deployedModules.get(module).getString(DEPLOYMENT_ID, StringUtils.EMPTY)));
+    existingModules.stream().forEach(module ->
+        toReturn
+            .add(new ModuleDeployInfo(module, DeployStatus.UNDEPLOY,
+                deployedModules.get(module).getString(DEPLOYMENT_ID, StringUtils.EMPTY)))
 
-        }
     );
   }
 
