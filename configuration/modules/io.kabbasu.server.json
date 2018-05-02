@@ -3,6 +3,8 @@
   "config": {
     "verticle": "io.kabassu.server.KabassuServerVerticle",
     "port": 8080,
+    "security":"token",
+    "simpleToken":"s1mplet0ken",
     "GET": [
       {
         "path": "/runner",

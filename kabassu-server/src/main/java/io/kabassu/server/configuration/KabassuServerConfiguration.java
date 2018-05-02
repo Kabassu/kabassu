@@ -31,11 +31,14 @@ public class KabassuServerConfiguration {
 
   private String mainSecurityMode;
 
+  private String simpleToken;
+
   public KabassuServerConfiguration(JsonObject configuration) {
     this.port = configuration.getInteger("port");
     this.mainSecurityMode = configuration.getString("security");
     mapPaths(configuration.getJsonArray("GET"), HttpMethod.GET);
     mapPaths(configuration.getJsonArray("POST"), HttpMethod.POST);
+    this.simpleToken = configuration.getString("simpleToken","");
   }
 
 
@@ -56,5 +59,9 @@ public class KabassuServerConfiguration {
 
   public List<RoutingPath> getRoutingPath() {
     return routingPath;
+  }
+
+  public String getSimpleToken() {
+    return simpleToken;
   }
 }

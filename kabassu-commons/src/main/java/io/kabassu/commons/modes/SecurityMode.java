@@ -18,6 +18,6 @@ package io.kabassu.commons.modes;
 
 public enum SecurityMode {
 
-  SECURITY_TOKEN, NONE
+  TOKEN, NONE
 
 }
