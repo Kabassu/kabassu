@@ -30,6 +30,7 @@ public final class EventBusAdresses {
 
   public static final String KABASSU_RESULTS_RETRIEVER = "kabassu.results.retriever";
 
+  public static final String KABASSU_ADMIN_TEST_MANAGER = "kabassu.admin.test.manager";
 
   private EventBusAdresses() {
     //for constants

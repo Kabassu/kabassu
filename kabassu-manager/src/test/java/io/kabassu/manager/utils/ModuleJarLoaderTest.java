@@ -17,7 +17,6 @@
 package io.kabassu.manager.utils;
 
 import static org.hamcrest.CoreMatchers.containsStringIgnoringCase;
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.io.File;

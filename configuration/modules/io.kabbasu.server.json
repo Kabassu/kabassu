@@ -3,8 +3,8 @@
   "config": {
     "verticle": "io.kabassu.server.KabassuServerVerticle",
     "port": 8080,
-    "security":"token",
-    "simpleToken":"s1mplet0ken",
+    "security": "token",
+    "simpleToken": "s1mplet0ken",
     "GET": [
       {
         "path": "/runner",
@@ -23,6 +23,14 @@
         "address": "kabassu.results.retriever",
         "handler": "results",
         "security": "none"
+      }
+    ],
+    "POST": [
+      {
+        "path": "/admin/addtest",
+        "address": "kabassu.admin.test.manager",
+        "handler": "testmanager",
+        "security": "token"
       }
     ]
   }

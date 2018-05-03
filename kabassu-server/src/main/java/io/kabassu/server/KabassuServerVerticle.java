@@ -28,6 +28,7 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.reactivex.core.AbstractVerticle;
 import io.vertx.reactivex.ext.web.Router;
+import io.vertx.reactivex.ext.web.handler.BodyHandler;
 
 public class KabassuServerVerticle extends AbstractVerticle {
 
@@ -62,6 +63,7 @@ public class KabassuServerVerticle extends AbstractVerticle {
             routingPath.getPath(), SecurityMode.NONE);
       }
       router.route(routingPath.getMethod(), routingPath.getPath())
+          .handler(BodyHandler.create())
           .handler(handlersFactory
               .createRoutingHandler(routingPath.getHandler(), routingPath.getAddress()));
     }

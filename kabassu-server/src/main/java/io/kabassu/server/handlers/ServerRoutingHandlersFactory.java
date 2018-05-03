@@ -43,7 +43,9 @@ public class ServerRoutingHandlersFactory {
     if (StringUtils.isEmpty(routingHandlerType) || routingHandlerType.equalsIgnoreCase("results")) {
       return new ResultsServerRoutingHandler(vertx, address);
     }
-
+    if (StringUtils.isEmpty(routingHandlerType) || routingHandlerType.equalsIgnoreCase("testmanager")) {
+      return new TestManagerServerRoutingHandler(vertx, address);
+    }
     throw new IllegalArgumentException("Unknown type of handler: " + routingHandlerType);
   }
 
