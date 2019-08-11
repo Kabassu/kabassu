@@ -13,8 +13,8 @@
       },
       {
         "operationId": "adddefinition",
-        "address": "kabassu.test.dispatcher",
-        "handler": ""
+        "address": "kabassu.database.mongo.adddefinition",
+        "handler": "adddefinition"
       }
     ]
   }

@@ -42,8 +42,6 @@ public class KabassuServerVerticle extends AbstractVerticle {
   public void init(Vertx vertx, Context context) {
     super.init(vertx, context);
     options = new KabassuServerConfiguration(config());
-    //handlersFactory = new ServerRoutingHandlersFactory(this.vertx);
-    //securityHandlerFactory = new SecurityHandlerFactory(kabassuServerConfiguration);
   }
 
   @Override

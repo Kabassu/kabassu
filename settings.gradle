@@ -32,4 +32,5 @@ include 'kabassu-commons'
 //include 'kabassu-results-retriever'
 //include 'kabassu-json-file-result'
 //include 'kabassu-test-manager'
+include 'kabassu-mongo'
 
