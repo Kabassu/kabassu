@@ -16,9 +16,8 @@
  */
 package io.kabassu.manager.factory;
 
-import io.kabassu.manager.utils.ModuleJarLoader;
 import io.vertx.core.DeploymentOptions;
-import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import io.vertx.core.Verticle;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
@@ -34,9 +33,8 @@ public abstract class AbstractVerticleFactory implements VerticleFactory {
     return true;
   }
 
-  @Override
   public void resolve(String id, DeploymentOptions deploymentOptions, ClassLoader classLoader,
-      Future<String> resolution) {
+      Promise<String> resolution) {
     String identifier = VerticleFactory.removePrefix(id);
     try {
       String verticle = retrieveVerticle(deploymentOptions, identifier);
@@ -48,7 +46,7 @@ public abstract class AbstractVerticleFactory implements VerticleFactory {
         deploymentOptions.setInstances(5);
         LOGGER.info("{} is worker", verticle);
       }
-      ModuleJarLoader.checkClasspath(deploymentOptions.getConfig().getString("modules_directory"));
+      //ModuleJarLoader.checkClasspath(deploymentOptions.getConfig().getString("modules_directory"));
       resolution.complete(verticle);
     } catch (Exception e) {
       resolution.fail(e);

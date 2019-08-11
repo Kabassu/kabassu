@@ -13,18 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-buildscript {
-    apply from: "$rootProject.projectDir/buildscript.gradle", to: buildscript
-}
-
 dependencies {
-    compileOnly group: 'io.vertx', name: 'vertx-core', version: '3.5.1'
-    compileOnly group: 'io.vertx', name: 'vertx-rx-java2', version: '3.5.1'
-    compileOnly group: 'io.vertx', name: 'vertx-web', version: '3.5.1'
-    compileOnly group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
-    compileOnly group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.8'
-    compileOnly project(path: ':kabassu-commons', configuration: 'shadow')
+    implementation group: 'io.vertx', name: 'vertx-core', version: vertxVersion
+    implementation group: 'io.vertx', name: 'vertx-rx-java2', version: vertxVersion
+    implementation group: 'io.vertx', name: 'vertx-web', version: vertxVersion
+    implementation group: 'io.vertx', name: 'vertx-web-api-contract', version: vertxVersion
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.8'
+    implementation project(path: ':kabassu-commons')
 
 }
 

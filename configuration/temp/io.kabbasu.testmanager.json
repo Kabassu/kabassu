@@ -1,0 +1,7 @@
+{
+  "name": "standard:io.kabassu.testmanager",
+  "config": {
+    "verticle": "io.kabassu.testmanager.KabassuTestManagerVerticle",
+    "testDirectory": "tests"
+  }
+}

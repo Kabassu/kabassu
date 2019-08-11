@@ -17,6 +17,7 @@
 package io.kabassu.storage.memory.handlers;
 
 import io.kabassu.commons.constants.MessagesFields;
+import io.kabassu.commons.constants.TestManagerCommands;
 import io.kabassu.commons.constants.TestRetrieverCommands;
 import io.kabassu.storage.memory.data.MemoryStorage;
 import io.vertx.core.Handler;
@@ -54,6 +55,9 @@ public class MemoryStorageHandler implements Handler<Message<JsonObject>> {
       testsToRun.stream().map(test -> memoryStorage.getTestByIdAsJson(test.toString()))
           .filter(Objects::nonNull).forEach(requiredTestsInfo::add);
       reply.put(MessagesFields.REPLY, requiredTestsInfo);
+    } else if(request.equals(TestManagerCommands.ADD_TESTS)){
+      JsonArray testsData = event.body().getJsonArray(TestManagerCommands.TESTS_DATA);
+      memoryStorage.addTests(testsData.getList());
     }
     event.reply(reply);
   }

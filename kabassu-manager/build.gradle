@@ -14,28 +14,20 @@
  * limitations under the License.
  */
 
-buildscript {
-    apply from: "$rootProject.projectDir/buildscript.gradle", to: buildscript
-}
-
 dependencies {
-    compile group: 'io.vertx', name: 'vertx-core', version: '3.5.1'
-    compile group: 'io.vertx', name: 'vertx-config', version: '3.5.1'
-    compile group: 'io.vertx', name: 'vertx-rx-java2', version: '3.5.1'
-    compile group: 'io.vertx', name: 'vertx-web', version: '3.5.1'
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
-    compile group: 'commons-io', name: 'commons-io', version: '2.6'
-    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.8'
-    compileOnly project(path: ':kabassu-commons', configuration: 'shadow')
+    implementation group: 'io.vertx', name: 'vertx-core', version: vertxVersion
+    implementation group: 'io.vertx', name: 'vertx-config', version: vertxVersion
+    implementation group: 'io.vertx', name: 'vertx-rx-java2', version: vertxVersion
+    implementation group: 'io.vertx', name: 'vertx-web', version: vertxVersion
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.6'
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.8'
 }
 
-shadowJar {
+jar {
     manifest {
         attributes 'Main-Verticle': 'io.kabassu.manager.KabassuManagerVerticle'
         attributes 'Main-Class': 'io.kabassu.manager.LogbackLauncher'
-    }
-    mergeServiceFiles {
-        include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
-        include 'META-INF/services/io.vertx.config.spi.ConfigStoreFactory'
+        attributes 'Premain-Class':'io.kabassu.manager.agent.ModuleLoadAgent'
     }
 }

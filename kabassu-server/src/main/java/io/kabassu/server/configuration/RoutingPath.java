@@ -16,8 +16,6 @@
 
 package io.kabassu.server.configuration;
 
-import io.kabassu.commons.modes.SecurityMode;
-import io.vertx.core.http.HttpMethod;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 
@@ -25,52 +23,24 @@ public class RoutingPath {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(RoutingPath.class);
 
-  private HttpMethod method;
-
-  private String path;
+  private String operationId;
 
   private String address;
 
   private String handler;
 
-  private SecurityMode securityMode;
-
-  public RoutingPath(HttpMethod method, String path, String address, String handler,
-      String securityMode) {
-    this.method = method;
-    this.path = path;
+  public RoutingPath(String operationId, String address, String handler) {
+    this.operationId = operationId;
     this.address = address;
     this.handler = handler;
-    this.securityMode = translateSecurity(securityMode);
   }
 
-  private SecurityMode translateSecurity(String securityMode) {
-    try {
-      return SecurityMode.valueOf(securityMode.toUpperCase());
-    } catch (IllegalArgumentException e) {
-      LOGGER.error("Security mode \"{}\" for path \"{}\" is not valid!", securityMode, this.path);
-      return SecurityMode.NONE;
-    }
+  public String getOperationId() {
+    return operationId;
   }
 
-  public SecurityMode getSecurityMode() {
-    return securityMode;
-  }
-
-  public HttpMethod getMethod() {
-    return method;
-  }
-
-  public void setMethod(HttpMethod method) {
-    this.method = method;
-  }
-
-  public String getPath() {
-    return path;
-  }
-
-  public void setPath(String path) {
-    this.path = path;
+  public void setOperationId(String operationId) {
+    this.operationId = operationId;
   }
 
   public String getAddress() {

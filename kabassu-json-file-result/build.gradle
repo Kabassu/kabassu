@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-buildscript {
-    apply from: "$rootProject.projectDir/buildscript.gradle", to: buildscript
-}
+jar.enabled = true
+shadowJar.enabled = false
 
 dependencies {
     compileOnly group: 'io.vertx', name: 'vertx-core', version: '3.5.1'

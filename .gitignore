@@ -28,4 +28,6 @@
 /kabassu-results-retriever/build/
 /kabassu-json-file-result/build/
 /kabassu-manager/out/
-
+/kabassu-test-manager/build/
+/distribution
+/java

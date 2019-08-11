@@ -16,23 +16,17 @@
 
 package io.kabassu.commons.constants;
 
-public final class EventBusAdresses {
+public class TestManagerCommands {
 
-  public static final String KABASSU_TEST_RETRIEVER = "kabassu.test.retriever";
+  public static final String ADD_TESTS = "addTests";
 
-  public static final String KABASSU_TEST_DISPATCHER = "kabassu.test.dispatcher";
+  public static final String TESTS_DATA = "testsData";
 
-  public static final String KABASSU_TEST_CONTEXT = "kabassu.test.context";
+  public static final String TESTS_FILES = "testsFiles";
 
-  public static final String KABASSU_RESULTS_DISPATCHER = "kabassu.results.dispatcher";
-
-  public static final String KABASSU_MEMORY_STORAGE = "kabassu.memory.storage";
-
-  public static final String KABASSU_RESULTS_RETRIEVER = "kabassu.results.retriever";
-
-  public static final String KABASSU_ADMIN_TEST_MANAGER_ADD = "kabassu.admin.test.manager.add";
-
-  private EventBusAdresses() {
+  private TestManagerCommands() {
     //for constants
   }
+
 }
+

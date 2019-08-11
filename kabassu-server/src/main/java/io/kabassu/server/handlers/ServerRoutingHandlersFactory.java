@@ -33,15 +33,17 @@ public class ServerRoutingHandlersFactory {
 
     if (StringUtils.isEmpty(routingHandlerType) || routingHandlerType.equalsIgnoreCase("default")) {
       return new DefaultServerRoutingHandler(vertx, address);
-    }
+    } else {
+      if (routingHandlerType.equalsIgnoreCase("available")) {
+        return new AvailableServerRoutingHandler(vertx, address);
+      }
 
-    if (StringUtils.isEmpty(routingHandlerType) || routingHandlerType
-        .equalsIgnoreCase("available")) {
-      return new AvailableServerRoutingHandler(vertx, address);
-    }
-
-    if (StringUtils.isEmpty(routingHandlerType) || routingHandlerType.equalsIgnoreCase("results")) {
-      return new ResultsServerRoutingHandler(vertx, address);
+      if (routingHandlerType.equalsIgnoreCase("results")) {
+        return new ResultsServerRoutingHandler(vertx, address);
+      }
+      if (routingHandlerType.equalsIgnoreCase("testmanager")) {
+        return new TestManagerServerRoutingHandler(vertx, address);
+      }
     }
 
     throw new IllegalArgumentException("Unknown type of handler: " + routingHandlerType);

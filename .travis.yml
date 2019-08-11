@@ -4,6 +4,8 @@ jobs:
       if: tag IS blank
       
       language: java
+      jdk:
+        - openjdk12
       git:
         depth: false
 

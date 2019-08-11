@@ -3,26 +3,18 @@
   "config": {
     "verticle": "io.kabassu.server.KabassuServerVerticle",
     "port": 8080,
-    "security":"token",
-    "simpleToken":"s1mplet0ken",
-    "GET": [
+    "security": "token",
+    "simpleToken": "s1mplet0ken",
+    "operations": [
       {
-        "path": "/runner",
+        "operationId": "testRun",
         "address": "kabassu.test.dispatcher",
-        "handler": "",
-        "security": "none"
+        "handler": ""
       },
       {
-        "path": "/available",
+        "operationId": "adddefinition",
         "address": "kabassu.test.dispatcher",
-        "handler": "available",
-        "security": "none"
-      },
-      {
-        "path": "/results",
-        "address": "kabassu.results.retriever",
-        "handler": "results",
-        "security": "none"
+        "handler": ""
       }
     ]
   }

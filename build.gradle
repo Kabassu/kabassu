@@ -15,20 +15,24 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-buildscript {
-    apply from: "$rootProject.projectDir/buildscript.gradle", to: buildscript
+plugins {
+    id "org.sonarqube" version "2.7"
+  //  id "com.github.johnrengelman.shadow" version "5.1.0" apply false
+    id 'jacoco'
 }
+
+def verAll = '0.0.1-SNAPSHOT'
+
 description = "Kabassu"
 defaultTasks = ['clean', 'build', 'prepareRunningInstance']
 
 apply plugin: 'org.sonarqube'
 
 allprojects {
-    version '0.0.1-SNAPSHOT'
-
     apply plugin: "eclipse"
     apply plugin: "idea"
     apply plugin: 'jacoco'
+    version verAll
 
     repositories {
         mavenLocal()
@@ -39,51 +43,43 @@ allprojects {
 }
 
 subprojects {
-
     apply plugin: 'java'
-    apply plugin: 'com.github.johnrengelman.shadow'
 
-    targetCompatibility = 1.8
+    //apply plugin: 'com.github.johnrengelman.shadow'
+
+    sourceCompatibility = '12'
+    targetCompatibility = '12'
 
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
     }
 
     tasks.withType(Jar) {
-        destinationDir = file("$rootDir/build/libs")
+       // destinationDir = file("$rootDir/build/libs")
     }
 
     clean.doLast {
         file("$rootDir/build").deleteDir()
     }
 
-    plugins.withId 'com.github.johnrengelman.shadow', {
-        shadowJar {
-            classifier = 'fat'
-        }
-    }
-
     dependencies {
-        testCompile("org.junit.jupiter:junit-jupiter-api:5.0.3",
+        testImplementation("org.junit.jupiter:junit-jupiter-api:5.5.1",
                 group: 'org.hamcrest', name: 'hamcrest-junit', version: '2.0.0.0',
-                'io.vertx:vertx-unit:3.5.1',
-                'org.junit.jupiter:junit-jupiter-engine:5.0.3',
-                'org.junit.platform:junit-platform-launcher:1.0.3',
-                'org.junit.platform:junit-platform-runner:1.0.3')
-        testCompile group: 'io.vertx', name: 'vertx-core', version: '3.5.1'
-        testCompile group: 'io.vertx', name: 'vertx-rx-java2', version: '3.5.1'
-        testCompile project(path: ':kabassu-mocks', configuration: 'shadow')
-        testCompile 'org.awaitility:awaitility:3.0.0'
-        testCompile group: 'commons-io', name: 'commons-io', version: '2.6'
-        testCompile project(path: ':kabassu-test-register', configuration: 'shadow')
-        testCompile project(path: ':kabassu-test-dispatcher', configuration: 'shadow')
-        testCompile project(path: ':kabassu-commons', configuration: 'shadow')
-        testCompile project(path: ':kabassu-test-context', configuration: 'shadow')
-        testCompile project(path: ':kabassu-runner-junit', configuration: 'shadow')
-        testCompile project(path: ':kabassu-results-dispatcher', configuration: 'shadow')
-        testCompile project(path: ':kabassu-publisher-json', configuration: 'shadow')
+                'io.vertx:vertx-unit:3.8.0',
+                'org.junit.jupiter:junit-jupiter-engine:5.5.1',
+                'org.junit.platform:junit-platform-launcher:1.5.1',
+                'org.junit.platform:junit-platform-runner:1.5.1')
+        testImplementation group: 'io.vertx', name: 'vertx-core', version: '3.8.0'
+        testImplementation group: 'io.vertx', name: 'vertx-rx-java2', version: '3.8.0'
+        testImplementation 'org.awaitility:awaitility:3.0.0'
+        testImplementation group: 'commons-io', name: 'commons-io', version: '2.6'
+        testCompile project(path: ':kabassu-commons')
+
 
     }
+
+    jar.enabled = true
+    build.dependsOn(jar);
 
     test {
         beforeTest { descriptor ->
@@ -94,9 +90,6 @@ subprojects {
             logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message )
         }
     }
-
-    jar.enabled = false
-    build.dependsOn(shadowJar);
 
     sonarqube {
         properties {
@@ -130,7 +123,7 @@ task aggregatedJavadocs(type: Javadoc, description: 'Generate javadocs from all 
     destinationDir.delete()
     title = "$project.name $version API"
     options.author true
-    options.links 'http://docs.oracle.com/javase/8/docs/api/', 'http://vertx.io/docs/apidocs'
+    options.links 'https://docs.oracle.com/en/java/javase/12/docs/api/'
     options.addStringOption 'Xdoclint:none', '-quiet'
 
     subprojects.each { proj ->
@@ -145,12 +138,12 @@ task aggregatedJavadocs(type: Javadoc, description: 'Generate javadocs from all 
 
 task copyConfiguration(type: Copy) {
     from 'configuration'
-    into 'build'
+    into 'build/dist'
 }
 
 task copyStarters(type: Copy) {
     from 'starters'
-    into 'build'
+    into 'build/dist'
 }
 
 task cleanJacoco(dependsOn: 'clean') {  delete "$buildDir/jacoco" }
@@ -158,5 +151,29 @@ task cleanJacoco(dependsOn: 'clean') {  delete "$buildDir/jacoco" }
 task prepareRunningInstance {
 }
 
+configurations {
+    deps
+}
+
+dependencies {
+    deps project(':kabassu-manager')
+    deps project(':kabassu-commons')
+    deps project(':kabassu-server')
+}
+
+task downloadDeps(type: Copy) {
+    from configurations.deps
+    into "build/dist/libs"
+}
+
+task assembleDistributionWithDeps(type: Zip) {
+    from 'build/dist/'
+    destinationDir  file("distribution")
+    archiveName "kabassu.${verAll}.zip"
+}
+
 prepareRunningInstance.dependsOn copyStarters
 prepareRunningInstance.dependsOn copyConfiguration
+prepareRunningInstance.dependsOn downloadDeps
+prepareRunningInstance.finalizedBy assembleDistributionWithDeps
+
