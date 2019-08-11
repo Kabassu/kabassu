@@ -1,0 +1,76 @@
+openapi: 3.0.0
+info:
+  title: Kabassu API
+  description: API for Kabassu system
+  version: 0.0.1
+paths:
+  /kabassu/adddefinition:
+    post:
+      operationId: adddefinition
+      summary: Adds a new test definition to be run with Kabassu
+      requestBody:
+        description: JSON File containing test definition data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestDefinition'
+            examples:
+              Local_gradle:
+                value:
+                  name: test
+                  runner: gradle
+                  locationType: filesystem
+                  location: '../junit5-test'
+              
+      responses:
+        '201':
+          description: Added
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: Test Definition Id
+                    
+  /kabassu/test/run:
+    post:
+      operationId: testRun
+      summary: Run tests 
+      requestBody:
+        description: JSON File containing test run data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestRun'
+      responses:
+        '200':
+          description: Test is running
+
+              
+components:
+  schemas:
+    TestDefinition:
+        type: object
+        properties:
+          name:
+            type: string
+          runner:
+            type: string
+          locationType:
+            type: string
+          location:
+            type: string
+    TestRun:
+      type: object
+      properties: 
+        definitionId: 
+          type: string
+        configurationId: 
+          type: string
+        additionalData: 
+          type: object
+      

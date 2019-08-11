@@ -52,7 +52,7 @@ public class TestManagerServerRoutingHandler implements Handler<RoutingContext> 
 
   private void handleRequestBody(RoutingContext routingContext) {
     String command = routingContext.getBodyAsJson().getString(MessagesFields.REQUEST);
-    JsonArray testsData = routingContext.getBodyAsJson().getJsonArray("testsData");
+    JsonArray testsData = routingContext.getBodyAsJson().getJsonArray(TestManagerCommands.TESTS_DATA);
     if (StringUtils.isNoneEmpty(command) || testsData == null || testsData.size() == 0) {
       JsonObject message = new JsonObject();
       message.put(MessagesFields.REQUEST, command);

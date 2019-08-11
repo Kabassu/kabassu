@@ -14,27 +14,23 @@
  * limitations under the License.
  */
 
-buildscript {
-    apply from: "$rootProject.projectDir/buildscript.gradle", to: buildscript
-}
-
 dependencies {
     testCompileOnly 'org.awaitility:awaitility:3.0.0'
     testCompileOnly group: 'io.vertx', name: 'vertx-core', version: '3.5.1'
     testCompileOnly group: 'io.vertx', name: 'vertx-rx-java2', version: '3.5.1'
     testCompileOnly group: 'commons-io', name: 'commons-io', version: '2.6'
-    testCompileOnly project(path: ':kabassu-test-register', configuration: 'shadow')
-    testCompileOnly project(path: ':kabassu-test-dispatcher', configuration: 'shadow')
-    testCompileOnly project(path: ':kabassu-mocks', configuration: 'shadow')
-    testCompileOnly project(path: ':kabassu-commons', configuration: 'shadow')
-    testCompileOnly project(path: ':kabassu-test-context', configuration: 'shadow')
-    testCompileOnly project(path: ':kabassu-runner-junit', configuration: 'shadow')
-    testCompile project(path: ':kabassu-test-examples', configuration: 'shadow')
-    testCompileOnly project(path: ':kabassu-results-dispatcher', configuration: 'shadow')
-    testCompileOnly project(path: ':kabassu-publisher-json', configuration: 'shadow')
-    testCompileOnly project(path: ':kabassu-storage-memory', configuration: 'shadow')
+    testCompileOnly project(path: ':kabassu-test-register')
+    testCompileOnly project(path: ':kabassu-test-dispatcher')
+    testCompileOnly project(path: ':kabassu-mocks')
+    testCompileOnly project(path: ':kabassu-commons')
+    testCompileOnly project(path: ':kabassu-test-context')
+    testCompileOnly project(path: ':kabassu-runner-junit')
+    testCompile project(path: ':kabassu-test-examples')
+    testCompileOnly project(path: ':kabassu-results-dispatcher')
+    testCompileOnly project(path: ':kabassu-publisher-json')
+    testCompileOnly project(path: ':kabassu-storage-memory')
     testRuntime group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
-    testRuntime project(path: ':kabassu-storage-memory', configuration: 'shadow')
+    testRuntime project(path: ':kabassu-storage-memory')
 
 
 }

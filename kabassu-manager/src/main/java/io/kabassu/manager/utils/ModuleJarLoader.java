@@ -16,9 +16,11 @@
 
 package io.kabassu.manager.utils;
 
+import io.kabassu.manager.agent.ModuleLoadAgent;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
@@ -47,23 +49,10 @@ public final class ModuleJarLoader {
   }
 
   private static void loadLibrary(File jar,String modulePath) {
-    try {
-      java.net.URLClassLoader loader = (java.net.URLClassLoader) ClassLoader.getSystemClassLoader();
-      java.net.URL url = jar.toURI().toURL();
-      for (java.net.URL it : java.util.Arrays.asList(loader.getURLs())) {
-        if (it.toURI().equals(url.toURI())) {
-          return;
-        }
-      }
-      java.lang.reflect.Method method = java.net.URLClassLoader.class
-          .getDeclaredMethod("addURL", java.net.URL.class);
-      method.setAccessible(true);
-      method.invoke(loader, url);
+    try{
+      ModuleLoadAgent.addToClassPath(jar);
       System.setProperty(JAVA_CLASS_PATH, System.getProperty(JAVA_CLASS_PATH)+";"+modulePath+jar.getName());
-    } catch (final java.lang.NoSuchMethodException |
-        java.lang.IllegalAccessException |
-        java.net.MalformedURLException |
-        java.lang.reflect.InvocationTargetException | URISyntaxException e) {
+    } catch (IOException e) {
       LOGGER.error("Can't add jar to classpath: ", e);
     }
   }

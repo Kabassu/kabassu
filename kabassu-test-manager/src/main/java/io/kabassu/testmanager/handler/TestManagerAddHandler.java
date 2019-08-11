@@ -14,19 +14,26 @@
  * limitations under the License.
  */
 
-package io.kabassu.commons.constants;
+package io.kabassu.testmanager.handler;
 
-public class TestManagerCommands {
+import io.vertx.core.Handler;
+import io.vertx.core.json.JsonObject;
+import io.vertx.reactivex.core.Vertx;
+import io.vertx.reactivex.core.eventbus.Message;
 
-  public static final String ADD_TESTS = "addTests";
+public class TestManagerAddHandler implements Handler<Message<JsonObject>> {
 
-  public static final String TESTS_DATA = "testsData";
+  private Vertx vertx;
 
-  public static final String TESTS_FILES = "testsFiles";
+  private String testDirectory;
 
-  private TestManagerCommands() {
-    //for constants
+  public TestManagerAddHandler(Vertx vertx, String testDirectory){
+    this.vertx = vertx;
+    this.testDirectory = testDirectory;
   }
 
-}
+  @Override
+  public void handle(Message<JsonObject> jsonObjectMessage) {
 
+  }
+}

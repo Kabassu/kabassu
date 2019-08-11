@@ -33,22 +33,25 @@ public class KabassuServerConfiguration {
 
   private String simpleToken;
 
+  private String routingSpecificationLocation;
+
   public KabassuServerConfiguration(JsonObject configuration) {
     this.port = configuration.getInteger("port");
     this.mainSecurityMode = configuration.getString("security");
-    mapPaths(configuration.getJsonArray("GET"), HttpMethod.GET);
-    mapPaths(configuration.getJsonArray("POST"), HttpMethod.POST);
-    this.simpleToken = configuration.getString("simpleToken","");
+    mapOperations(configuration.getJsonArray("operations"));
+    this.simpleToken = configuration.getString("simpleToken", "");
+    this.routingSpecificationLocation = configuration
+        .getString("routingSpecificationLocation", "openapi/kabassu_api.yaml");
   }
 
 
-  private void mapPaths(JsonArray paths, HttpMethod method) {
-    if (paths != null) {
-      paths.stream().map(path -> (JsonObject) path).forEach(pathData ->
+  private void mapOperations(JsonArray operations) {
+    if (operations != null) {
+      operations.stream().map(operation -> (JsonObject) operation).forEach(pathData ->
           routingPath.add(
-              new RoutingPath(method, pathData.getString("path"), pathData.getString("address"),
+              new RoutingPath(pathData.getString("operationId"), pathData.getString("address"),
                   pathData.getString("handler",
-                      StringUtils.EMPTY), pathData.getString("security", mainSecurityMode)))
+                      StringUtils.EMPTY)))
       );
     }
   }
@@ -63,5 +66,13 @@ public class KabassuServerConfiguration {
 
   public String getSimpleToken() {
     return simpleToken;
+  }
+
+  public String getRoutingSpecificationLocation() {
+    return routingSpecificationLocation;
+  }
+
+  public String getMainSecurityMode() {
+    return mainSecurityMode;
   }
 }

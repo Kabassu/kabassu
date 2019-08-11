@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package io.kabassu.commons.constants;
+package io.kabassu.testmanager.configuration;
 
-public class TestManagerCommands {
+import io.vertx.core.json.JsonObject;
 
-  public static final String ADD_TESTS = "addTests";
+public class KabassuTestManagerConfiguration {
 
-  public static final String TESTS_DATA = "testsData";
+  private String testDirectory;
 
-  public static final String TESTS_FILES = "testsFiles";
-
-  private TestManagerCommands() {
-    //for constants
+  public KabassuTestManagerConfiguration(JsonObject configuration){
+    testDirectory = configuration.getString("testDirectory");
   }
 
+  public String getTestDirectory() {
+    return testDirectory;
+  }
 }
-

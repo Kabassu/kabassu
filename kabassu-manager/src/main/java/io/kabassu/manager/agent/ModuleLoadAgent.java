@@ -14,19 +14,24 @@
  * limitations under the License.
  */
 
-package io.kabassu.commons.constants;
+package io.kabassu.manager.agent;
 
-public class TestManagerCommands {
+import java.io.File;
+import java.io.IOException;
+import java.lang.instrument.Instrumentation;
+import java.util.jar.JarFile;
 
-  public static final String ADD_TESTS = "addTests";
+public class ModuleLoadAgent {
 
-  public static final String TESTS_DATA = "testsData";
+  private static Instrumentation inst;
 
-  public static final String TESTS_FILES = "testsFiles";
+  public static void addToClassPath(File jarFile) throws IOException {
+    inst.appendToSystemClassLoaderSearch(new JarFile(jarFile));
+  }
 
-  private TestManagerCommands() {
-    //for constants
+  public static void premain(String agentArgs, Instrumentation instrumentation) {
+    System.out.println("Agent Started");
+    inst = instrumentation;
   }
 
 }
-
