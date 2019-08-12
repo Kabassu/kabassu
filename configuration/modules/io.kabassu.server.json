@@ -7,14 +7,19 @@
     "simpleToken": "s1mplet0ken",
     "operations": [
       {
-        "operationId": "testRun",
-        "address": "kabassu.test.dispatcher",
-        "handler": ""
-      },
-      {
         "operationId": "adddefinition",
         "address": "kabassu.database.mongo.adddefinition",
-        "handler": "adddefinition"
+        "handler": "adddata"
+      },
+      {
+        "operationId": "testrun",
+        "address": "kabassu.runtestrequest",
+        "handler": "adddata"
+      },
+      {
+        "operationId": "getdefinition",
+        "address": "kabassu.database.mongo.getdefinition",
+        "handler": "getdatabyid"
       }
     ]
   }

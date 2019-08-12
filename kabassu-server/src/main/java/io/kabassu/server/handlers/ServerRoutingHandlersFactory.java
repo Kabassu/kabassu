@@ -44,8 +44,11 @@ public class ServerRoutingHandlersFactory {
       if (routingHandlerType.equalsIgnoreCase("testmanager")) {
         return new TestManagerServerRoutingHandler(vertx, address);
       }
-      if (routingHandlerType.equalsIgnoreCase("adddefinition")) {
-        return new AddDefinitionRoutingHandler(vertx, address);
+      if (routingHandlerType.equalsIgnoreCase("adddata")) {
+        return new AddDataRoutingHandler(vertx, address);
+      }
+      if (routingHandlerType.equalsIgnoreCase("getdatabyid")) {
+        return new GetByIdRoutingHandler(vertx, address);
       }
     }
 

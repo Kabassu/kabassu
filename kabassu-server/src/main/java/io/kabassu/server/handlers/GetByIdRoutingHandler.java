@@ -17,39 +17,37 @@
 package io.kabassu.server.handlers;
 
 import io.vertx.core.Handler;
-import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.http.HttpServerResponse;
 import io.vertx.reactivex.ext.web.RoutingContext;
 import org.apache.commons.lang3.StringUtils;
 
-public class AddDefinitionRoutingHandler implements Handler<RoutingContext> {
+public class GetByIdRoutingHandler implements Handler<RoutingContext> {
 
   private Vertx vertx;
 
   private String address;
 
-  public AddDefinitionRoutingHandler(Vertx vertx, String address) {
+  public GetByIdRoutingHandler(Vertx vertx, String address) {
     this.vertx = vertx;
     this.address = address;
   }
 
   @Override
   public void handle(RoutingContext routingContext) {
-    String definition = routingContext.getBodyAsString();
-    if (StringUtils.isNotEmpty(definition)) {
-      addDefinition(definition,routingContext.request().response());
+    String id = routingContext.request().getParam("id");
+    if (StringUtils.isNotEmpty(id)) {
+      getData(id,routingContext.request().response());
     } else {
       routingContext.request().response().putHeader("content-type", "application/json")
-          .end(new JsonObject().put("response", "No definiton to add").encodePrettily());
+          .end(new JsonObject().put("response", "Definition not found").encodePrettily());
     }
 
   }
 
-  private void addDefinition(String definition, HttpServerResponse response) {
-    JsonObject message = new JsonObject(definition);
-    vertx.eventBus().rxRequest(address, message).toObservable().doOnNext(eventResponse ->
+  private void getData(String id, HttpServerResponse response) {
+    vertx.eventBus().rxRequest(address, id).toObservable().doOnNext(eventResponse ->
         response.end(((JsonObject) eventResponse.body()).encodePrettily())
     ).subscribe();
   }

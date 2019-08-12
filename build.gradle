@@ -160,6 +160,7 @@ dependencies {
     deps project(':kabassu-commons')
     deps project(':kabassu-server')
     deps project(':kabassu-mongo')
+    deps project(':kabassu-test-dispatcher')
 }
 
 task downloadDeps(type: Copy) {

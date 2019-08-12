@@ -17,24 +17,33 @@
 package io.kabassu.mongo.handlers;
 
 import io.kabassu.mongo.configuration.KabassuMongoConfiguration;
-import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.eventbus.Message;
-import io.vertx.reactivex.ext.mongo.MongoClient;
 
-public abstract class AbstractMongoHandler<T> implements Handler<Message<T>> {
+public class MongoGetDataByIdHandler extends AbstractMongoHandler<String> {
 
-  protected final Vertx vertx;
+  private static final Logger LOGGER = LoggerFactory.getLogger(MongoGetDataByIdHandler.class);
+  private final String collection;
 
-  protected final MongoClient client;
-
-  public AbstractMongoHandler(Vertx vertx, KabassuMongoConfiguration configuration) {
-    this.vertx = vertx;
-    this.client = MongoClient.createShared(vertx, configuration.getDatabase());
+  public MongoGetDataByIdHandler(Vertx vertx, KabassuMongoConfiguration configuration,
+    String collection) {
+    super(vertx, configuration);
+    this.collection = collection;
   }
 
+  @Override
+  public void handle(Message<String> event) {
+    client.findOne(collection, new JsonObject().put("_id", event.body()), null, res -> {
+      if (res.succeeded()) {
+        event.reply(res.result());
+      } else {
+        event.reply(new JsonObject().put("error", res.cause().getMessage()));
+        LOGGER.error("Problem during adding data", res.cause());
+      }
+    });
+  }
 
 }

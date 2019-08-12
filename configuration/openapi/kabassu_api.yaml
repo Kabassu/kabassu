@@ -4,6 +4,31 @@ info:
   description: API for Kabassu system
   version: 0.0.1
 paths:
+  /kabassu/getdefinition/{id}:
+    get:
+      operationId: getdefinition
+      summary: get test definition by id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+           type: string
+          description: Test Definition ID
+      responses:
+        '200':
+          description: Retrieved object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestDefinition'
+              examples: 
+                Local_gradle:
+                  value:
+                    name: test
+                    runner: gradle
+                    locationType: filesystem
+                    location: '../junit5-test'  
   /kabassu/adddefinition:
     post:
       operationId: adddefinition
@@ -37,7 +62,7 @@ paths:
                     
   /kabassu/test/run:
     post:
-      operationId: testRun
+      operationId: testrun
       summary: Run tests 
       requestBody:
         description: JSON File containing test run data

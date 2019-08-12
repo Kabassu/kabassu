@@ -23,22 +23,26 @@ import io.vertx.core.logging.LoggerFactory;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.eventbus.Message;
 
-public class MongoAddDefinitonHandler extends AbstractMongoHandler {
+public class MongoAddDataHandler extends AbstractMongoHandler<JsonObject> {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(MongoAddDefinitonHandler.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(MongoAddDataHandler.class);
 
-  public MongoAddDefinitonHandler(Vertx vertx, KabassuMongoConfiguration configuration) {
+  private final String collection;
+
+  public MongoAddDataHandler(Vertx vertx, KabassuMongoConfiguration configuration,
+    String collection) {
     super(vertx, configuration);
+    this.collection = collection;
   }
 
   @Override
   public void handle(Message<JsonObject> event) {
-    client.insert("kabassu-definitions", event.body(), res -> {
+    client.insert(collection, event.body(), res -> {
       if (res.succeeded()) {
         event.reply(new JsonObject().put("id", res.result()));
       } else {
         event.reply(new JsonObject().put("error", res.cause().getMessage()));
-        LOGGER.error("Problem during adding definition", res.cause());
+        LOGGER.error("Problem during adding data", res.cause());
       }
     });
   }

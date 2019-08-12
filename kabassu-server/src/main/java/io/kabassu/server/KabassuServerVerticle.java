@@ -34,10 +34,6 @@ public class KabassuServerVerticle extends AbstractVerticle {
 
   private KabassuServerConfiguration options;
 
-  private ServerRoutingHandlersFactory handlersFactory;
-
-  private SecurityHandlerFactory securityHandlerFactory;
-
   @Override
   public void init(Vertx vertx, Context context) {
     super.init(vertx, context);
