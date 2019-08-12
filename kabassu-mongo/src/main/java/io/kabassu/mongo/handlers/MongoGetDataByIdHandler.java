@@ -17,6 +17,7 @@
 package io.kabassu.mongo.handlers;
 
 import io.kabassu.mongo.configuration.KabassuMongoConfiguration;
+import io.vertx.core.AsyncResult;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
@@ -27,23 +28,33 @@ public class MongoGetDataByIdHandler extends AbstractMongoHandler<String> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(MongoGetDataByIdHandler.class);
   private final String collection;
+  private final String idName;
 
   public MongoGetDataByIdHandler(Vertx vertx, KabassuMongoConfiguration configuration,
-    String collection) {
+    String collection, String idName) {
     super(vertx, configuration);
     this.collection = collection;
+    this.idName = idName;
   }
 
   @Override
   public void handle(Message<String> event) {
-    client.findOne(collection, new JsonObject().put("_id", event.body()), null, res -> {
+    client.findOne(collection, new JsonObject().put(idName, event.body()), null, res -> {
       if (res.succeeded()) {
-        event.reply(res.result());
+        validateResult(event, res);
       } else {
         event.reply(new JsonObject().put("error", res.cause().getMessage()));
         LOGGER.error("Problem during adding data", res.cause());
       }
     });
+  }
+
+  private void validateResult(Message<String> event, AsyncResult<JsonObject> res) {
+    if (res.result() != null) {
+      event.reply(res.result());
+    } else {
+      event.reply(new JsonObject().put("error", "Data not found"));
+    }
   }
 
 }

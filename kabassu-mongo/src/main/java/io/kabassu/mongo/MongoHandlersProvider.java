@@ -19,7 +19,7 @@ public class MongoHandlersProvider {
     return new MongoAddDataHandler(vertx, configuration, collection);
   }
 
-  public MongoGetDataByIdHandler provideGetDataByIdHandler(String collection) {
-    return new MongoGetDataByIdHandler(vertx, configuration, collection);
+  public MongoGetDataByIdHandler provideGetDataByIdHandler(String collection, String idName) {
+    return new MongoGetDataByIdHandler(vertx, configuration, collection, idName);
   }
 }

@@ -32,11 +32,26 @@ public class TestDispatcherHandler implements Handler<Message<JsonObject>> {
   @Override
   public void handle(Message<JsonObject> event) {
     JsonObject testRequest = event.body();
-    vertx.eventBus().rxRequest("kabassu.database.mongo.addrequest", testRequest).toObservable()
+    vertx.eventBus().rxRequest("kabassu.database.mongo.getdefinition",testRequest.getString("definitionId")).toObservable()
+      .doOnNext(
+      eventResponse->{
+        JsonObject definitionData = (JsonObject) eventResponse.body();
+        if(definitionData.containsKey("_id")){
+          runTest(event, definitionData);
+        } else {
+          event.reply(eventResponse.body());
+        }
+      }
+    ).subscribe();
+
+  }
+
+  private void runTest(Message<JsonObject> event, JsonObject definitionData) {
+    vertx.eventBus().rxRequest("kabassu.database.mongo.addrequest", event.body()).toObservable()
       .doOnNext(
         eventResponse -> {
           event.reply(eventResponse.body());
-          System.out.println("TEST RUNNING: " + eventResponse.body());
+          System.out.println("TEST RUNNING: " + eventResponse.body() + " Definition: " + definitionData.getString("_id"));
         }
       ).subscribe();
   }
