@@ -16,7 +16,6 @@
 
 package io.kabassu.testcontext.handlers;
 
-import io.kabassu.commons.constants.EventBusAdresses;
 import io.kabassu.commons.constants.MessagesFields;
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -25,6 +24,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.eventbus.Message;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 public class TestContextHandler implements Handler<Message<JsonObject>> {
 
@@ -33,7 +33,7 @@ public class TestContextHandler implements Handler<Message<JsonObject>> {
   private Map<String, String> runnersMap;
 
   public TestContextHandler(Vertx vertx,
-      Map<String, String> runnersMap) {
+    Map<String, String> runnersMap) {
     this.runnersMap = runnersMap;
     this.vertx = vertx;
   }
@@ -41,21 +41,46 @@ public class TestContextHandler implements Handler<Message<JsonObject>> {
   @Override
   public void handle(Message<JsonObject> event) {
     JsonObject testResults = new JsonObject();
-    testResults.put(MessagesFields.TEST_RUN_ID, event.body().getString(MessagesFields.TEST_RUN_ID));
+    //testResults.put(MessagesFields.TEST_RUN_ID, event.body().getString(MessagesFields.TEST_RUN_ID));
+
     Observable.fromIterable((event.body().getJsonArray(MessagesFields.TESTS_TO_RUN)))
-        .filter(testInfoObject ->
-            runnersMap.containsKey(((JsonObject) testInfoObject).getString("runner"))
-        )
-        .flatMap(testInfoObject -> callRunner((JsonObject) testInfoObject).toObservable())
-        .map(results -> mergeResults(testResults, results))
-        .doOnComplete(
-            () -> vertx.eventBus().send(EventBusAdresses.KABASSU_RESULTS_DISPATCHER, testResults))
-        .subscribe();
+      .filter(testInfoObject ->
+        runnersMap.containsKey(((JsonObject) testInfoObject).getString("runner"))
+      )
+      .flatMap(testInfoObject -> callRunner((JsonObject) testInfoObject).toObservable())
+      .map(results -> mergeResults(testResults, results))
+      .doOnComplete(
+        () -> {
+        } /*vertx.eventBus().send(EventBusAdresses.KABASSU_RESULTS_DISPATCHER, testResults)*/)
+      .subscribe();
+
+  }
+
+  private JsonObject mergeWithDefinitionAndConfiguration(JsonObject testRequest) {
+    CompletableFuture<JsonObject> completableFuture = new CompletableFuture<>();
+    vertx.eventBus()
+      .rxRequest("kabassu.database.mongo.getdefinition", testRequest.getString("definitionId"))
+      .toObservable()
+      .doOnNext(
+        eventResponse -> {
+          JsonObject definitionData = (JsonObject) eventResponse.body();
+          if (definitionData.containsKey("_id")) {
+            completableFuture.complete(new JsonObject());
+          } else {
+            completableFuture.complete(new JsonObject().put("runner", ""));
+          }
+        }
+      ).subscribe();
+    try {
+      return completableFuture.get();
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private Single<Message<Object>> callRunner(JsonObject message) {
     return vertx.eventBus()
-        .rxSend(runnersMap.get(message.getString("runner")), message.getString("className"));
+      .rxSend(runnersMap.get(message.getString("runner")), message.getString("className"));
   }
 
   private JsonObject mergeResults(JsonObject testResults, Message<Object> results) {

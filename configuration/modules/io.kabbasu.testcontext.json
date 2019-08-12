@@ -1,0 +1,13 @@
+{
+  "name": "worker:io.kabassu.testcontext",
+  "config": {
+    "verticle": "io.kabassu.testcontext.KabassuTestContextVerticle",
+    "runners": [
+      {
+        "runner": "gradle",
+        "address": "kabassu.runner.gradle"
+      }
+    ]
+  }
+}
+

@@ -161,6 +161,8 @@ dependencies {
     deps project(':kabassu-server')
     deps project(':kabassu-mongo')
     deps project(':kabassu-test-dispatcher')
+    deps project(':kabassu-test-context')
+
 }
 
 task downloadDeps(type: Copy) {

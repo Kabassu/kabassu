@@ -16,7 +16,10 @@
 
 package io.kabassu.testdispatcher.handlers;
 
+import io.kabassu.commons.constants.EventBusAdresses;
+import io.kabassu.commons.constants.MessagesFields;
 import io.vertx.core.Handler;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.eventbus.Message;
@@ -37,7 +40,9 @@ public class TestDispatcherHandler implements Handler<Message<JsonObject>> {
       .doOnNext(
         eventResponse -> {
           event.reply(eventResponse.body());
-          //call testcontext
+          JsonObject testsToRun = new JsonObject().put(MessagesFields.TESTS_TO_RUN, new JsonArray()
+            .add(new JsonObject().put(eventResponse.body().toString(), testRequest)));
+          vertx.eventBus().send(EventBusAdresses.KABASSU_TEST_CONTEXT, testsToRun);
         }
       ).subscribe();
 
