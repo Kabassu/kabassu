@@ -40,7 +40,7 @@ public class KabassuRunnerGradleVerticle extends AbstractVerticle {
   public void start() throws Exception {
 
     consumer = vertx.eventBus()
-      .consumer(configuration.getAddress(), new RunnerGradleHandler(vertx));
+      .consumer(configuration.getAddress(), new RunnerGradleHandler(vertx, configuration));
   }
 
   @Override

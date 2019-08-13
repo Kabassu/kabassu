@@ -16,22 +16,54 @@
 
 package io.kabassu.runner.gradle.handlers;
 
+import io.kabassu.runner.gradle.configuration.KabassuRunnerGradleConfiguration;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.eventbus.Message;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import org.gradle.tooling.BuildException;
+import org.gradle.tooling.BuildLauncher;
+import org.gradle.tooling.GradleConnector;
+import org.gradle.tooling.ProjectConnection;
 
 public class RunnerGradleHandler implements Handler<Message<JsonObject>> {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(RunnerGradleHandler.class);
+
   private Vertx vertx;
 
-  public RunnerGradleHandler(Vertx vertx) {
+  private KabassuRunnerGradleConfiguration configuration;
+
+  public RunnerGradleHandler(Vertx vertx, KabassuRunnerGradleConfiguration configuration) {
     this.vertx = vertx;
+    this.configuration = configuration;
   }
 
   @Override
   public void handle(Message<JsonObject> event) {
-    System.out.println("RUNNING GRADLE TEST");
+    JsonObject testDefinition = event.body().getJsonObject("definition");
+    // TODO need to switch java version
+    try (ProjectConnection connection = GradleConnector.newConnector()
+      .forProjectDirectory(new File(testDefinition.getString("location"))).connect()) {
+      BuildLauncher buildLauncher = connection.newBuild();
+      buildLauncher.forTasks("clean", "test");
+      if(event.body().getJsonObject("testRequest").containsKey("jvm")) {
+        buildLauncher.setJavaHome(new File(configuration.getJvmsMap().get(event.body().getJsonObject("testRequest").getString("jvm"))));
+      }
+      buildLauncher.setStandardInput(new ByteArrayInputStream("consume this!".getBytes()));
+
+      //kick the build off:
+      buildLauncher.run();
+    } catch (BuildException e){
+      LOGGER.error(e);
+    }
   }
 
 }

@@ -17,16 +17,25 @@
 package io.kabassu.runner.gradle.configuration;
 
 import io.vertx.core.json.JsonObject;
+import java.util.HashMap;
+import java.util.Map;
 
 public class KabassuRunnerGradleConfiguration {
 
   private String address;
+  private Map<String, String> jvmsMap = new HashMap<>();
 
   public KabassuRunnerGradleConfiguration(JsonObject configuration) {
     this.address = configuration.getString("address");
+    JsonObject jvm = configuration.getJsonObject("jvm");
+    jvm.stream().forEach(jvmEntry -> jvmsMap.put(jvmEntry.getKey(), jvmEntry.getValue().toString()));
   }
 
   public String getAddress() {
     return address;
+  }
+
+  public Map<String, String> getJvmsMap() {
+    return jvmsMap;
   }
 }
