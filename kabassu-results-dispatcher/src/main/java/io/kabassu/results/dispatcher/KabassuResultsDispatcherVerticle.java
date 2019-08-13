@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package io.kabassu.resultsdispatcher;
+package io.kabassu.results.dispatcher;
 
 import io.kabassu.commons.constants.EventBusAdresses;
-import io.kabassu.resultsdispatcher.configuration.KabassuResultsDispatcherConfiguration;
-import io.kabassu.resultsdispatcher.handlers.ResultDispatchertHandler;
+import io.kabassu.results.dispatcher.configuration.KabassuResultsDispatcherConfiguration;
+import io.kabassu.results.dispatcher.handlers.ResultDispatchertHandler;
 import io.vertx.core.Context;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;

@@ -165,6 +165,7 @@ dependencies {
     deps project(':kabassu-test-dispatcher')
     deps project(':kabassu-runner-gradle')
     deps project(':kabassu-test-context')
+    deps project(':kabassu-results-dispatcher')
 
 }
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.kabassu.resultsdispatcher.handlers;
+package io.kabassu.results.dispatcher.handlers;
 
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;

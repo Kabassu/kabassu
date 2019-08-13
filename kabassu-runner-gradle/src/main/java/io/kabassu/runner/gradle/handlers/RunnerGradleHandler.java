@@ -23,11 +23,8 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.eventbus.Message;
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import org.gradle.tooling.BuildException;
 import org.gradle.tooling.BuildLauncher;
 import org.gradle.tooling.GradleConnector;
@@ -48,22 +45,24 @@ public class RunnerGradleHandler implements Handler<Message<JsonObject>> {
 
   @Override
   public void handle(Message<JsonObject> event) {
+    String testResult= "Success";
     JsonObject testDefinition = event.body().getJsonObject("definition");
-    // TODO need to switch java version
     try (ProjectConnection connection = GradleConnector.newConnector()
       .forProjectDirectory(new File(testDefinition.getString("location"))).connect()) {
       BuildLauncher buildLauncher = connection.newBuild();
       buildLauncher.forTasks("clean", "test");
-      if(event.body().getJsonObject("testRequest").containsKey("jvm")) {
-        buildLauncher.setJavaHome(new File(configuration.getJvmsMap().get(event.body().getJsonObject("testRequest").getString("jvm"))));
+      if (event.body().getJsonObject("testRequest").containsKey("jvm")) {
+        buildLauncher.setJavaHome(new File(configuration.getJvmsMap()
+          .get(event.body().getJsonObject("testRequest").getString("jvm"))));
       }
       buildLauncher.setStandardInput(new ByteArrayInputStream("consume this!".getBytes()));
-
-      //kick the build off:
       buildLauncher.run();
-    } catch (BuildException e){
+    } catch (BuildException e) {
       LOGGER.error(e);
+      testResult = "Failure";
+      vertx.eventBus().send("kabassu.results.dispatcher",event.body().put("result", testResult));
     }
+
   }
 
 }

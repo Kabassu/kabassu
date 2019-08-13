@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.kabassu.resultsdispatcher.configuration;
+package io.kabassu.results.dispatcher.configuration;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
