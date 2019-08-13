@@ -34,15 +34,17 @@ public class TestDispatcherHandler implements Handler<Message<JsonObject>> {
 
   @Override
   public void handle(Message<JsonObject> event) {
-    JsonObject testRequest = event.body();
     //TODO: MANY TESTS IN ONE REQUEST
     vertx.eventBus().rxRequest("kabassu.database.mongo.addrequest", event.body()).toObservable()
       .doOnNext(
         eventResponse -> {
           event.reply(eventResponse.body());
-          JsonObject testsToRun = new JsonObject().put(MessagesFields.TESTS_TO_RUN, new JsonArray()
-            .add(new JsonObject().put(eventResponse.body().toString(), testRequest)));
-          vertx.eventBus().send(EventBusAdresses.KABASSU_TEST_CONTEXT, testsToRun);
+          vertx.eventBus().send(EventBusAdresses.KABASSU_TEST_CONTEXT,
+            new JsonObject()
+              .put(MessagesFields.TESTS_TO_RUN,
+                new JsonArray()
+                  .add(event.body()
+                    .put("id", ((JsonObject) eventResponse.body()).getString("id")))));
         }
       ).subscribe();
 

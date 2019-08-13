@@ -30,5 +30,6 @@
 /kabassu-manager/out/
 /kabassu-test-manager/build/
 /kabassu-mongo/build/
+/kabassu-runner-gradle/build/
 /distribution
 /java

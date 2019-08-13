@@ -1,0 +1,7 @@
+{
+  "name": "worker:io.kabassu.runner.gradle",
+  "config": {
+    "verticle": "io.kabassu.runner.gradle.KabassuRunnerGradleVerticle",
+    "address": "kabassu.runner.gradle"
+  }
+}

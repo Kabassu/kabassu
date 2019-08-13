@@ -14,32 +14,33 @@
  * limitations under the License.
  */
 
-package io.kabassu.testrunner.junit;
+package io.kabassu.runner.gradle;
 
-import io.kabassu.testrunner.junit.configuration.KabassuTestRunnerJUnitConfiguration;
-import io.kabassu.testrunner.junit.handlers.TestRunnerJUnitHandler;
+import io.kabassu.runner.gradle.configuration.KabassuRunnerGradleConfiguration;
+import io.kabassu.runner.gradle.handlers.RunnerGradleHandler;
 import io.vertx.core.Context;
 import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.AbstractVerticle;
 import io.vertx.reactivex.core.eventbus.MessageConsumer;
 
-public class KabassuTestRunnerJUnitVerticle extends AbstractVerticle {
+public class KabassuRunnerGradleVerticle extends AbstractVerticle {
 
-  private KabassuTestRunnerJUnitConfiguration configuration;
+  private KabassuRunnerGradleConfiguration configuration;
 
-  private MessageConsumer<String> consumer;
+  private MessageConsumer<JsonObject> consumer;
 
   @Override
   public void init(Vertx vertx, Context context) {
     super.init(vertx, context);
-    configuration = new KabassuTestRunnerJUnitConfiguration(config());
+    configuration = new KabassuRunnerGradleConfiguration(config());
   }
 
   @Override
   public void start() throws Exception {
 
     consumer = vertx.eventBus()
-        .consumer(configuration.getAddress(), new TestRunnerJUnitHandler(vertx));
+      .consumer(configuration.getAddress(), new RunnerGradleHandler(vertx));
   }
 
   @Override

@@ -38,6 +38,8 @@ allprojects {
         mavenLocal()
         mavenCentral()
         jcenter()
+        maven { url 'https://repo.gradle.org/gradle/libs-releases' }
+
     }
 
 }
@@ -161,6 +163,7 @@ dependencies {
     deps project(':kabassu-server')
     deps project(':kabassu-mongo')
     deps project(':kabassu-test-dispatcher')
+    deps project(':kabassu-runner-gradle')
     deps project(':kabassu-test-context')
 
 }
