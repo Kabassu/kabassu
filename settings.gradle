@@ -33,4 +33,5 @@ include 'kabassu-results-dispatcher'
 //include 'kabassu-test-manager'
 include 'kabassu-mongo'
 include 'kabassu-runner-gradle'
+include 'kabassu-results-retriever-main'
 

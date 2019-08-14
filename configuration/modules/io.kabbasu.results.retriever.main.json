@@ -1,0 +1,19 @@
+{
+  "name": "worker:io.kabassu.results.retriever.main",
+  "config": {
+    "verticle": "io.kabassu.results.retriever.main.KabassuResultsRetrieverMainVerticle",
+    "address": "kabassu.results.retriever.main",
+    "reports": [
+      {
+        "id": "allure",
+        "retriever": "allure-retriever"
+      },
+      {
+        "id": "cucumber",
+        "retriever": "cucumber-retriever"
+      }
+    ],
+    "defaultReports": "allure",
+    "defaultReportsDir": "./reports-dir"
+  }
+}

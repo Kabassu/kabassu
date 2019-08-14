@@ -60,6 +60,7 @@ public class RunnerGradleHandler implements Handler<Message<JsonObject>> {
     } catch (BuildException e) {
       LOGGER.error(e);
       testResult = "Failure";
+    } finally {
       vertx.eventBus().send("kabassu.results.dispatcher",event.body().put("result", testResult));
     }
 

@@ -44,6 +44,7 @@ public abstract class AbstractVerticleFactory implements VerticleFactory {
         deploymentOptions.setWorkerPoolName(identifier);
         deploymentOptions.setWorkerPoolSize(5);
         deploymentOptions.setInstances(5);
+        changeBlockingTime(deploymentOptions);
         LOGGER.info("{} is worker", verticle);
       }
       //ModuleJarLoader.checkClasspath(deploymentOptions.getConfig().getString("modules_directory"));
@@ -52,7 +53,6 @@ public abstract class AbstractVerticleFactory implements VerticleFactory {
       resolution.fail(e);
     }
   }
-
 
   @Override
   public Verticle createVerticle(String verticleName, ClassLoader classLoader) throws Exception {
@@ -69,4 +69,6 @@ public abstract class AbstractVerticleFactory implements VerticleFactory {
 
   protected abstract boolean isWorker();
 
+  protected void changeBlockingTime(DeploymentOptions deploymentOptions) {
+  }
 }

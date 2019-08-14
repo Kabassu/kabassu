@@ -1,9 +1,0 @@
-{
-  "name": "worker:io.kabassu.json.file.result",
-  "config": {
-    "verticle": "io.kabassu.json.file.result.KabassuJsonFileResultVerticle",
-    "directory": "reports-json",
-    "address": "kabassu.results.file.json"
-  }
-}
-

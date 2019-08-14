@@ -89,12 +89,16 @@ components:
             type: string
           location:
             type: string
+          reports:
+           type: array
     TestRun:
       type: object
       properties: 
         definitionId: 
           type: string
         configurationId: 
+          type: string
+        jvm:
           type: string
         additionalData: 
           type: object

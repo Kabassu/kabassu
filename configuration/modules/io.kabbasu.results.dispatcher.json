@@ -5,7 +5,7 @@
     "publishers": [
       {
         "name": "standard",
-        "address": "kabassu.publisher.json"
+        "address": "kabassu.results.retriever.main"
       }
     ]
   }

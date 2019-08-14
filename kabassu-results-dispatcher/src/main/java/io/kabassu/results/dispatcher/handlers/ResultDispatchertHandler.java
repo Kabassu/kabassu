@@ -37,7 +37,7 @@ public class ResultDispatchertHandler implements Handler<Message<JsonObject>> {
   @Override
   public void handle(Message<JsonObject> event) {
     publishersMap.values().stream()
-        .forEach(address -> vertx.eventBus().publish(address, event.body()));
+        .forEach(address -> vertx.eventBus().send(address, event.body()));
   }
 
 }
