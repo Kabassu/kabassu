@@ -56,6 +56,9 @@ public class KabassuMongoVerticle extends AbstractVerticle {
     consumers.add(vertx.eventBus()
       .consumer("kabassu.database.mongo.addrequest",
         mongoHandlersProvider.provideAddDataHandler("kabassu-requests")));
+    consumers.add(vertx.eventBus()
+      .consumer("kabassu.database.mongo.getall",
+        mongoHandlersProvider.provideGetAllHandler()));
   }
 
   @Override

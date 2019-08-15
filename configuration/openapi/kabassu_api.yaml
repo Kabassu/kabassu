@@ -29,6 +29,33 @@ paths:
                     runner: gradle
                     locationType: filesystem
                     location: '../junit5-test'  
+                    paths:
+  /kabassu/getall/{collection}/{page}/{pagesize}:
+    get:
+      operationId: getall
+      summary: get all data from collection
+      parameters:
+        - in: path
+          name: collection
+          required: true
+          schema:
+           type: string
+          description: collection name
+        - in: path
+          name: page
+          required: true
+          schema:
+           type: integer
+          description: page
+        - in: path
+          name: pagesize
+          required: true
+          schema:
+           type: integer
+          description: page size
+      responses:
+        '200':
+          description: ok
   /kabassu/adddefinition:
     post:
       operationId: adddefinition
@@ -90,7 +117,7 @@ components:
           location:
             type: string
           reports:
-           type: array
+            type: object
     TestRun:
       type: object
       properties: 

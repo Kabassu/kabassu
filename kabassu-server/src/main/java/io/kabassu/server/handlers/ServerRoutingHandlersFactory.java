@@ -50,6 +50,9 @@ public class ServerRoutingHandlersFactory {
       if (routingHandlerType.equalsIgnoreCase("getdatabyid")) {
         return new GetByIdRoutingHandler(vertx, address);
       }
+      if (routingHandlerType.equalsIgnoreCase("getall")) {
+        return new GetAllRoutingHandler(vertx, address);
+      }
     }
 
     throw new IllegalArgumentException("Unknown type of handler: " + routingHandlerType);

@@ -2,6 +2,7 @@ package io.kabassu.mongo;
 
 import io.kabassu.mongo.configuration.KabassuMongoConfiguration;
 import io.kabassu.mongo.handlers.MongoAddDataHandler;
+import io.kabassu.mongo.handlers.MongoGetAllHandler;
 import io.kabassu.mongo.handlers.MongoGetDataByIdHandler;
 import io.vertx.reactivex.core.Vertx;
 
@@ -21,5 +22,9 @@ public class MongoHandlersProvider {
 
   public MongoGetDataByIdHandler provideGetDataByIdHandler(String collection, String idName) {
     return new MongoGetDataByIdHandler(vertx, configuration, collection, idName);
+  }
+
+  public MongoGetAllHandler provideGetAllHandler() {
+    return new MongoGetAllHandler(vertx, configuration);
   }
 }
