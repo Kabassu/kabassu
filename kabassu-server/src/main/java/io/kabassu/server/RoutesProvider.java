@@ -21,6 +21,7 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.ext.web.api.contract.openapi3.OpenAPI3RouterFactory;
+import io.vertx.reactivex.ext.web.handler.CorsHandler;
 import io.vertx.reactivex.ext.web.handler.ErrorHandler;
 import java.util.List;
 
@@ -38,6 +39,7 @@ class RoutesProvider {
 
   void configureRouting(OpenAPI3RouterFactory routerFactory) {
     ServerRoutingHandlersFactory handlerFactory = new ServerRoutingHandlersFactory(vertx);
+    routerFactory.addGlobalHandler(CorsHandler.create("*"));
     routingPaths.forEach(operation -> {
       registerRoutingHandlersPerOperation(routerFactory, handlerFactory, operation);
       routerFactory.addFailureHandlerByOperationId(operation.getOperationId(), ErrorHandler.create(true));
