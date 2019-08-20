@@ -19,8 +19,11 @@ package io.kabassu.results.retriever.main.reports;
 import java.io.File;
 import java.io.IOException;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class SimpleDownloadRetriever extends ReportsRetriever {
+
+  private String path;
 
   protected SimpleDownloadRetriever(String reportType, String name, String reportDir,
       String reportDownload) {
@@ -31,7 +34,12 @@ public class SimpleDownloadRetriever extends ReportsRetriever {
   public String retrieveReport() throws IOException {
     File directory = prepareDirectory();
     FileUtils.copyDirectory(new File(reportDir), directory);
-    return directory.getAbsolutePath();
+    path = directory.getAbsolutePath();
+    return path;
+  }
+
+  public String retrieveLink(){
+      return StringUtils.substringAfterLast(path,reportDownload) + "/index.html";
   }
 
   private File prepareDirectory() throws IOException {

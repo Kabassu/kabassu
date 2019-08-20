@@ -167,6 +167,7 @@ dependencies {
     deps project(':kabassu-test-context')
     deps project(':kabassu-results-dispatcher')
     deps project(':kabassu-results-retriever-main')
+    deps project(':kabassu-results-server')
 
 }
 

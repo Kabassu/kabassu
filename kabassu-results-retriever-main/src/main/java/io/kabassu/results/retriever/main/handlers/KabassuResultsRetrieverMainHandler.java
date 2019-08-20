@@ -51,18 +51,20 @@ public class KabassuResultsRetrieverMainHandler implements Handler<Message<JsonO
   public void handle(Message<JsonObject> event) {
     JsonObject testData = event.body();
     List<String> reports = new ArrayList<>();
-    if(testData.getJsonObject("definition").containsKey("reports")){
+    if (testData.getJsonObject("definition").containsKey("reports")) {
       reports = testData.getJsonObject("definition").getJsonArray("reports").getList();
     } else {
       reports.add(configuration.getDefaultReports());
     }
-    List<String> downloadReports = new ArrayList<>();
-    reports.forEach(report->{
+    List<JsonObject> downloadReports = new ArrayList<>();
+    reports.forEach(report -> {
       ReportsRetriever reportsRetriever = reportsRetrieverFactory
           .getReportsRetriever(report, testData.getJsonObject("testRequest").getString("id"),
               testData.getJsonObject("definition").getString("location"));
       try {
-        downloadReports.add(reportsRetriever.retrieveReport());
+        downloadReports.add(
+            new JsonObject().put("location", reportsRetriever.retrieveReport()).put("downloadPath",
+                reportsRetriever.retrieveLink()));
       } catch (IOException e) {
         LOGGER.error("Problem with report download", e);
       }
@@ -72,7 +74,7 @@ public class KabassuResultsRetrieverMainHandler implements Handler<Message<JsonO
     resultsData.put("testId", testData.getJsonObject("testRequest").getString("id"));
     resultsData.put("result", testData.getString("result"));
     testData.put("downloadedReports", new JsonArray(downloadReports));
-    vertx.eventBus().send("kabassu.database.mongo.addresults",testData);
+    vertx.eventBus().send("kabassu.database.mongo.addresults", testData);
   }
 
 }

@@ -34,4 +34,5 @@ include 'kabassu-results-dispatcher'
 include 'kabassu-mongo'
 include 'kabassu-runner-gradle'
 include 'kabassu-results-retriever-main'
+include 'kabassu-results-server'
 

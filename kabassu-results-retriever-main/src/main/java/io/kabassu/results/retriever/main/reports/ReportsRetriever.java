@@ -35,4 +35,6 @@ public abstract class ReportsRetriever {
 
   public abstract String retrieveReport() throws IOException;
 
+  public abstract String retrieveLink() throws IOException;
+
 }
