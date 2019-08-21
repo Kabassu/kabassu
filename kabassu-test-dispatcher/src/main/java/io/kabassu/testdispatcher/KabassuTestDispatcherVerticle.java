@@ -16,20 +16,19 @@
 
 package io.kabassu.testdispatcher;
 
-import io.kabassu.commons.constants.EventBusAdresses;
 import io.kabassu.testdispatcher.handlers.TestDispatcherHandler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.AbstractVerticle;
 import io.vertx.reactivex.core.eventbus.MessageConsumer;
 
-public class KabassuTestDispatcherVerticle extends AbstractVerticle{
+public class KabassuTestDispatcherVerticle extends AbstractVerticle {
 
   private MessageConsumer<JsonObject> consumer;
 
   @Override
   public void start() throws Exception {
     consumer = vertx.eventBus()
-        .consumer(EventBusAdresses.KABASSU_TEST_DISPATCHER, new TestDispatcherHandler(vertx));
+      .consumer("kabassu.runtestrequest", new TestDispatcherHandler(vertx));
   }
 
   @Override

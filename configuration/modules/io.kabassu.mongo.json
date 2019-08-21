@@ -1,0 +1,9 @@
+{
+  "name": "worker:io.kabassu.mongo",
+  "config": {
+    "verticle": "io.kabassu.mongo.KabassuMongoVerticle",
+    "mongo-config": {
+      "db_name": "kabassu-dev"
+    }
+  }
+}

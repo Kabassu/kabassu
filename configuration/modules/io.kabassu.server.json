@@ -1,0 +1,32 @@
+{
+  "name": "standard:io.kabassu.server",
+  "config": {
+    "verticle": "io.kabassu.server.KabassuServerVerticle",
+    "port": 8080,
+    "security": "token",
+    "simpleToken": "s1mplet0ken",
+    "operations": [
+      {
+        "operationId": "adddefinition",
+        "address": "kabassu.database.mongo.adddefinition",
+        "handler": "adddata"
+      },
+      {
+        "operationId": "testrun",
+        "address": "kabassu.runtestrequest",
+        "handler": "adddata"
+      },
+      {
+        "operationId": "getdefinition",
+        "address": "kabassu.database.mongo.getdefinition",
+        "handler": "getdatabyid"
+      }
+    ,
+      {
+        "operationId": "getall",
+        "address": "kabassu.database.mongo.getall",
+        "handler": "getall"
+      }
+    ]
+  }
+}

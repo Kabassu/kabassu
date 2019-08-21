@@ -38,6 +38,8 @@ allprojects {
         mavenLocal()
         mavenCentral()
         jcenter()
+        maven { url 'https://repo.gradle.org/gradle/libs-releases' }
+
     }
 
 }
@@ -47,8 +49,8 @@ subprojects {
 
     //apply plugin: 'com.github.johnrengelman.shadow'
 
-    sourceCompatibility = '12'
-    targetCompatibility = '12'
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
 
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
@@ -159,6 +161,14 @@ dependencies {
     deps project(':kabassu-manager')
     deps project(':kabassu-commons')
     deps project(':kabassu-server')
+    deps project(':kabassu-mongo')
+    deps project(':kabassu-test-dispatcher')
+    deps project(':kabassu-runner-gradle')
+    deps project(':kabassu-test-context')
+    deps project(':kabassu-results-dispatcher')
+    deps project(':kabassu-results-retriever-main')
+    deps project(':kabassu-results-server')
+
 }
 
 task downloadDeps(type: Copy) {

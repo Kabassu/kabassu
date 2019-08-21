@@ -16,50 +16,106 @@
 
 package io.kabassu.testcontext.handlers;
 
-import io.kabassu.commons.constants.EventBusAdresses;
 import io.kabassu.commons.constants.MessagesFields;
-import io.reactivex.Observable;
-import io.reactivex.Single;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
+import io.vertx.reactivex.core.CompositeFuture;
+import io.vertx.reactivex.core.Promise;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.eventbus.Message;
 import java.util.Map;
 
 public class TestContextHandler implements Handler<Message<JsonObject>> {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(TestContextHandler.class);
+  private static final String RUNNER = "runner";
+
   private final Vertx vertx;
 
   private Map<String, String> runnersMap;
 
   public TestContextHandler(Vertx vertx,
-      Map<String, String> runnersMap) {
+    Map<String, String> runnersMap) {
     this.runnersMap = runnersMap;
     this.vertx = vertx;
   }
 
   @Override
   public void handle(Message<JsonObject> event) {
-    JsonObject testResults = new JsonObject();
-    testResults.put(MessagesFields.TEST_RUN_ID, event.body().getString(MessagesFields.TEST_RUN_ID));
-    Observable.fromIterable((event.body().getJsonArray(MessagesFields.TESTS_TO_RUN)))
-        .filter(testInfoObject ->
-            runnersMap.containsKey(((JsonObject) testInfoObject).getString("runner"))
-        )
-        .flatMap(testInfoObject -> callRunner((JsonObject) testInfoObject).toObservable())
-        .map(results -> mergeResults(testResults, results))
-        .doOnComplete(
-            () -> vertx.eventBus().send(EventBusAdresses.KABASSU_RESULTS_DISPATCHER, testResults))
-        .subscribe();
+    event.body().getJsonArray(MessagesFields.TESTS_TO_RUN)
+      .stream()
+      // TODO Write test plan implementation.map(testInfoObject -> mergeWithDefinitionAndConfiguration((JsonObject) testInfoObject))
+      .forEach(
+        testRequest -> {
+          Promise<JsonObject> mergeWithDefinitionPromise = mergeWithDefinition(
+            (JsonObject) testRequest);
+          Promise<JsonObject> mergeWithConfigurationPromise = mergeWithConfiguration(
+            (JsonObject) testRequest);
+          CompositeFuture
+            .all(mergeWithDefinitionPromise.future(), mergeWithConfigurationPromise.future())
+            .setHandler(
+              completedFutures -> {
+                if (completedFutures.succeeded() && existingRunner(
+                  mergeWithDefinitionPromise.future().result())) {
+                  JsonObject completeTestResults = new JsonObject();
+                  completeTestResults.put("testRequest", (JsonObject) testRequest);
+                  completeTestResults
+                    .put("definition", mergeWithDefinitionPromise.future().result());
+                  completeTestResults
+                    .put("configuration", mergeWithConfigurationPromise.future().result());
+                  callRunner(completeTestResults);
+                }
+              }
+            );
+        }
+      );
   }
 
-  private Single<Message<Object>> callRunner(JsonObject message) {
-    return vertx.eventBus()
-        .rxSend(runnersMap.get(message.getString("runner")), message.getString("className"));
+  private boolean existingRunner(JsonObject result) {
+    return runnersMap.containsKey(result.getString(RUNNER));
   }
 
-  private JsonObject mergeResults(JsonObject testResults, Message<Object> results) {
-    return testResults.put(((JsonObject) results.body()).getString("resultsId"), results.body());
+  private Promise<JsonObject> mergeWithConfiguration(JsonObject testRequest) {
+    Promise<JsonObject> promise = Promise.promise();
+    promise.complete(new JsonObject());
+    return promise;
+  }
+
+  private Promise<JsonObject> mergeWithDefinition(JsonObject testRequest) {
+    Promise<JsonObject> promise = Promise.promise();
+    vertx.eventBus()
+      .request("kabassu.database.mongo.getdefinition", testRequest.getString("definitionId"),
+        eventResponse -> {
+          if (eventResponse.succeeded()) {
+            JsonObject definitionData = (JsonObject) eventResponse.result().body();
+            if (definitionData != null && definitionData.containsKey("_id")) {
+              promise.complete(definitionData);
+            } else {
+              promise
+                .complete(new JsonObject().put(RUNNER, ""));
+            }
+          } else {
+            promise
+              .complete(new JsonObject().put(RUNNER, ""));
+          }
+        }
+      );
+    try {
+      return promise;
+    } catch (Exception e) {
+      LOGGER.error("Error during recovering test definition. Definition id {}",
+        testRequest.getString("definitionId"), e);
+      promise.complete(new JsonObject().put(RUNNER, ""));
+      return promise;
+    }
+  }
+
+  private void callRunner(JsonObject completeTestRequest) {
+    vertx.eventBus()
+      .send(runnersMap.get(completeTestRequest.getJsonObject("definition").getString(RUNNER)),
+        completeTestRequest);
   }
 
 }

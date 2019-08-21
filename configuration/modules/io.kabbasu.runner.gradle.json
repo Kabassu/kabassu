@@ -1,0 +1,11 @@
+{
+  "name": "longworker:io.kabassu.runner.gradle",
+  "config": {
+    "verticle": "io.kabassu.runner.gradle.KabassuRunnerGradleVerticle",
+    "address": "kabassu.runner.gradle",
+    "jvm": {
+      "1.8": "D:/jvms/store/1.8.0",
+      "1.8_2": "D:/Java/jdk1.8.0_181"
+    }
+  }
+}

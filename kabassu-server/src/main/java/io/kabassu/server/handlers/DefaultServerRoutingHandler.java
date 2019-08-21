@@ -58,7 +58,7 @@ public class DefaultServerRoutingHandler implements Handler<RoutingContext> {
     JsonObject message = new JsonObject();
     message.put(MessagesFields.REQUEST, TestRetrieverCommands.RUN_TESTS);
     message.put(MessagesFields.TESTS_TO_RUN, new JsonArray(testsToRun));
-    vertx.eventBus().rxSend(address, message).toObservable().doOnNext(eventResponse ->
+    vertx.eventBus().rxRequest(address, message).toObservable().doOnNext(eventResponse ->
         response.end(((JsonObject) eventResponse.body()).encodePrettily())
     ).subscribe();
   }

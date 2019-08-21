@@ -44,6 +44,15 @@ public class ServerRoutingHandlersFactory {
       if (routingHandlerType.equalsIgnoreCase("testmanager")) {
         return new TestManagerServerRoutingHandler(vertx, address);
       }
+      if (routingHandlerType.equalsIgnoreCase("adddata")) {
+        return new AddDataRoutingHandler(vertx, address);
+      }
+      if (routingHandlerType.equalsIgnoreCase("getdatabyid")) {
+        return new GetByIdRoutingHandler(vertx, address);
+      }
+      if (routingHandlerType.equalsIgnoreCase("getall")) {
+        return new GetAllRoutingHandler(vertx, address);
+      }
     }
 
     throw new IllegalArgumentException("Unknown type of handler: " + routingHandlerType);

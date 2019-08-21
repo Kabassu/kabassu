@@ -1,0 +1,8 @@
+{
+  "name": "standard:io.kabassu.results.server",
+  "config": {
+    "verticle": "io.kabassu.results.server.KabassuResultsServerVerticle",
+    "port": 8090,
+    "resultsDir": "reports-dir"
+  }
+}

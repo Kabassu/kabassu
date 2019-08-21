@@ -29,5 +29,9 @@
 /kabassu-json-file-result/build/
 /kabassu-manager/out/
 /kabassu-test-manager/build/
+/kabassu-mongo/build/
+/kabassu-runner-gradle/build/
+/kabassu-results-retriever-main/build/
 /distribution
 /java
+/kabassu-results-server/build/

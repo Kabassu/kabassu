@@ -27,3 +27,4 @@
 
 io.kabassu.manager.factory.StandardModuleVerticleFactory
 io.kabassu.manager.factory.WorkerModuleVerticleFactory
+io.kabassu.manager.factory.LongWorkerModuleVerticleFactory
