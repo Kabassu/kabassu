@@ -7,7 +7,7 @@
 # Description
 The goal of Kabassu is to create test central, place where users can gather different tests for different application, run them against different enviroments and configurations
 
-#Requirements
+# Requirements
 
 1. Java 12
 2. MongoDB
