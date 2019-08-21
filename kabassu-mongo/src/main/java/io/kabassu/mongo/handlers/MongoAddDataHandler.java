@@ -22,6 +22,7 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.eventbus.Message;
+import java.util.Date;
 
 public class MongoAddDataHandler extends AbstractMongoHandler<JsonObject> {
 
@@ -37,7 +38,8 @@ public class MongoAddDataHandler extends AbstractMongoHandler<JsonObject> {
 
   @Override
   public void handle(Message<JsonObject> event) {
-    client.insert(collection, event.body(), res -> {
+
+    client.insert(collection, addDate(event.body()), res -> {
       if (res.succeeded()) {
         event.reply(new JsonObject().put("id", res.result()));
       } else {
@@ -45,6 +47,10 @@ public class MongoAddDataHandler extends AbstractMongoHandler<JsonObject> {
         LOGGER.error("Problem during adding data", res.cause());
       }
     });
+  }
+
+  private JsonObject addDate(JsonObject request) {
+    return request.put("created", new Date().getTime());
   }
 
 }

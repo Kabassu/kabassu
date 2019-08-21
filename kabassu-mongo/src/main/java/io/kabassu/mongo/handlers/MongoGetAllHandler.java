@@ -43,6 +43,7 @@ public class MongoGetAllHandler extends AbstractMongoHandler<JsonObject> {
     FindOptions findOptions = new FindOptions();
     findOptions.setLimit(request.getInteger("pageSize"));
     findOptions.setSkip(request.getInteger("pageSize") * request.getInteger("page"));
+    findOptions.setSort(new JsonObject().put("created",1));
     client.findWithOptions(request.getString("collection"), new JsonObject(), findOptions, res -> {
       if (res.succeeded()) {
         promise.complete(new JsonObject().put("results", res.result()));

@@ -33,7 +33,7 @@ import java.util.List;
 public class KabassuResultsRetrieverMainHandler implements Handler<Message<JsonObject>> {
 
   private static final Logger LOGGER = LoggerFactory
-      .getLogger(KabassuResultsRetrieverMainHandler.class);
+    .getLogger(KabassuResultsRetrieverMainHandler.class);
 
   private Vertx vertx;
 
@@ -41,7 +41,7 @@ public class KabassuResultsRetrieverMainHandler implements Handler<Message<JsonO
   private ReportsRetrieverFactory reportsRetrieverFactory;
 
   public KabassuResultsRetrieverMainHandler(Vertx vertx,
-      KabassuResultsRetrieverMainConfiguration configuration) {
+    KabassuResultsRetrieverMainConfiguration configuration) {
     this.vertx = vertx;
     this.configuration = configuration;
     reportsRetrieverFactory = new ReportsRetrieverFactory(configuration.getDefaultReportsDir());
@@ -59,12 +59,12 @@ public class KabassuResultsRetrieverMainHandler implements Handler<Message<JsonO
     List<JsonObject> downloadReports = new ArrayList<>();
     reports.forEach(report -> {
       ReportsRetriever reportsRetriever = reportsRetrieverFactory
-          .getReportsRetriever(report, testData.getJsonObject("testRequest").getString("id"),
-              testData.getJsonObject("definition").getString("location"));
+        .getReportsRetriever(report, testData.getJsonObject("testRequest").getString("id"),
+          testData.getJsonObject("definition").getString("location"));
       try {
         downloadReports.add(
-            new JsonObject().put("location", reportsRetriever.retrieveReport()).put("downloadPath",
-                reportsRetriever.retrieveLink()));
+          new JsonObject().put("location", reportsRetriever.retrieveReport()).put("downloadPath",
+            reportsRetriever.retrieveLink()));
       } catch (IOException e) {
         LOGGER.error("Problem with report download", e);
       }
