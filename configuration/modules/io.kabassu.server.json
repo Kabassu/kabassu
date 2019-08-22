@@ -27,6 +27,12 @@
         "address": "kabassu.database.mongo.getall",
         "handler": "getall"
       }
+    ,
+      {
+        "operationId": "getallbyfield",
+        "address": "kabassu.database.mongo.getallbyfield",
+        "handler": "getallbyfield"
+      }
     ]
   }
 }

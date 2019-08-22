@@ -25,5 +25,5 @@ The goal of Kabassu is to create test central, place where users can gather diff
  ```
 Here you can find possible options [https://vertx.io/docs/vertx-mongo-client/java/#_configuring_the_client]
 
-6. Run windows_run.bat
+6. Run start.bat or start.sh
 7. Application will use ports 8080 and 8090. They can be changed in server configuration files

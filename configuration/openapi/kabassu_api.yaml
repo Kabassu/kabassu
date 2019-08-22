@@ -56,6 +56,44 @@ paths:
       responses:
         '200':
           description: ok
+  /kabassu/getallbyfield/{collection}/{field}/{value}/{page}/{pagesize}:
+    get:
+      operationId: getallbyfield
+      summary: get all data from collection by field
+      parameters:
+        - in: path
+          name: collection
+          required: true
+          schema:
+           type: string
+          description: collection name
+        - in: path
+          name: field
+          required: true
+          schema:
+           type: string
+          description: field name
+        - in: path
+          name: value
+          required: true
+          schema:
+           type: string
+          description: value
+        - in: path
+          name: page
+          required: true
+          schema:
+           type: integer
+          description: page
+        - in: path
+          name: pagesize
+          required: true
+          schema:
+           type: integer
+          description: page size
+      responses:
+        '200':
+          description: ok
   /kabassu/adddefinition:
     post:
       operationId: adddefinition
