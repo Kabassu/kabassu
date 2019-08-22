@@ -4,6 +4,20 @@ info:
   description: API for Kabassu system
   version: 0.0.1
 paths:
+  /kabassu/getrequest/{id}:
+    get:
+      operationId: getrequest
+      summary: get test request by id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+           type: string
+          description: Test Request ID
+      responses:
+        '200':
+          description: Retrieved object
   /kabassu/getdefinition/{id}:
     get:
       operationId: getdefinition
