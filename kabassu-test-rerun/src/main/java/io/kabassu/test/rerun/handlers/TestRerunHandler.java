@@ -24,11 +24,11 @@ public class TestRerunHandler implements Handler<Message<JsonObject>> {
       .toObservable()
       .doOnNext(
         eventResponse -> {
-          event.reply(eventResponse.body());
           JsonObject updateHistory = updateHistory((JsonObject) eventResponse.body());
           vertx.eventBus().rxRequest("kabassu.database.mongo.replacedocument", updateHistory).toObservable()
             .doOnNext(updateResponse->{
               if (updateHistory.getJsonObject("new").containsKey("_id")) {
+                event.reply(updateHistory.getJsonObject("new"));
                 vertx.eventBus().send(EventBusAdresses.KABASSU_TEST_CONTEXT,
                   new JsonObject()
                     .put(MessagesFields.TESTS_TO_RUN,
