@@ -193,6 +193,8 @@ components:
           type: string
         jvm:
           type: string
+        description:
+          type: string
         additionalData: 
           type: object
     TestReRun:
