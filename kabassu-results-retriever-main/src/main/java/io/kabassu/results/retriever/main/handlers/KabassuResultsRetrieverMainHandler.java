@@ -28,6 +28,7 @@ import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.eventbus.Message;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class KabassuResultsRetrieverMainHandler implements Handler<Message<JsonObject>> {
@@ -59,7 +60,7 @@ public class KabassuResultsRetrieverMainHandler implements Handler<Message<JsonO
     List<JsonObject> downloadReports = new ArrayList<>();
     reports.forEach(report -> {
       ReportsRetriever reportsRetriever = reportsRetrieverFactory
-        .getReportsRetriever(report, testData.getJsonObject("testRequest").getString("id"),
+        .getReportsRetriever(report, testData.getJsonObject("testRequest").getString("_id"),
           testData.getJsonObject("definition").getString("location"));
       try {
         downloadReports.add(
@@ -71,10 +72,18 @@ public class KabassuResultsRetrieverMainHandler implements Handler<Message<JsonO
 
     });
     JsonObject resultsData = new JsonObject();
-    resultsData.put("testId", testData.getJsonObject("testRequest").getString("id"));
+    resultsData.put("testId", testData.getJsonObject("testRequest").getString("_id"));
     resultsData.put("result", testData.getString("result"));
     testData.put("downloadedReports", new JsonArray(downloadReports));
     vertx.eventBus().send("kabassu.database.mongo.addresults", testData);
+    updateHistory(testData.getJsonObject("testRequest"));
   }
 
+  private void updateHistory(JsonObject testRequest) {
+    testRequest.put("status","finished");
+    testRequest.getJsonArray("history").add(new JsonObject().put("date",new Date().getTime()).put("event","Reports downloaded"));
+    JsonObject updateRequest = new JsonObject().put("new",testRequest)
+      .put("collection","kabassu-requests").put("id",testRequest.getString("_id"));
+    vertx.eventBus().send("kabassu.database.mongo.replacedocument", updateRequest);
+  }
 }
