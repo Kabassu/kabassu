@@ -25,6 +25,7 @@ import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.eventbus.Message;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.util.Date;
 import org.gradle.tooling.BuildException;
 import org.gradle.tooling.BuildLauncher;
 import org.gradle.tooling.GradleConnector;
@@ -61,9 +62,23 @@ public class RunnerGradleHandler implements Handler<Message<JsonObject>> {
       LOGGER.error(e);
       testResult = "Failure";
     } finally {
-      vertx.eventBus().send("kabassu.results.dispatcher",event.body().put("result", testResult));
+      final String result = testResult;
+      JsonObject updateHistory = updateHistory(event.body().getJsonObject("testRequest"), testResult);
+      vertx.eventBus().rxRequest("kabassu.database.mongo.replacedocument", updateHistory)
+        .toObservable()
+        .doOnNext(
+          eventResponse->{
+            vertx.eventBus().send("kabassu.results.dispatcher",event.body().put("result", result).put("testRequest",updateHistory.getJsonObject("new")));
+          }
+        ).subscribe();
     }
 
+  }
+
+  private JsonObject updateHistory(JsonObject testRequest, String testResult) {
+    testRequest.getJsonArray("history").add(new JsonObject().put("date",new Date().getTime()).put("event","Test finished with: "+testResult));
+    return new JsonObject().put("new",testRequest)
+      .put("collection","kabassu-requests").put("id",testRequest.getString("_id"));
   }
 
 }

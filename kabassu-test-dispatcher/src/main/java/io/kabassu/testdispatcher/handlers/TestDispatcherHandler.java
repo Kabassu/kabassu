@@ -23,6 +23,7 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.eventbus.Message;
+import java.util.Date;
 
 public class TestDispatcherHandler implements Handler<Message<JsonObject>> {
 
@@ -35,7 +36,9 @@ public class TestDispatcherHandler implements Handler<Message<JsonObject>> {
   @Override
   public void handle(Message<JsonObject> event) {
     //TODO: MANY TESTS IN ONE REQUEST
-    vertx.eventBus().rxRequest("kabassu.database.mongo.addrequest", event.body()).toObservable()
+    JsonObject requestWithStatus = addStatusAndHistory(event.body());
+    vertx.eventBus().rxRequest("kabassu.database.mongo.addrequest",
+      requestWithStatus).toObservable()
       .doOnNext(
         eventResponse -> {
           event.reply(eventResponse.body());
@@ -43,22 +46,14 @@ public class TestDispatcherHandler implements Handler<Message<JsonObject>> {
             new JsonObject()
               .put(MessagesFields.TESTS_TO_RUN,
                 new JsonArray()
-                  .add(event.body()
-                    .put("id", ((JsonObject) eventResponse.body()).getString("id")))));
+                  .add(requestWithStatus
+                    .put("_id", ((JsonObject) eventResponse.body()).getString("id")))));
         }
       ).subscribe();
+  }
 
-    //vertx.eventBus().rxRequest("kabassu.database.mongo.getdefinition",testRequest.getString("definitionId")).toObservable()
-    //  .doOnNext(
-    //  eventResponse->{
-    //    JsonObject definitionData = (JsonObject) eventResponse.body();
-    //    if(definitionData.containsKey("_id")){
-    //     runTest(event, definitionData);
-    //    } else {
-    //      event.reply(eventResponse.body());
-    //    }
-    //  }
-    //).subscribe();
-
+  private JsonObject addStatusAndHistory(JsonObject request) {
+    return request.put("status", "started")
+      .put("history", new JsonArray().add(new JsonObject().put("date", new Date().getTime()).put("event","Request created and started")));
   }
 }
