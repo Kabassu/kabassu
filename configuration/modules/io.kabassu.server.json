@@ -37,6 +37,11 @@
         "operationId": "getallbyfield",
         "address": "kabassu.database.mongo.getallbyfield",
         "handler": "getallbyfield"
+      },
+      {
+        "operationId": "testrerun",
+        "address": "kabassu.reruntestrequest",
+        "handler": "adddata"
       }
     ]
   }

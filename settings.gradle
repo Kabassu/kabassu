@@ -35,4 +35,5 @@ include 'kabassu-mongo'
 include 'kabassu-runner-gradle'
 include 'kabassu-results-retriever-main'
 include 'kabassu-results-server'
+include 'kabassu-test-rerun'
 

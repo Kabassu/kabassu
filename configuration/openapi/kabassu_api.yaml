@@ -154,7 +154,21 @@ paths:
         '200':
           description: Test is running
 
-              
+  /kabassu/test/rerun:
+    post:
+      operationId: testrerun
+      summary: ReRun tests 
+      requestBody:
+        description: JSON File containing test id
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestReRun'
+      responses:
+        '200':
+          description: Test is running
+          
 components:
   schemas:
     TestDefinition:
@@ -181,4 +195,8 @@ components:
           type: string
         additionalData: 
           type: object
-      
+    TestReRun:
+      type: object
+      properties: 
+        requestId: 
+          type: string

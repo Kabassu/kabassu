@@ -1,0 +1,6 @@
+{
+    "name": "standard:io.kabassu.test.rerun",
+    "config": {
+        "verticle": "io.kabassu.test.rerun.KabassuTestRerunVerticle"
+    }
+}
