@@ -183,7 +183,9 @@ components:
           location:
             type: string
           reports:
-            type: object
+            type: array
+            items:
+                type: string
     TestRun:
       type: object
       properties: 
