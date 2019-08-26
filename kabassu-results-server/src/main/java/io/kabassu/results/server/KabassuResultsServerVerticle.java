@@ -46,7 +46,7 @@ public class KabassuResultsServerVerticle extends AbstractVerticle {
       HttpServer server = vertx.createHttpServer();
       Router router = Router.router(vertx);
       router.route().handler(CorsHandler.create("*"));
-      router.route("/kabassu/results/*").handler(StaticHandler.create(options.getResultsDir()));
+      router.route("/kabassu/results/*").handler(StaticHandler.create(options.getResultsDir()).setCachingEnabled(false));
       server.requestHandler(router).rxListen(options.getPort()).subscribe(
           ok -> {
             LOGGER.info("Kabassu Results Server has started. Listening on port {}",

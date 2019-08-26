@@ -26,7 +26,7 @@ public class KabassuResultsRetrieverMainConfiguration {
   private String address;
   private String defaultReports;
   private String defaultReportsDir;
-  private Map<String, String> reportsTypes = new HashMap<>();
+  private Map<String, JsonObject> reportsTypes = new HashMap<>();
 
   public KabassuResultsRetrieverMainConfiguration(JsonObject configuration) {
     this.address = configuration.getString("address");
@@ -35,7 +35,7 @@ public class KabassuResultsRetrieverMainConfiguration {
     JsonArray reports = configuration.getJsonArray("reports");
     reports.stream().forEach(reportConfig -> {
       JsonObject reportJson = (JsonObject) reportConfig;
-      reportsTypes.put(reportJson.getString("id"), reportJson.getString("retriever"));
+      reportsTypes.put(reportJson.getString("id"), reportJson);
     });
   }
 
@@ -51,7 +51,7 @@ public class KabassuResultsRetrieverMainConfiguration {
     return defaultReportsDir;
   }
 
-  public Map<String, String> getReportsTypes() {
+  public Map<String, JsonObject> getReportsTypes() {
     return reportsTypes;
   }
 }
