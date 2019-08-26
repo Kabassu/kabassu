@@ -65,7 +65,7 @@ public class KabassuResultsRetrieverMainHandler implements Handler<Message<JsonO
       try {
         downloadReports.add(
           new JsonObject().put("location", reportsRetriever.retrieveReport()).put("downloadPath",
-            reportsRetriever.retrieveLink()));
+            reportsRetriever.retrieveLink()).put("reportType",report));
       } catch (IOException | InterruptedException e) {
         LOGGER.error("Problem with report download", e);
       }
