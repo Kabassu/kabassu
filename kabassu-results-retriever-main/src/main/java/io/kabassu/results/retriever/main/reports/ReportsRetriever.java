@@ -33,7 +33,7 @@ public abstract class ReportsRetriever {
     this.reportDownload = reportConfiguration;
   }
 
-  public abstract String retrieveReport() throws IOException;
+  public abstract String retrieveReport() throws IOException, InterruptedException;
 
   public abstract String retrieveLink() throws IOException;
 

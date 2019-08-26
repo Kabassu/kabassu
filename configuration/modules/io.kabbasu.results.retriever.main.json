@@ -9,6 +9,10 @@
         "retriever": "allure-retriever"
       },
       {
+        "id": "allure-trend",
+        "retriever": "allure-trend-retriever"
+      },
+      {
         "id": "cucumber",
         "retriever": "cucumber-retriever"
       }
