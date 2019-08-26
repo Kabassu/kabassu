@@ -11,6 +11,7 @@ The goal of Kabassu is to create test central, place where users can gather diff
 
 1. Java 12
 2. MongoDB
+3. Allure 2.7.0 added to path (if allure-trend reports are used)
 
 # How to run it
 
