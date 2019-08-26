@@ -6,15 +6,18 @@
     "reports": [
       {
         "id": "allure",
-        "retriever": "allure-retriever"
+        "retriever": "allure-retriever",
+        "type": "multi"
       },
       {
         "id": "allure-trend",
-        "retriever": "allure-trend-retriever"
+        "retriever": "allure-trend-retriever",
+        "type": "single"
       },
       {
         "id": "cucumber",
-        "retriever": "cucumber-retriever"
+        "retriever": "cucumber-retriever",
+        "type": "multi"
       }
     ],
     "defaultReports": "allure",
