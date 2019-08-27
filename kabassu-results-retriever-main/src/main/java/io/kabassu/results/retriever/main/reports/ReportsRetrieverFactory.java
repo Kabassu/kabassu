@@ -31,6 +31,9 @@ public class ReportsRetrieverFactory {
     if(reportType.equals("allure-trend")){
       return new AllureTrendRetriever(reportType, name, reportDir+"/build/allure-results", downloadDir);
     }
+    if(reportType.equals("cucumber")){
+      return new SimpleDownloadRetriever(reportType, name, reportDir+"/build/cucumber-html-report", downloadDir);
+    }
     throw new IllegalArgumentException("Unknown type of report:" + reportType);
   }
 }

@@ -178,6 +178,10 @@ components:
             type: string
           runner:
             type: string
+          runnerOptions:
+            type: array
+            items:
+                type: string
           locationType:
             type: string
           location:

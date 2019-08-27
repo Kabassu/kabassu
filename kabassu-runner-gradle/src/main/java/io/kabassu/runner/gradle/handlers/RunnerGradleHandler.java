@@ -18,6 +18,7 @@ package io.kabassu.runner.gradle.handlers;
 
 import io.kabassu.runner.gradle.configuration.KabassuRunnerGradleConfiguration;
 import io.vertx.core.Handler;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
@@ -46,21 +47,27 @@ public class RunnerGradleHandler implements Handler<Message<JsonObject>> {
 
   @Override
   public void handle(Message<JsonObject> event) {
-    String testResult= "Success";
+    String testResult= "Failure";
     JsonObject testDefinition = event.body().getJsonObject("definition");
     try (ProjectConnection connection = GradleConnector.newConnector()
       .forProjectDirectory(new File(testDefinition.getString("location"))).connect()) {
       BuildLauncher buildLauncher = connection.newBuild();
-      buildLauncher.forTasks("clean", "test");
+      if(testDefinition.containsKey("runnerOptions")){
+        String[] runnerOptions = (String[]) testDefinition.getJsonArray("runnerOptions").getList()
+            .toArray(new String[0]);
+        buildLauncher.forTasks(runnerOptions);
+      } else {
+        buildLauncher.forTasks(new String[0]);
+      }
       if (event.body().getJsonObject("testRequest").containsKey("jvm")) {
         buildLauncher.setJavaHome(new File(configuration.getJvmsMap()
           .get(event.body().getJsonObject("testRequest").getString("jvm"))));
       }
       buildLauncher.setStandardInput(new ByteArrayInputStream("consume this!".getBytes()));
       buildLauncher.run();
+      testResult = "Success";
     } catch (BuildException e) {
       LOGGER.error(e);
-      testResult = "Failure";
     } finally {
       final String result = testResult;
       JsonObject updateHistory = updateHistory(event.body().getJsonObject("testRequest"), testResult);
