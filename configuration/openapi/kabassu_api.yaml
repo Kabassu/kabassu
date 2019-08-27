@@ -138,6 +138,28 @@ paths:
                   id:
                     type: integer
                     description: Test Definition Id
+  /kabassu/addsuite:
+    post:
+      operationId: addsuite
+      summary: Adds a new test suite to be run with Kabassu
+      requestBody:
+        description: JSON File containing test suite data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestSuite'
+      responses:
+        '201':
+          description: Added
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: Test suite Id
                     
   /kabassu/test/run:
     post:
@@ -187,6 +209,17 @@ components:
           location:
             type: string
           reports:
+            type: array
+            items:
+                type: string
+    TestSuite:
+        type: object
+        properties:
+          name:
+            type: string
+          description:
+            type: string
+          definitions:
             type: array
             items:
                 type: string
