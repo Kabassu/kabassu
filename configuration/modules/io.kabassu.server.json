@@ -50,6 +50,11 @@
         "operationId": "testrerun",
         "address": "kabassu.reruntestrequest",
         "handler": "adddata"
+      },
+      {
+        "operationId": "suiterun",
+        "address": "kabassu.suiterun",
+        "handler": "adddata"
       }
     ]
   }

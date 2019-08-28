@@ -45,11 +45,17 @@ public class KabassuMongoVerticle extends AbstractVerticle {
       .consumer("kabassu.database.mongo.adddefinition",
         mongoHandlersProvider.provideAddDataHandler("kabassu-definitions")));
     consumers.add(vertx.eventBus()
+      .consumer("kabassu.database.mongo.addsuiterun",
+        mongoHandlersProvider.provideAddDataHandler("kabassu-suite-runs")));
+    consumers.add(vertx.eventBus()
       .consumer("kabassu.database.mongo.addresults",
         mongoHandlersProvider.provideAddDataHandler("kabassu-results")));
     consumers.add(vertx.eventBus()
         .consumer("kabassu.database.mongo.addsuite",
             mongoHandlersProvider.provideAddDataHandler("kabassu-suites")));
+    consumers.add(vertx.eventBus()
+      .consumer("kabassu.database.mongo.getsuiterun",
+        mongoHandlersProvider.provideGetDataByIdHandler("kabassu-suite-runs", "_id")));
     consumers.add(vertx.eventBus()
       .consumer("kabassu.database.mongo.getresults",
         mongoHandlersProvider.provideGetDataByIdHandler("kabassu-results", "_id")));
