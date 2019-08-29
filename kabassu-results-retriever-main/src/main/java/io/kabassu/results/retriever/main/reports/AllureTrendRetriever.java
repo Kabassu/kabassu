@@ -19,7 +19,7 @@ public class AllureTrendRetriever extends ReportsRetriever {
   public String retrieveReport() throws IOException, InterruptedException {
     File[] directories = prepareDirectories();
     FileUtils.copyDirectory(new File(reportDir), directories[0]);
-    path = directories[1].getAbsolutePath();
+    path = directories[1].getCanonicalPath();
     if(new File(directories[1],"history").exists()){
       prepareHistory(directories);
     }
@@ -27,8 +27,8 @@ public class AllureTrendRetriever extends ReportsRetriever {
     return path;
   }
 
-  public String retrieveLink(){
-    return StringUtils.substringAfterLast(path,reportDownload) + "/index.html";
+  public String retrieveLink() throws IOException {
+    return StringUtils.substringAfterLast(path,new File(reportDownload).getCanonicalPath()) + "/index.html";
   }
 
   private void generateReport(File directory) throws IOException, InterruptedException {
