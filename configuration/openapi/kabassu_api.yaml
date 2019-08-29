@@ -84,6 +84,20 @@ paths:
       responses:
         '200':
           description: ok
+  /kabassu/getbyfilters/:
+    post:
+      operationId: getbyfilters
+      summary: get all data from collection by filters
+      requestBody:
+        description: JSON File containing all filters data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestFilters'
+      responses:
+        '200':
+          description: filtered data
   /kabassu/getallbyfield/{collection}/{field}/{value}/{page}/{pagesize}:
     get:
       operationId: getallbyfield
@@ -251,6 +265,26 @@ components:
             type: array
             items:
                 type: string
+    RequestFilters:
+        type: object
+        properties:
+          collection:
+            type: string
+          page:
+            type: integer
+          pageSize:
+            type: integer
+          filters:
+            type: array
+            items:
+                type: object
+                properties:
+                  filterName:
+                    type: string
+                  filterValues:
+                    type: array
+                    items:
+                      type: string
     TestRun:
       type: object
       properties: 
@@ -269,7 +303,7 @@ components:
       properties: 
         suiteId: 
           type: string
-        descriptionsData: 
+        definitionsData: 
           type: array
           items: 
             type: object

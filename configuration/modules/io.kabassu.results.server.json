@@ -3,6 +3,6 @@
   "config": {
     "verticle": "io.kabassu.results.server.KabassuResultsServerVerticle",
     "port": 8090,
-    "resultsDir": "reports-dir"
+    "resultsDir": "../../../reports-dir"
   }
 }

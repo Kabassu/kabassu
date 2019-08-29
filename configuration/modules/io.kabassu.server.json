@@ -55,6 +55,11 @@
         "operationId": "suiterun",
         "address": "kabassu.suiterun",
         "handler": "adddata"
+      },
+      {
+        "operationId": "getbyfilters",
+        "address": "kabassu.database.mongo.getbyfilters",
+        "handler": "adddata"
       }
     ]
   }
