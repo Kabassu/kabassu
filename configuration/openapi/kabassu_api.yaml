@@ -32,6 +32,20 @@ paths:
       responses:
         '200':
           description: Retrieved object
+  /kabassu/getsuiterun/{id}:
+    get:
+      operationId: getsuiterun
+      summary: get test suite run by id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+           type: string
+          description: Test Suite Run ID
+      responses:
+        '200':
+          description: Retrieved object
   /kabassu/getdefinition/{id}:
     get:
       operationId: getdefinition

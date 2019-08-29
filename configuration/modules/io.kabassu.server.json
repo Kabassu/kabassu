@@ -37,6 +37,11 @@
         "handler": "getdatabyid"
       },
       {
+        "operationId": "getsuiterun",
+        "address": "kabassu.database.mongo.getsuiterun",
+        "handler": "getdatabyid"
+      },
+      {
         "operationId": "getall",
         "address": "kabassu.database.mongo.getall",
         "handler": "getall"
