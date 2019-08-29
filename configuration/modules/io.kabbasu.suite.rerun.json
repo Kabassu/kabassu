@@ -1,0 +1,6 @@
+{
+    "name": "standard:io.kabassu.suite.rerun",
+    "config": {
+        "verticle": "io.kabassu.suite.rerun.KabassuSuiteRerunVerticle"
+    }
+}

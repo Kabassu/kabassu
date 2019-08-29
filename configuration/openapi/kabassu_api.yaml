@@ -246,6 +246,20 @@ paths:
       responses:
         '200':
           description: Test is running
+  /kabassu/suite/rerun:
+    post:
+      operationId: suitererun
+      summary: ReRun suite 
+      requestBody:
+        description: JSON File containing suite id
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SuiteReRun'
+      responses:
+        '200':
+          description: Test is running
           
 components:
   schemas:
@@ -332,4 +346,9 @@ components:
       type: object
       properties: 
         requestId: 
+          type: string
+    SuiteReRun:
+      type: object
+      properties: 
+        suiterunId: 
           type: string

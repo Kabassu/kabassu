@@ -78,7 +78,8 @@ public class SuiteDispatcherHandler implements Handler<Message<JsonObject>> {
     JsonObject suiteRunRequest = new JsonObject();
     JsonArray testRequestsId = new JsonArray();
     futures.forEach(future -> testRequestsId.add(((JsonObject) future.result()).getString("_id")));
-    suiteRunRequest.put("suiteId", suiteId).put("requests", testRequestsId);
+    suiteRunRequest.put("suiteId", suiteId).put("requests", testRequestsId)
+      .put("history", new JsonArray().add(new JsonObject().put("date", new Date().getTime()).put("event","Suite run created and started")));
     vertx.eventBus()
       .send("kabassu.database.mongo.addsuiterun", suiteRunRequest);
 
@@ -93,7 +94,7 @@ public class SuiteDispatcherHandler implements Handler<Message<JsonObject>> {
       .put("description", "Created for suite: " + suiteId)
       .put("status", "started")
       .put("history", new JsonArray().add(new JsonObject().put("date", new Date().getTime())
-        .put("event", "Request created and started")));
+        .put("event", "Request created with test suite and started")));
   }
 
   private Promise<JsonObject> createRequest(JsonObject testRequest) {

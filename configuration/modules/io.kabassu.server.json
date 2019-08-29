@@ -57,6 +57,11 @@
         "handler": "adddata"
       },
       {
+        "operationId": "suitererun",
+        "address": "kabassu.rerunsuite",
+        "handler": "adddata"
+      },
+      {
         "operationId": "suiterun",
         "address": "kabassu.suiterun",
         "handler": "adddata"
