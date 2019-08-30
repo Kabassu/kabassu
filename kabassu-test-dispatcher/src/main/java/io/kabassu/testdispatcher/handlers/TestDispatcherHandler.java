@@ -35,7 +35,6 @@ public class TestDispatcherHandler implements Handler<Message<JsonObject>> {
 
   @Override
   public void handle(Message<JsonObject> event) {
-    //TODO: MANY TESTS IN ONE REQUEST
     JsonObject requestWithStatus = addStatusAndHistory(event.body());
     vertx.eventBus().rxRequest("kabassu.database.mongo.addrequest",
       requestWithStatus).toObservable()

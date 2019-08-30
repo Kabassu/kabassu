@@ -4,6 +4,7 @@ import io.kabassu.mongo.configuration.KabassuMongoConfiguration;
 import io.kabassu.mongo.handlers.MongoAddDataHandler;
 import io.kabassu.mongo.handlers.MongoGetAllByFieldHandler;
 import io.kabassu.mongo.handlers.MongoGetAllHandler;
+import io.kabassu.mongo.handlers.MongoGetByFiltersHandler;
 import io.kabassu.mongo.handlers.MongoGetDataByIdHandler;
 import io.kabassu.mongo.handlers.MongoReplaceDocumentHandler;
 import io.vertx.reactivex.core.Vertx;
@@ -36,5 +37,9 @@ public class MongoHandlersProvider {
 
   public MongoReplaceDocumentHandler provideReplaceDocumentHandler() {
     return new MongoReplaceDocumentHandler(vertx, configuration);
+  }
+
+  public MongoGetByFiltersHandler provideGetByFilterstHandler() {
+    return new MongoGetByFiltersHandler(vertx, configuration);
   }
 }

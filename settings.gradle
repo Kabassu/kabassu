@@ -36,4 +36,6 @@ include 'kabassu-runner-gradle'
 include 'kabassu-results-retriever-main'
 include 'kabassu-results-server'
 include 'kabassu-test-rerun'
+include 'kabassu-suite-dispatcher'
+include 'kabassu-suite-rerun'
 

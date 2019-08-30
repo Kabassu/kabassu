@@ -1,0 +1,6 @@
+{
+    "name": "standard:io.kabassu.suitedispatcher",
+    "config": {
+        "verticle": "io.kabassu.suitedispatcher.KabassuSuiteDispatcherVerticle"
+    }
+}

@@ -34,12 +34,12 @@ public class SimpleDownloadRetriever extends ReportsRetriever {
   public String retrieveReport() throws IOException {
     File directory = prepareDirectory();
     FileUtils.copyDirectory(new File(reportDir), directory);
-    path = directory.getAbsolutePath();
+    path = directory.getCanonicalPath();
     return path;
   }
 
-  public String retrieveLink(){
-      return StringUtils.substringAfterLast(path,reportDownload) + "/index.html";
+  public String retrieveLink() throws IOException {
+      return StringUtils.substringAfterLast(path,new File(reportDownload).getCanonicalPath()) + "/index.html";
   }
 
   private File prepareDirectory() throws IOException {

@@ -12,6 +12,11 @@
         "handler": "adddata"
       },
       {
+        "operationId": "addsuite",
+        "address": "kabassu.database.mongo.addsuite",
+        "handler": "adddata"
+      },
+      {
         "operationId": "testrun",
         "address": "kabassu.runtestrequest",
         "handler": "adddata"
@@ -25,14 +30,22 @@
         "operationId": "getrequest",
         "address": "kabassu.database.mongo.getrequest",
         "handler": "getdatabyid"
-      }
-    ,
+      },
+      {
+        "operationId": "getsuite",
+        "address": "kabassu.database.mongo.getsuite",
+        "handler": "getdatabyid"
+      },
+      {
+        "operationId": "getsuiterun",
+        "address": "kabassu.database.mongo.getsuiterun",
+        "handler": "getdatabyid"
+      },
       {
         "operationId": "getall",
         "address": "kabassu.database.mongo.getall",
         "handler": "getall"
-      }
-    ,
+      },
       {
         "operationId": "getallbyfield",
         "address": "kabassu.database.mongo.getallbyfield",
@@ -41,6 +54,21 @@
       {
         "operationId": "testrerun",
         "address": "kabassu.reruntestrequest",
+        "handler": "adddata"
+      },
+      {
+        "operationId": "suitererun",
+        "address": "kabassu.rerunsuite",
+        "handler": "adddata"
+      },
+      {
+        "operationId": "suiterun",
+        "address": "kabassu.suiterun",
+        "handler": "adddata"
+      },
+      {
+        "operationId": "getbyfilters",
+        "address": "kabassu.database.mongo.getbyfilters",
         "handler": "adddata"
       }
     ]

@@ -21,6 +21,6 @@
       }
     ],
     "defaultReports": "allure",
-    "defaultReportsDir": "reports-dir"
+    "defaultReportsDir": "../../../reports-dir"
   }
 }
