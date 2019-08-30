@@ -16,9 +16,9 @@
 
 package io.kabassu.runner.gradle.handlers;
 
+import io.kabassu.commons.checks.FilesDownloadChecker;
 import io.kabassu.runner.gradle.configuration.KabassuRunnerGradleConfiguration;
 import io.vertx.core.Handler;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
@@ -47,21 +47,38 @@ public class RunnerGradleHandler implements Handler<Message<JsonObject>> {
 
   @Override
   public void handle(Message<JsonObject> event) {
-    String testResult= "Failure";
-    JsonObject testDefinition = event.body().getJsonObject("definition");
+
+    if (FilesDownloadChecker
+      .checkIfFilesRetrieveIsRequired(event.body().getJsonObject("definition").getString("locationType"))) {
+      vertx.eventBus().rxRequest("kabassu.filesretriever",
+        event.body()).toObservable()
+        .doOnNext(
+          eventResponse -> {
+            JsonObject fullRequest = (JsonObject) eventResponse.body();
+            runTest(fullRequest);
+          }
+        ).subscribe();
+    } else {
+      runTest(event.body());
+    }
+  }
+
+  private void runTest(JsonObject fullRequest) {
+    String testResult = "Failure";
+    JsonObject testDefinition = fullRequest.getJsonObject("definition");
     try (ProjectConnection connection = GradleConnector.newConnector()
       .forProjectDirectory(new File(testDefinition.getString("location"))).connect()) {
       BuildLauncher buildLauncher = connection.newBuild();
-      if(testDefinition.containsKey("runnerOptions")){
+      if (testDefinition.containsKey("runnerOptions")) {
         String[] runnerOptions = (String[]) testDefinition.getJsonArray("runnerOptions").getList()
-            .toArray(new String[0]);
+          .toArray(new String[0]);
         buildLauncher.forTasks(runnerOptions);
       } else {
         buildLauncher.forTasks(new String[0]);
       }
-      if (event.body().getJsonObject("testRequest").containsKey("jvm")) {
+      if (fullRequest.getJsonObject("testRequest").containsKey("jvm")) {
         buildLauncher.setJavaHome(new File(configuration.getJvmsMap()
-          .get(event.body().getJsonObject("testRequest").getString("jvm"))));
+          .get(fullRequest.getJsonObject("testRequest").getString("jvm"))));
       }
       buildLauncher.setStandardInput(new ByteArrayInputStream("consume this!".getBytes()));
       buildLauncher.run();
@@ -70,22 +87,25 @@ public class RunnerGradleHandler implements Handler<Message<JsonObject>> {
       LOGGER.error(e);
     } finally {
       final String result = testResult;
-      JsonObject updateHistory = updateHistory(event.body().getJsonObject("testRequest"), testResult);
+      JsonObject updateHistory = updateHistory(fullRequest.getJsonObject("testRequest"),
+        testResult);
       vertx.eventBus().rxRequest("kabassu.database.mongo.replacedocument", updateHistory)
         .toObservable()
         .doOnNext(
-          eventResponse->{
-            vertx.eventBus().send("kabassu.results.dispatcher",event.body().put("result", result).put("testRequest",updateHistory.getJsonObject("new")));
+          eventResponse -> {
+            vertx.eventBus().send("kabassu.results.dispatcher",
+              fullRequest.put("result", result)
+                .put("testRequest", updateHistory.getJsonObject("new")));
           }
         ).subscribe();
     }
-
   }
 
   private JsonObject updateHistory(JsonObject testRequest, String testResult) {
-    testRequest.getJsonArray("history").add(new JsonObject().put("date",new Date().getTime()).put("event","Test finished with: "+testResult));
-    return new JsonObject().put("new",testRequest)
-      .put("collection","kabassu-requests").put("id",testRequest.getString("_id"));
+    testRequest.getJsonArray("history").add(new JsonObject().put("date", new Date().getTime())
+      .put("event", "Test finished with: " + testResult));
+    return new JsonObject().put("new", testRequest)
+      .put("collection", "kabassu-requests").put("id", testRequest.getString("_id"));
   }
 
 }
