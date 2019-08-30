@@ -38,4 +38,5 @@ include 'kabassu-results-server'
 include 'kabassu-test-rerun'
 include 'kabassu-suite-dispatcher'
 include 'kabassu-suite-rerun'
+include 'kabassu-files-retriever'
 

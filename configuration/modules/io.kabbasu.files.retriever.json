@@ -1,0 +1,7 @@
+{
+  "name": "longworker:io.kabassu.files.retriever",
+  "config": {
+    "verticle": "io.kabassu.files.retriever.KabassuFilesRetrieverVerticle",
+    "downloadDirectory":  "../../../test-dir"
+  }
+}
