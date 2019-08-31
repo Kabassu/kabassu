@@ -13,4 +13,4 @@ Not every file has to be changed, in fact if file is not described here the the 
 **Need to be changed before start**   
 5.[io.kabassu.results.server.json](results.server.md) - configuration of server that will provide access to download reports in html format   
 **Has to be changed if directory in _io.kabassu.results.retriever.main.json_ was changed**
-6. [io.kabassu.files.retriever](files.retriever.md) - configuration for getting test files from other places then local filesystem 
+6. [io.kabassu.files.retriever.json](files.retriever.md) - configuration for getting test files from other places then local filesystem 
