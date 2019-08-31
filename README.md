@@ -28,3 +28,7 @@ Here you can find possible options [https://vertx.io/docs/vertx-mongo-client/jav
 
 6. Run start.bat or start.sh
 7. Application will use ports 8080 and 8090. They can be changed in server configuration files
+
+More detailed information can be found:  
+[Installation](/docs/instalation.md)  
+[Configuration]
