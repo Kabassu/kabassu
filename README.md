@@ -31,4 +31,4 @@ Here you can find possible options [https://vertx.io/docs/vertx-mongo-client/jav
 
 More detailed information can be found:  
 [Installation](/docs/instalation.md)  
-[Configuration]
+[Configuration](/docs/configuration/configuration.md)
