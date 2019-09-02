@@ -176,5 +176,13 @@ To view report we need to use result server and **downloadPath** from results
 
 ## Rerun test
 
+It is possible to rerun test execution that was finished earlier.  
+Endpoint ``POST /kabassu/suite/rerun``  
 
-
+Request
+```
+{
+  "requestId": "5d5d3fa50086ca1f247da509"
+}
+```
+**requestId** - id of execution to rerun
