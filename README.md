@@ -32,3 +32,8 @@ Here you can find possible options [https://vertx.io/docs/vertx-mongo-client/jav
 More detailed information can be found:  
 [Installation](/docs/instalation.md)  
 [Configuration](/docs/configuration/configuration.md)
+
+# API
+
+Kabassu is run by calling series of rest services. All available endpoints can be found in OpenApi specification _configuration/openapi_   
+[Guide for single test](docs/guide/singletest.md) and [Guide for test suit](docs/guide/testsuite.md) explain using of API and every endpoint              
