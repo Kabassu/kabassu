@@ -70,8 +70,7 @@ public class RunnerGradleHandler implements Handler<Message<JsonObject>> {
       .forProjectDirectory(new File(testDefinition.getJsonObject("additionalParameters", new JsonObject()).getString("location"))).connect()) {
       BuildLauncher buildLauncher = connection.newBuild();
       if (testDefinition.getJsonObject("additionalParameters", new JsonObject()).containsKey("runnerOptions")) {
-        String[] runnerOptions = (String[]) testDefinition.getJsonObject("additionalParameters").getJsonArray("runnerOptions").getList()
-          .toArray(new String[0]);
+        String[] runnerOptions = testDefinition.getJsonObject("additionalParameters").getString("runnerOptions").split(" ");
         buildLauncher.forTasks(runnerOptions);
       } else {
         buildLauncher.forTasks(new String[0]);
