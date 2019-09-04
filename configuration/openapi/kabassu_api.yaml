@@ -324,7 +324,7 @@ components:
           type: string
         description:
           type: string
-        additionalData: 
+        additionalParameters:
           type: object
     SuiteRun:
       type: object
@@ -342,7 +342,7 @@ components:
                 type: string
               jvm: 
                 type: string
-              additionalData:
+              additionalParameters:
                 type: object
     TestReRun:
       type: object

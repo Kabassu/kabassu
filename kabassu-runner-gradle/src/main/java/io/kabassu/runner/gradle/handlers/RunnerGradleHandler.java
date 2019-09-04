@@ -67,18 +67,17 @@ public class RunnerGradleHandler implements Handler<Message<JsonObject>> {
     String testResult = "Failure";
     JsonObject testDefinition = fullRequest.getJsonObject("definition");
     try (ProjectConnection connection = GradleConnector.newConnector()
-      .forProjectDirectory(new File(testDefinition.getString("location"))).connect()) {
+      .forProjectDirectory(new File(testDefinition.getJsonObject("additionalParameters", new JsonObject()).getString("location"))).connect()) {
       BuildLauncher buildLauncher = connection.newBuild();
-      if (testDefinition.containsKey("runnerOptions")) {
-        String[] runnerOptions = (String[]) testDefinition.getJsonArray("runnerOptions").getList()
-          .toArray(new String[0]);
+      if (testDefinition.getJsonObject("additionalParameters", new JsonObject()).containsKey("runnerOptions")) {
+        String[] runnerOptions = testDefinition.getJsonObject("additionalParameters").getString("runnerOptions").split(" ");
         buildLauncher.forTasks(runnerOptions);
       } else {
         buildLauncher.forTasks(new String[0]);
       }
-      if (fullRequest.getJsonObject("testRequest").containsKey("jvm")) {
+      if (fullRequest.getJsonObject("testRequest").getJsonObject("additionalParameters", new JsonObject()).containsKey("jvm")) {
         buildLauncher.setJavaHome(new File(configuration.getJvmsMap()
-          .get(fullRequest.getJsonObject("testRequest").getString("jvm"))));
+          .get(fullRequest.getJsonObject("testRequest").getJsonObject("additionalParameters").getString("jvm"))));
       }
       buildLauncher.setStandardInput(new ByteArrayInputStream("consume this!".getBytes()));
       buildLauncher.run();

@@ -18,21 +18,22 @@ Request
 {
   "name": "test",
   "runner": "gradle",
-  "runnerOptions": ["clean", "test"],
   "locationType": "git",
   "additionalParameters": {
-  	"repository": "git@github.com:Kabassu/kabassu-simple-test.git"
+  	"repository": "git@github.com:Kabassu/kabassu-simple-test.git",
+  	"location": "",
+  	"runnerOptions": ["clean", "test"],
   },
-  "location": "",
   "reports": [ "allure", "allure-trend" ]
 }
 ```
 **name** - just name for definition to make easier to understand it's purpose
 **runner** - what runner is used for this test
-**runnerOptions** - array of options for runner (for example for gradle runner: list of tasks)
 **locationType** - where is test located
-**location** - actual location od disk (used only for _filesystem_)
-**additionaParameters** - array of other parameters that maybe required for **runner** or **locationType**. In our case it is **repository** which is required by **locationType**   
+**additionaParameters** - array of other parameters that maybe required for **runner** or **locationType**. 
+-  **runnerOptions** - array of options for runner (for example for gradle runner: list of tasks)
+-  **location** - actual location od disk (used only for _filesystem_)
+-  **repository** - address of git repository if you use git locationType
 **reports** - list of reports to download after test
 
 Call for this service will return id of the definition
@@ -47,17 +48,18 @@ Request
 {
   "definitionId": "5d6914b4540d7f634e494f55",
   "configurationId": "string",
-  "additionalData": {
-  	"branch": "test"
+  "additionalParameters": {
+  	"branch": "test",
+  	  "jvm":"1.8",
   },
-  "jvm":"1.8",
   "description": "Test execution descriptiom"
 }
 ```
 **definitionId** - id of prepared definition
-**configurationId** - id of earlier prepared **additionalData** !NOT DONE YET!
-**jvm** - jvm which will be used to run test (defined in Kabassu configuration)
-**additionalData** - list of additional parameters that can be changed for execution. For example **branch** is parameter for git **location** from definition that can be used to checkout different branch the default  
+**configurationId** - id of earlier prepared **additionalParameters** !NOT DONE YET!
+**additionalParameters** - list of additional parameters that can be changed for execution. 
+- **branch** is parameter for git **locationType** from definition that can be used to checkout different branch the default  
+- **jvm** - jvm which will be used to run test (defined in Kabassu configuration)
 **description** - only the description of this execution
 Call will return id of created execution
 
@@ -71,11 +73,11 @@ Response:
 {
   "_id" : "5d692388540d7f634e494f5b",
   "definitionId" : "5d691239540d7f634e494f4f",
-  "jvm" : "1.8",
   "description" : "uber",
   "configurationId" : "string",
-  "additionalData" : {
-    "branch" : "test"
+  "additionalParameters" : {
+    "branch" : "test",
+    "jvm" : "1.8",
   },
   "status" : "finished",
   "history" : [ {
@@ -114,11 +116,11 @@ Response:
     "testRequest" : {
       "_id" : "5d692388540d7f634e494f5b",
       "definitionId" : "5d691239540d7f634e494f4f",
-      "jvm" : "1.8",
       "description" : "uber",
       "configurationId" : "string",
-      "additionalData" : {
-        "branch" : "test"
+      "additionalParameters" : {
+        "branch" : "test",
+        "jvm" : "1.8"
       },
       "status" : "started",
       "history" : [ {
@@ -133,12 +135,12 @@ Response:
       "_id" : "5d691239540d7f634e494f4f",
       "name" : "GIT",
       "runner" : "gradle",
-      "runnerOptions" : [ "clean", "test" ],
       "locationType" : "git",
       "additionalParameters" : {
-        "repository" : "git@github.com:Kabassu/kabassu-simple-test.git"
+        "repository" : "git@github.com:Kabassu/kabassu-simple-test.git",
+        "runnerOptions" : [ "clean", "test" ],
+        "location" : "D:\\code\\kabassu\\test-dir\\5d692388540d7f634e494f5b\\kabassu-simple-test"
       },
-      "location" : "D:\\code\\kabassu\\test-dir\\5d692388540d7f634e494f5b\\kabassu-simple-test",
       "reports" : [ "allure", "allure-trend" ],
       "created" : 1567167033831
     },

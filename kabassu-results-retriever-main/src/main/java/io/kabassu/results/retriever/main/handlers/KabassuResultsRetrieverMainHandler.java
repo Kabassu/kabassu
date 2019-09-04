@@ -61,7 +61,7 @@ public class KabassuResultsRetrieverMainHandler implements Handler<Message<JsonO
     reports.forEach(report -> {
       ReportsRetriever reportsRetriever = reportsRetrieverFactory
         .getReportsRetriever(report, testData.getJsonObject("testRequest").getString("_id"),
-          testData.getJsonObject("definition").getString("location"));
+          testData.getJsonObject("definition").getJsonObject("additionalParameters").getString("location"));
       try {
         downloadReports.add(
           new JsonObject().put("location", reportsRetriever.retrieveReport()).put("downloadPath",
