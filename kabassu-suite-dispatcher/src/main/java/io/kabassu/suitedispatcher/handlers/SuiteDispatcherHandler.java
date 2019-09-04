@@ -95,9 +95,6 @@ public class SuiteDispatcherHandler implements Handler<Message<JsonObject>> {
       .put("status", "started")
       .put("history", new JsonArray().add(new JsonObject().put("date", new Date().getTime())
         .put("event", "Request created with test suite and started")));
-    if(testRequestData.getJsonObject("additionalParameters", new JsonObject()).containsKey("jvm")){
-      preparedRequest.getJsonObject("additionalParameters").put("jvm", testRequestData.getString("jvm"));
-    }
     return preparedRequest;
   }
 
