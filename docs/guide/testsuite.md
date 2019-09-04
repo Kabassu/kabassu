@@ -33,14 +33,14 @@ Request
   	{
   	  "definitionId": "5d6640d2d6c8ed646fc8d4ac",
 		  "configurationId": "string",
-		  "additionalData": {
+		  "additionalParameters": {
 		  	"branch": "test",
 		  	"jvm":"1.8"	
   	},
   	{
   		"definitionId": "5d664103d6c8ed646fc8d4ae",
 		  "configurationId": "string",
-		  "additionalData": {
+		  "additionalParameters": {
         "branch": "test",
        	"jvm":"1.8"	
       }	
@@ -52,7 +52,7 @@ Request
 *definitionData* - array of object that have configuration for every definition
 - **definitionId** - id of definition
 - **configurationId** - preset additional data !NOT IMPLEMENTED!
-- **additionalData** - different additional data used for execution
+- **additionalParameters** - different additional data used for execution
 
 ## Get the status and results of every test execution in suite
 To do this you need to retrieve every test execution connected to suite execution and check required information.    

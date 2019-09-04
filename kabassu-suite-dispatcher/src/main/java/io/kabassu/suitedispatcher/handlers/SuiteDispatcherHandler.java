@@ -89,14 +89,14 @@ public class SuiteDispatcherHandler implements Handler<Message<JsonObject>> {
     JsonObject preparedRequest=  new JsonObject()
       .put("definitionId", testRequestData.getString("definitionId"))
       .put("configurationId", testRequestData.getString("configurationId"))
-      .put("additionalData", testRequestData.getJsonObject("additionalData", new JsonObject()))
+      .put("additionalParameters", testRequestData.getJsonObject("additionalParameters", new JsonObject()))
       .put("suiteId", suiteId)
       .put("description", "Created for suite configuration: " + suiteId)
       .put("status", "started")
       .put("history", new JsonArray().add(new JsonObject().put("date", new Date().getTime())
         .put("event", "Request created with test suite and started")));
-    if(testRequestData.getJsonObject("additionalData", new JsonObject()).containsKey("jvm")){
-      preparedRequest.getJsonObject("additionalData").put("jvm", testRequestData.getString("jvm"));
+    if(testRequestData.getJsonObject("additionalParameters", new JsonObject()).containsKey("jvm")){
+      preparedRequest.getJsonObject("additionalParameters").put("jvm", testRequestData.getString("jvm"));
     }
     return preparedRequest;
   }

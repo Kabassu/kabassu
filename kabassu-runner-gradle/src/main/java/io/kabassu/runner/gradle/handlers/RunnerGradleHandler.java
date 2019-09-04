@@ -76,9 +76,9 @@ public class RunnerGradleHandler implements Handler<Message<JsonObject>> {
       } else {
         buildLauncher.forTasks(new String[0]);
       }
-      if (fullRequest.getJsonObject("testRequest").getJsonObject("additionalData", new JsonObject()).containsKey("jvm")) {
+      if (fullRequest.getJsonObject("testRequest").getJsonObject("additionalParameters", new JsonObject()).containsKey("jvm")) {
         buildLauncher.setJavaHome(new File(configuration.getJvmsMap()
-          .get(fullRequest.getJsonObject("testRequest").getJsonObject("additionalData").getString("jvm"))));
+          .get(fullRequest.getJsonObject("testRequest").getJsonObject("additionalParameters").getString("jvm"))));
       }
       buildLauncher.setStandardInput(new ByteArrayInputStream("consume this!".getBytes()));
       buildLauncher.run();

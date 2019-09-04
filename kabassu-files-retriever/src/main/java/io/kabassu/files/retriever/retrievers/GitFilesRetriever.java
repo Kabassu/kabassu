@@ -24,10 +24,10 @@ public class GitFilesRetriever extends AbstractFileRetriever {
     try {
       prepareDirectory();
       cloneRepository();
-      if (request.getJsonObject("testRequest").getJsonObject("additionalData", new JsonObject())
+      if (request.getJsonObject("testRequest").getJsonObject("additionalParameters", new JsonObject())
         .containsKey("branch")) {
         switchBranch(
-          request.getJsonObject("testRequest").getJsonObject("additionalData").getString("branch"));
+          request.getJsonObject("testRequest").getJsonObject("additionalParameters").getString("branch"));
       }
       if(!this.request.getJsonObject("definition").containsKey("additionalParameters")){
         this.request.getJsonObject("definition").put("additionalParameters", new JsonObject());

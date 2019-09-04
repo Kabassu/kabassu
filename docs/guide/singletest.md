@@ -48,7 +48,7 @@ Request
 {
   "definitionId": "5d6914b4540d7f634e494f55",
   "configurationId": "string",
-  "additionalData": {
+  "additionalParameters": {
   	"branch": "test",
   	  "jvm":"1.8",
   },
@@ -56,8 +56,8 @@ Request
 }
 ```
 **definitionId** - id of prepared definition
-**configurationId** - id of earlier prepared **additionalData** !NOT DONE YET!
-**additionalData** - list of additional parameters that can be changed for execution. 
+**configurationId** - id of earlier prepared **additionalParameters** !NOT DONE YET!
+**additionalParameters** - list of additional parameters that can be changed for execution. 
 - **branch** is parameter for git **locationType** from definition that can be used to checkout different branch the default  
 - **jvm** - jvm which will be used to run test (defined in Kabassu configuration)
 **description** - only the description of this execution
@@ -75,7 +75,7 @@ Response:
   "definitionId" : "5d691239540d7f634e494f4f",
   "description" : "uber",
   "configurationId" : "string",
-  "additionalData" : {
+  "additionalParameters" : {
     "branch" : "test",
     "jvm" : "1.8",
   },
@@ -118,7 +118,7 @@ Response:
       "definitionId" : "5d691239540d7f634e494f4f",
       "description" : "uber",
       "configurationId" : "string",
-      "additionalData" : {
+      "additionalParameters" : {
         "branch" : "test",
         "jvm" : "1.8"
       },
