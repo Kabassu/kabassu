@@ -86,16 +86,19 @@ public class SuiteDispatcherHandler implements Handler<Message<JsonObject>> {
   }
 
   private JsonObject mapTestRequest(JsonObject testRequestData, String suiteId) {
-    return new JsonObject()
+    JsonObject preparedRequest=  new JsonObject()
       .put("definitionId", testRequestData.getString("definitionId"))
       .put("configurationId", testRequestData.getString("configurationId"))
       .put("additionalData", testRequestData.getJsonObject("additionalData", new JsonObject()))
-      .put("jvm", testRequestData.getString("jvm"))
       .put("suiteId", suiteId)
       .put("description", "Created for suite configuration: " + suiteId)
       .put("status", "started")
       .put("history", new JsonArray().add(new JsonObject().put("date", new Date().getTime())
         .put("event", "Request created with test suite and started")));
+    if(testRequestData.getJsonObject("additionalData", new JsonObject()).containsKey("jvm")){
+      preparedRequest.getJsonObject("additionalData").put("jvm", testRequestData.getString("jvm"));
+    }
+    return preparedRequest;
   }
 
   private Promise<JsonObject> createRequest(JsonObject testRequest) {

@@ -24,13 +24,15 @@ public class GitFilesRetriever extends AbstractFileRetriever {
     try {
       prepareDirectory();
       cloneRepository();
-      if (this.request.getJsonObject("testRequest").containsKey("additionalData") && request
-        .getJsonObject("testRequest").getJsonObject("additionalData")
+      if (request.getJsonObject("testRequest").getJsonObject("additionalData", new JsonObject())
         .containsKey("branch")) {
         switchBranch(
           request.getJsonObject("testRequest").getJsonObject("additionalData").getString("branch"));
       }
-      this.request.getJsonObject("definition")
+      if(!this.request.getJsonObject("definition").containsKey("additionalParameters")){
+        this.request.getJsonObject("definition").put("additionalParameters", new JsonObject());
+      }
+      this.request.getJsonObject("definition").getJsonObject("additionalParameters")
         .put("location", checkoutDirectory.getCanonicalPath());
     } catch (IOException e) {
       LOGGER.error("Problem with getting files from GIT", e);
