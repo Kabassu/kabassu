@@ -1,5 +1,6 @@
 package io.kabassu.files.retriever.retrievers;
 
+import io.kabassu.commons.configuration.ConfigurationRetriever;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
@@ -24,10 +25,9 @@ public class GitFilesRetriever extends AbstractFileRetriever {
     try {
       prepareDirectory();
       cloneRepository();
-      if (request.getJsonObject("testRequest").getJsonObject("additionalParameters", new JsonObject())
-        .containsKey("branch")) {
+      if (ConfigurationRetriever.containsParameter(request.getJsonObject("testRequest"),"branch")) {
         switchBranch(
-          request.getJsonObject("testRequest").getJsonObject("additionalParameters").getString("branch"));
+          ConfigurationRetriever.getParameter(request.getJsonObject("testRequest"),"branch"));
       }
       if(!this.request.getJsonObject("definition").containsKey("additionalParameters")){
         this.request.getJsonObject("definition").put("additionalParameters", new JsonObject());
@@ -65,8 +65,7 @@ public class GitFilesRetriever extends AbstractFileRetriever {
   }
 
   private void cloneRepository() throws IOException, InterruptedException {
-    String repository = request.getJsonObject("definition").getJsonObject("additionalParameters")
-      .getString("repository");
+    String repository = ConfigurationRetriever.getParameter(request.getJsonObject("definition"),"repository");
     ProcessBuilder processBuilder = new ProcessBuilder();
     processBuilder.directory(requestDirectory);
     if (SystemUtils.IS_OS_WINDOWS) {

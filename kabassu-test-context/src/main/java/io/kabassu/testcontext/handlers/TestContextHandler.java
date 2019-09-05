@@ -17,7 +17,6 @@
 package io.kabassu.testcontext.handlers;
 
 import io.kabassu.commons.constants.MessagesFields;
-import io.kabassu.testcontext.utils.ParametersCombiner;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
@@ -139,10 +138,8 @@ public class TestContextHandler implements Handler<Message<JsonObject>> {
           if (eventResponse.succeeded()) {
             JsonObject configurationData = (JsonObject) eventResponse.result().body();
             if (configurationData != null && configurationData.containsKey("_id")) {
-
-              ParametersCombiner
-                .mergeAdditionalParameters(jsonWithAdditionalParameters, configurationData);
-              promise.complete(jsonWithAdditionalParameters);
+              promise.complete(
+                jsonWithAdditionalParameters.put("configurationParameters", configurationData.getJsonObject("parameters")));
             } else {
               promise
                 .complete(jsonWithAdditionalParameters);
