@@ -181,8 +181,6 @@ paths:
                   name: test
                   runner: gradle
                   locationType: filesystem
-                  location: '../junit5-test'
-              
       responses:
         '201':
           description: Added
@@ -306,14 +304,12 @@ components:
             type: string
           runner:
             type: string
-          runnerOptions:
-            type: array
-            items:
-                type: string
+          configurationId:
+            type: string
           locationType:
             type: string
-          location:
-            type: string
+          additionalParameters:
+            type: object
           reports:
             type: array
             items:

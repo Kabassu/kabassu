@@ -45,6 +45,9 @@ public class KabassuMongoVerticle extends AbstractVerticle {
       .consumer("kabassu.database.mongo.adddefinition",
         mongoHandlersProvider.provideAddDataHandler("kabassu-definitions")));
     consumers.add(vertx.eventBus()
+      .consumer("kabassu.database.mongo.addconfiguration",
+        mongoHandlersProvider.provideAddDataHandler("kabassu-configurations")));
+    consumers.add(vertx.eventBus()
       .consumer("kabassu.database.mongo.addsuiterun",
         mongoHandlersProvider.provideAddDataHandler("kabassu-suite-runs")));
     consumers.add(vertx.eventBus()
@@ -62,6 +65,9 @@ public class KabassuMongoVerticle extends AbstractVerticle {
     consumers.add(vertx.eventBus()
       .consumer("kabassu.database.mongo.getdefinition",
         mongoHandlersProvider.provideGetDataByIdHandler("kabassu-definitions", "_id")));
+    consumers.add(vertx.eventBus()
+      .consumer("kabassu.database.mongo.getconfiguration",
+        mongoHandlersProvider.provideGetDataByIdHandler("kabassu-configurations", "_id")));
     consumers.add(vertx.eventBus()
       .consumer("kabassu.database.mongo.getrequest",
         mongoHandlersProvider.provideGetDataByIdHandler("kabassu-requests", "_id")));
