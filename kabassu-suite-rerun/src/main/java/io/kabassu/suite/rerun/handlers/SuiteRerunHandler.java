@@ -83,27 +83,8 @@ public class SuiteRerunHandler implements Handler<Message<JsonObject>> {
   }
 
   private Promise<JsonObject> updateTest(JsonObject request) {
-    Promise<JsonObject> promise = Promise.promise();
-
-    vertx.eventBus()
-      .request("kabassu.database.mongo.replacedocument", request,
-        eventResponse -> {
-          if (eventResponse.succeeded()) {
-            JsonObject testRequest = (JsonObject) eventResponse.result().body();
-            promise.complete(updateHistory(testRequest));
-          } else {
-            promise
-              .complete(new JsonObject());
-          }
-        }
-      );
-    try {
-      return promise;
-    } catch (Exception e) {
-      LOGGER.error("Error during update  test request.", e);
-      promise.complete(new JsonObject());
-      return promise;
-    }
+    return getPromiseWithRequest("kabassu.database.mongo.replacedocument", request,
+      "Error during updatign  test request.");
   }
 
   private void runTests(List<Future> futures) {
@@ -117,10 +98,16 @@ public class SuiteRerunHandler implements Handler<Message<JsonObject>> {
   }
 
   private Promise<JsonObject> retrieveRequest(String request) {
+    return getPromiseWithRequest("kabassu.database.mongo.getrequest", request,
+      "Error during creating  test request.");
+  }
+
+  private Promise<JsonObject> getPromiseWithRequest(String address, Object request,
+    String errorMessage) {
     Promise<JsonObject> promise = Promise.promise();
 
     vertx.eventBus()
-      .request("kabassu.database.mongo.getrequest", request,
+      .request(address, request,
         eventResponse -> {
           if (eventResponse.succeeded()) {
             JsonObject testRequest = (JsonObject) eventResponse.result().body();
@@ -134,7 +121,7 @@ public class SuiteRerunHandler implements Handler<Message<JsonObject>> {
     try {
       return promise;
     } catch (Exception e) {
-      LOGGER.error("Error during creating  test request.", e);
+      LOGGER.error(errorMessage, e);
       promise.complete(new JsonObject());
       return promise;
     }
