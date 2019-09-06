@@ -17,6 +17,7 @@
 package io.kabassu.results.retriever.main.handlers;
 
 import io.kabassu.commons.configuration.ConfigurationRetriever;
+import io.kabassu.commons.constants.JsonFields;
 import io.kabassu.results.retriever.main.configuration.KabassuResultsRetrieverMainConfiguration;
 import io.kabassu.results.retriever.main.reports.ReportsRetriever;
 import io.kabassu.results.retriever.main.reports.ReportsRetrieverFactory;
@@ -53,31 +54,32 @@ public class KabassuResultsRetrieverMainHandler implements Handler<Message<JsonO
   public void handle(Message<JsonObject> event) {
     JsonObject testData = event.body();
     List<String> reports = new ArrayList<>();
-    if (testData.getJsonObject("definition").containsKey("reports")) {
-      reports = testData.getJsonObject("definition").getJsonArray("reports").getList();
+    if (testData.getJsonObject(JsonFields.DEFINITION).containsKey("reports")) {
+      reports = testData.getJsonObject(JsonFields.DEFINITION).getJsonArray("reports").getList();
     } else {
       reports.add(configuration.getDefaultReports());
     }
     List<JsonObject> downloadReports = new ArrayList<>();
     reports.forEach(report -> {
       ReportsRetriever reportsRetriever = reportsRetrieverFactory
-        .getReportsRetriever(report, testData.getJsonObject("testRequest").getString("_id"),
-          ConfigurationRetriever.getParameter(testData.getJsonObject("definition"),"location"));
+        .getReportsRetriever(report, testData.getJsonObject(JsonFields.TEST_REQUEST).getString("_id"),
+          ConfigurationRetriever.getParameter(testData.getJsonObject(JsonFields.DEFINITION),"location"));
       try {
         downloadReports.add(
           new JsonObject().put("location", reportsRetriever.retrieveReport()).put("downloadPath",
             reportsRetriever.retrieveLink()).put("reportType",report).put("type",configuration.getReportsTypes().get(report).getString("type","multi")));
       } catch (IOException | InterruptedException e) {
         LOGGER.error("Problem with report download", e);
+        Thread.currentThread().interrupt();
       }
 
     });
     JsonObject resultsData = new JsonObject();
-    resultsData.put("testId", testData.getJsonObject("testRequest").getString("_id"));
+    resultsData.put("testId", testData.getJsonObject(JsonFields.TEST_REQUEST).getString("_id"));
     resultsData.put("result", testData.getString("result"));
     testData.put("downloadedReports", new JsonArray(downloadReports));
     vertx.eventBus().send("kabassu.database.mongo.addresults", testData);
-    updateHistory(testData.getJsonObject("testRequest"));
+    updateHistory(testData.getJsonObject(JsonFields.TEST_REQUEST));
   }
 
   private void updateHistory(JsonObject testRequest) {
@@ -85,7 +87,7 @@ public class KabassuResultsRetrieverMainHandler implements Handler<Message<JsonO
     testRequest.getJsonArray("history").add(new JsonObject().put("date",new Date().getTime()).put("event","Reports downloaded"));
     JsonObject updateRequest = new JsonObject().put("new",testRequest)
       .put("collection","kabassu-requests").put("id",testRequest.getString("_id"));
-    testRequest.remove("configurationParameters");
+    testRequest.remove(JsonFields.CONFIGURATION_PARAMETERS);
     vertx.eventBus().send("kabassu.database.mongo.replacedocument", updateRequest);
   }
 }

@@ -17,6 +17,7 @@
 package io.kabassu.suitedispatcher.handlers;
 
 import io.kabassu.commons.constants.EventBusAdresses;
+import io.kabassu.commons.constants.JsonFields;
 import io.kabassu.commons.constants.MessagesFields;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
@@ -89,7 +90,8 @@ public class SuiteDispatcherHandler implements Handler<Message<JsonObject>> {
     JsonObject preparedRequest=  new JsonObject()
       .put("definitionId", testRequestData.getString("definitionId"))
       .put("configurationId", testRequestData.getString("configurationId"))
-      .put("additionalParameters", testRequestData.getJsonObject("additionalParameters", new JsonObject()))
+      .put(
+        JsonFields.ADDITIONAL_PARAMETERS, testRequestData.getJsonObject(JsonFields.ADDITIONAL_PARAMETERS, new JsonObject()))
       .put("suiteId", suiteId)
       .put("description", "Created for suite configuration: " + suiteId)
       .put("status", "started")

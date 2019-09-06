@@ -1,6 +1,7 @@
 package io.kabassu.files.retriever.retrievers;
 
 import io.kabassu.commons.configuration.ConfigurationRetriever;
+import io.kabassu.commons.constants.JsonFields;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
@@ -25,14 +26,14 @@ public class GitFilesRetriever extends AbstractFileRetriever {
     try {
       prepareDirectory();
       cloneRepository();
-      if (ConfigurationRetriever.containsParameter(request.getJsonObject("testRequest"),"branch")) {
+      if (ConfigurationRetriever.containsParameter(request.getJsonObject(JsonFields.TEST_REQUEST),"branch")) {
         switchBranch(
-          ConfigurationRetriever.getParameter(request.getJsonObject("testRequest"),"branch"));
+          ConfigurationRetriever.getParameter(request.getJsonObject(JsonFields.TEST_REQUEST),"branch"));
       }
-      if(!this.request.getJsonObject("definition").containsKey("additionalParameters")){
-        this.request.getJsonObject("definition").put("additionalParameters", new JsonObject());
+      if(!this.request.getJsonObject(JsonFields.DEFINITION).containsKey(JsonFields.ADDITIONAL_PARAMETERS)){
+        this.request.getJsonObject(JsonFields.DEFINITION).put(JsonFields.ADDITIONAL_PARAMETERS, new JsonObject());
       }
-      this.request.getJsonObject("definition").getJsonObject("additionalParameters")
+      this.request.getJsonObject(JsonFields.DEFINITION).getJsonObject(JsonFields.ADDITIONAL_PARAMETERS)
         .put("location", checkoutDirectory.getCanonicalPath());
     } catch (IOException e) {
       LOGGER.error("Problem with getting files from GIT", e);
@@ -65,7 +66,7 @@ public class GitFilesRetriever extends AbstractFileRetriever {
   }
 
   private void cloneRepository() throws IOException, InterruptedException {
-    String repository = ConfigurationRetriever.getParameter(request.getJsonObject("definition"),"repository");
+    String repository = ConfigurationRetriever.getParameter(request.getJsonObject(JsonFields.DEFINITION),"repository");
     ProcessBuilder processBuilder = new ProcessBuilder();
     processBuilder.directory(requestDirectory);
     if (SystemUtils.IS_OS_WINDOWS) {
@@ -80,7 +81,7 @@ public class GitFilesRetriever extends AbstractFileRetriever {
 
   private void prepareDirectory() throws IOException {
     requestDirectory = new File(this.downloadDirectory,
-      this.request.getJsonObject("testRequest").getString("_id"));
+      this.request.getJsonObject(JsonFields.TEST_REQUEST).getString("_id"));
     if (requestDirectory.exists()) {
       FileUtils.forceDelete(requestDirectory);
     }

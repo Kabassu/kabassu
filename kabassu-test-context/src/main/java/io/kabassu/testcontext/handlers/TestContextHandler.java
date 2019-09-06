@@ -16,6 +16,7 @@
 
 package io.kabassu.testcontext.handlers;
 
+import io.kabassu.commons.constants.JsonFields;
 import io.kabassu.commons.constants.MessagesFields;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
@@ -60,10 +61,10 @@ public class TestContextHandler implements Handler<Message<JsonObject>> {
                 if (completedFutures.succeeded() && existingRunner(
                   mergeWithDefinitionPromise.future().result())) {
                   JsonObject completeTestResults = new JsonObject();
-                  completeTestResults.put("testRequest",
+                  completeTestResults.put(JsonFields.TEST_REQUEST,
                     (JsonObject) mergeWithConfigurationPromise.future().result());
                   completeTestResults
-                    .put("definition", mergeWithDefinitionPromise.future().result());
+                    .put(JsonFields.DEFINITION, mergeWithDefinitionPromise.future().result());
                   callRunner(completeTestResults);
                 }
               }
@@ -139,7 +140,7 @@ public class TestContextHandler implements Handler<Message<JsonObject>> {
             JsonObject configurationData = (JsonObject) eventResponse.result().body();
             if (configurationData != null && configurationData.containsKey("_id")) {
               promise.complete(
-                jsonWithAdditionalParameters.put("configurationParameters", configurationData.getJsonObject("parameters")));
+                jsonWithAdditionalParameters.put(JsonFields.CONFIGURATION_PARAMETERS, configurationData.getJsonObject("parameters")));
             } else {
               promise
                 .complete(jsonWithAdditionalParameters);
@@ -154,7 +155,7 @@ public class TestContextHandler implements Handler<Message<JsonObject>> {
 
   private void callRunner(JsonObject completeTestRequest) {
     vertx.eventBus()
-      .send(runnersMap.get(completeTestRequest.getJsonObject("definition").getString(RUNNER)),
+      .send(runnersMap.get(completeTestRequest.getJsonObject(JsonFields.DEFINITION).getString(RUNNER)),
         completeTestRequest);
   }
 

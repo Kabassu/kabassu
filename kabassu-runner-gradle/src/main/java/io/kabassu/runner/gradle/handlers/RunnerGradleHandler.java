@@ -18,6 +18,7 @@ package io.kabassu.runner.gradle.handlers;
 
 import io.kabassu.commons.checks.FilesDownloadChecker;
 import io.kabassu.commons.configuration.ConfigurationRetriever;
+import io.kabassu.commons.constants.JsonFields;
 import io.kabassu.runner.gradle.configuration.KabassuRunnerGradleConfiguration;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
@@ -51,7 +52,7 @@ public class RunnerGradleHandler implements Handler<Message<JsonObject>> {
 
     if (FilesDownloadChecker
       .checkIfFilesRetrieveIsRequired(
-        event.body().getJsonObject("definition").getString("locationType"))) {
+        event.body().getJsonObject(JsonFields.DEFINITION).getString("locationType"))) {
       vertx.eventBus().rxRequest("kabassu.filesretriever",
         event.body()).toObservable()
         .doOnNext(
@@ -67,7 +68,7 @@ public class RunnerGradleHandler implements Handler<Message<JsonObject>> {
 
   private void runTest(JsonObject fullRequest) {
     String testResult = "Failure";
-    JsonObject testDefinition = fullRequest.getJsonObject("definition");
+    JsonObject testDefinition = fullRequest.getJsonObject(JsonFields.DEFINITION);
     try (ProjectConnection connection = GradleConnector.newConnector()
       .forProjectDirectory(
         new File(ConfigurationRetriever.getParameter(testDefinition, "location"))).connect()) {
@@ -79,10 +80,10 @@ public class RunnerGradleHandler implements Handler<Message<JsonObject>> {
       } else {
         buildLauncher.forTasks(new String[0]);
       }
-      if (ConfigurationRetriever.containsParameter(fullRequest.getJsonObject("testRequest")
+      if (ConfigurationRetriever.containsParameter(fullRequest.getJsonObject(JsonFields.TEST_REQUEST)
         ,"jvm")) {
         buildLauncher.setJavaHome(new File(configuration.getJvmsMap()
-          .get(ConfigurationRetriever.getParameter(fullRequest.getJsonObject("testRequest"),"jvm"))));
+          .get(ConfigurationRetriever.getParameter(fullRequest.getJsonObject(JsonFields.TEST_REQUEST),"jvm"))));
       }
       buildLauncher.setStandardInput(new ByteArrayInputStream("consume this!".getBytes()));
       buildLauncher.run();
@@ -91,7 +92,7 @@ public class RunnerGradleHandler implements Handler<Message<JsonObject>> {
       LOGGER.error(e);
     } finally {
       final String result = testResult;
-      JsonObject updateHistory = updateHistory(fullRequest.getJsonObject("testRequest"),
+      JsonObject updateHistory = updateHistory(fullRequest.getJsonObject(JsonFields.TEST_REQUEST),
         testResult);
       vertx.eventBus().rxRequest("kabassu.database.mongo.replacedocument", updateHistory)
         .toObservable()
@@ -99,7 +100,7 @@ public class RunnerGradleHandler implements Handler<Message<JsonObject>> {
           eventResponse -> {
             vertx.eventBus().send("kabassu.results.dispatcher",
               fullRequest.put("result", result)
-                .put("testRequest", updateHistory.getJsonObject("new")));
+                .put(JsonFields.TEST_REQUEST, updateHistory.getJsonObject("new")));
           }
         ).subscribe();
     }
