@@ -16,7 +16,6 @@
 
 package io.kabassu.server.configuration;
 
-import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import java.util.ArrayList;

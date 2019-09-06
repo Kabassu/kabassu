@@ -87,7 +87,7 @@ public class SuiteDispatcherHandler implements Handler<Message<JsonObject>> {
   }
 
   private JsonObject mapTestRequest(JsonObject testRequestData, String suiteId) {
-    JsonObject preparedRequest=  new JsonObject()
+    return new JsonObject()
       .put("definitionId", testRequestData.getString("definitionId"))
       .put(JsonFields.CONFIGURATION_ID, testRequestData.getString(JsonFields.CONFIGURATION_ID))
       .put(
@@ -97,7 +97,6 @@ public class SuiteDispatcherHandler implements Handler<Message<JsonObject>> {
       .put("status", "started")
       .put("history", new JsonArray().add(new JsonObject().put("date", new Date().getTime())
         .put("event", "Request created with test suite and started")));
-    return preparedRequest;
   }
 
   private Promise<JsonObject> createRequest(JsonObject testRequest) {

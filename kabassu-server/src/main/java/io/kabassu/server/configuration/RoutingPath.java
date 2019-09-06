@@ -16,9 +16,6 @@
 
 package io.kabassu.server.configuration;
 
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
-
 public class RoutingPath {
 
   private String operationId;

@@ -38,7 +38,7 @@ public class AvailableServerRoutingHandler implements Handler<RoutingContext> {
   public void handle(RoutingContext routingContext) {
     JsonObject message = new JsonObject();
     message.put(MessagesFields.REQUEST, TestRetrieverCommands.RETURN_AVAILABLE_TESTS);
-    vertx.eventBus().rxSend(address, message).toObservable().doOnNext(response ->
+    vertx.eventBus().rxRequest(address, message).toObservable().doOnNext(response ->
         routingContext.request().response().end(((JsonObject) response.body()).encodePrettily())
     ).subscribe();
 

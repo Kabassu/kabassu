@@ -60,7 +60,7 @@ public class TestManagerServerRoutingHandler implements Handler<RoutingContext> 
       if (!routingContext.fileUploads().isEmpty()) {
         prepareUploadFilesData(message, routingContext.fileUploads());
       }
-      vertx.eventBus().rxSend(address, message).toObservable().doOnNext(response ->
+      vertx.eventBus().rxRequest(address, message).toObservable().doOnNext(response ->
           routingContext.request().response().end(((JsonObject) response.body()).encodePrettily())
       ).subscribe();
     } else {

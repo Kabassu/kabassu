@@ -39,7 +39,7 @@ public class ResultsServerRoutingHandler implements Handler<RoutingContext> {
     message.put(MessagesFields.RESULTS_STORAGE, routingContext.request().getParam("resultStorage"));
     message.put(MessagesFields.TEST_RUN_ID, routingContext.request().getParam("id"));
 
-    vertx.eventBus().rxSend(address, message).toObservable().doOnNext(response ->
+    vertx.eventBus().rxRequest(address, message).toObservable().doOnNext(response ->
         routingContext.request().response().end(((JsonObject) response.body()).encodePrettily())
     ).subscribe();
 
