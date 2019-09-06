@@ -18,9 +18,6 @@ package io.kabassu.mongo.handlers;
 
 import io.kabassu.mongo.configuration.KabassuMongoConfiguration;
 import io.vertx.core.Handler;
-import io.vertx.core.json.JsonObject;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.eventbus.Message;
 import io.vertx.reactivex.ext.mongo.MongoClient;
