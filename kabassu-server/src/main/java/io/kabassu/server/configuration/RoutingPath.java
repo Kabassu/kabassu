@@ -21,8 +21,6 @@ import io.vertx.core.logging.LoggerFactory;
 
 public class RoutingPath {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(RoutingPath.class);
-
   private String operationId;
 
   private String address;

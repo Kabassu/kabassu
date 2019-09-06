@@ -51,16 +51,14 @@ public class RunnerGradleHandler implements Handler<Message<JsonObject>> {
   public void handle(Message<JsonObject> event) {
 
     if (FilesDownloadChecker
-      .checkIfFilesRetrieveIsRequired(
-        event.body().getJsonObject(JsonFields.DEFINITION).getString("locationType"))) {
+        .checkIfFilesRetrieveIsRequired(
+            event.body().getJsonObject(JsonFields.DEFINITION).getString("locationType"))) {
       vertx.eventBus().rxRequest("kabassu.filesretriever",
-        event.body()).toObservable()
-        .doOnNext(
-          eventResponse -> {
-            JsonObject fullRequest = (JsonObject) eventResponse.body();
-            runTest(fullRequest);
-          }
-        ).subscribe();
+          event.body()).toObservable()
+          .doOnNext(
+              eventResponse ->
+                  runTest((JsonObject) eventResponse.body())
+          ).subscribe();
     } else {
       runTest(event.body());
     }
@@ -70,20 +68,22 @@ public class RunnerGradleHandler implements Handler<Message<JsonObject>> {
     String testResult = "Failure";
     JsonObject testDefinition = fullRequest.getJsonObject(JsonFields.DEFINITION);
     try (ProjectConnection connection = GradleConnector.newConnector()
-      .forProjectDirectory(
-        new File(ConfigurationRetriever.getParameter(testDefinition, "location"))).connect()) {
+        .forProjectDirectory(
+            new File(ConfigurationRetriever.getParameter(testDefinition, "location"))).connect()) {
       BuildLauncher buildLauncher = connection.newBuild();
       if (ConfigurationRetriever.containsParameter(testDefinition, "runnerOptions")) {
         String[] runnerOptions = ConfigurationRetriever
-          .getParameter(testDefinition, "runnerOptions").split(" ");
+            .getParameter(testDefinition, "runnerOptions").split(" ");
         buildLauncher.forTasks(runnerOptions);
       } else {
-        buildLauncher.forTasks(new String[0]);
+        buildLauncher.forTasks(new String[1]);
       }
-      if (ConfigurationRetriever.containsParameter(fullRequest.getJsonObject(JsonFields.TEST_REQUEST)
-        ,"jvm")) {
+      if (ConfigurationRetriever
+          .containsParameter(fullRequest.getJsonObject(JsonFields.TEST_REQUEST)
+              , "jvm")) {
         buildLauncher.setJavaHome(new File(configuration.getJvmsMap()
-          .get(ConfigurationRetriever.getParameter(fullRequest.getJsonObject(JsonFields.TEST_REQUEST),"jvm"))));
+            .get(ConfigurationRetriever
+                .getParameter(fullRequest.getJsonObject(JsonFields.TEST_REQUEST), "jvm"))));
       }
       buildLauncher.setStandardInput(new ByteArrayInputStream("consume this!".getBytes()));
       buildLauncher.run();
@@ -93,24 +93,24 @@ public class RunnerGradleHandler implements Handler<Message<JsonObject>> {
     } finally {
       final String result = testResult;
       JsonObject updateHistory = updateHistory(fullRequest.getJsonObject(JsonFields.TEST_REQUEST),
-        testResult);
+          testResult);
       vertx.eventBus().rxRequest("kabassu.database.mongo.replacedocument", updateHistory)
-        .toObservable()
-        .doOnNext(
-          eventResponse -> {
-            vertx.eventBus().send("kabassu.results.dispatcher",
-              fullRequest.put("result", result)
-                .put(JsonFields.TEST_REQUEST, updateHistory.getJsonObject("new")));
-          }
-        ).subscribe();
+          .toObservable()
+          .doOnNext(
+              eventResponse ->
+                  vertx.eventBus().send("kabassu.results.dispatcher",
+                      fullRequest.put("result", result)
+                          .put(JsonFields.TEST_REQUEST, updateHistory.getJsonObject("new")))
+
+          ).subscribe();
     }
   }
 
   private JsonObject updateHistory(JsonObject testRequest, String testResult) {
     testRequest.getJsonArray("history").add(new JsonObject().put("date", new Date().getTime())
-      .put("event", "Test finished with: " + testResult));
+        .put("event", "Test finished with: " + testResult));
     return new JsonObject().put("new", testRequest)
-      .put(JsonFields.COLLECTION, "kabassu-requests").put("id", testRequest.getString("_id"));
+        .put(JsonFields.COLLECTION, "kabassu-requests").put("id", testRequest.getString("_id"));
   }
 
 }

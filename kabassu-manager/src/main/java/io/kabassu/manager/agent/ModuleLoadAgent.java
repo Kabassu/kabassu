@@ -16,8 +16,6 @@
 
 package io.kabassu.manager.agent;
 
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
@@ -25,18 +23,16 @@ import java.util.jar.JarFile;
 
 public class ModuleLoadAgent {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(ModuleLoadAgent.class);
-
   private static Instrumentation inst;
 
-  private ModuleLoadAgent(){}
+  private ModuleLoadAgent() {
+  }
 
   public static void addToClassPath(File jarFile) throws IOException {
     inst.appendToSystemClassLoaderSearch(new JarFile(jarFile));
   }
 
   public static void premain(String agentArgs, Instrumentation instrumentation) {
-    LOGGER.info("Agent Started");
     inst = instrumentation;
   }
 

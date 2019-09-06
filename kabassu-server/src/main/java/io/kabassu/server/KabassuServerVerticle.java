@@ -17,8 +17,6 @@
 package io.kabassu.server;
 
 import io.kabassu.server.configuration.KabassuServerConfiguration;
-import io.kabassu.server.handlers.ServerRoutingHandlersFactory;
-import io.kabassu.server.security.SecurityHandlerFactory;
 import io.vertx.core.Context;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
@@ -46,8 +44,8 @@ public class KabassuServerVerticle extends AbstractVerticle {
     LOGGER.info("Open API specification location [{}]",
         options.getRoutingSpecificationLocation());
 
-    HttpServerProvider httpServerProvider = new HttpServerProvider(vertx,options.getPort());
-    RoutesProvider routesProvider = new RoutesProvider(vertx,options.getRoutingPath());
+    HttpServerProvider httpServerProvider = new HttpServerProvider(vertx, options.getPort());
+    RoutesProvider routesProvider = new RoutesProvider(vertx, options.getRoutingPath());
 
     OpenAPI3RouterFactory.rxCreate(vertx, options.getRoutingSpecificationLocation())
         .doOnSuccess(routesProvider::configureRouting)
@@ -69,17 +67,8 @@ public class KabassuServerVerticle extends AbstractVerticle {
   }
 
   private void logRouterRoutes(Router router) {
-    LOGGER.info("Routes [{}]", router.getRoutes());
-    printRoutes(router);
+    LOGGER.info("Routes:");
+    router.getRoutes().forEach(route -> LOGGER.info(route.toString()));
   }
 
-  private void printRoutes(Router router) {
-    // @formatter:off
-    System.out.println("\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-    System.out.println("@@                              ROUTER CONFIG                                 @@");
-    System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-    router.getRoutes().forEach(route -> System.out.println("@@     " + route.getDelegate()));
-    System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
-    // @formatter:on
-  }
 }

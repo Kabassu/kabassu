@@ -23,6 +23,7 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
+import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonArray;
@@ -76,7 +77,8 @@ public class ModulesConfigStore implements ConfigStore {
                 completionHandler.handle(Future.failedFuture(ar.cause()));
               } else {
                 completionHandler
-                    .handle(Future.succeededFuture(Buffer.buffer(new JsonObject().put("modules",json.result()).encode())));
+                    .handle(Future.succeededFuture(
+                        Buffer.buffer(new JsonObject().put("modules", json.result()).encode())));
               }
             });
           }
@@ -85,10 +87,10 @@ public class ModulesConfigStore implements ConfigStore {
   }
 
   private void buildConfiguration(List<File> files, Handler<AsyncResult<JsonArray>> handler) {
-    List<Future> futures = new ArrayList<>();
+    List<Promise> futures = new ArrayList<>();
     files.stream()
         .forEach(file -> {
-          Future<JsonObject> future = Future.future();
+          Promise<JsonObject> future = Promise.promise();
           futures.add(future);
           try {
             vertx.fileSystem().readFile(file.getAbsolutePath(),
@@ -96,7 +98,7 @@ public class ModulesConfigStore implements ConfigStore {
                   if (buffer.failed()) {
                     future.fail(buffer.cause());
                   } else {
-                    processor.process(vertx, null, buffer.result(), future.completer());
+                    processor.process(vertx, null, buffer.result(), future.future());
                   }
                 });
           } catch (RejectedExecutionException e) {
@@ -104,16 +106,17 @@ public class ModulesConfigStore implements ConfigStore {
           }
         });
 
-    CompositeFuture.all(futures).setHandler(ar -> {
-      if (ar.failed()) {
-        handler.handle(Future.failedFuture(ar.cause()));
-      } else {
-        JsonArray result = new JsonArray();
-        futures.stream()
-            .map(future -> (JsonObject) future.result())
-            .forEach(result::add);
-        handler.handle(Future.succeededFuture(result));
-      }
-    });
+    CompositeFuture.all(futures.stream().map(Promise::future).collect(Collectors.toList()))
+        .setHandler(ar -> {
+          if (ar.failed()) {
+            handler.handle(Future.failedFuture(ar.cause()));
+          } else {
+            JsonArray result = new JsonArray();
+            futures.stream()
+                .map(future -> (JsonObject) future.future().result())
+                .forEach(result::add);
+            handler.handle(Future.succeededFuture(result));
+          }
+        });
   }
 }

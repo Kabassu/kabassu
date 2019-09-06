@@ -16,11 +16,7 @@
 
 package io.kabassu.results.server.configuration;
 
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.commons.lang3.StringUtils;
 
 public class KabassuResultsServerConfiguration {
 

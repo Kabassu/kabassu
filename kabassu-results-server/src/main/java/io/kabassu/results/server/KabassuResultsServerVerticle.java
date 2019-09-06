@@ -25,7 +25,6 @@ import io.vertx.core.logging.LoggerFactory;
 import io.vertx.reactivex.core.AbstractVerticle;
 import io.vertx.reactivex.core.http.HttpServer;
 import io.vertx.reactivex.ext.web.Router;
-import io.vertx.reactivex.ext.web.api.contract.openapi3.OpenAPI3RouterFactory;
 import io.vertx.reactivex.ext.web.handler.CorsHandler;
 import io.vertx.reactivex.ext.web.handler.StaticHandler;
 
@@ -43,21 +42,22 @@ public class KabassuResultsServerVerticle extends AbstractVerticle {
 
   @Override
   public void start(Promise<Void> startFuture) throws Exception {
-      HttpServer server = vertx.createHttpServer();
-      Router router = Router.router(vertx);
-      router.route().handler(CorsHandler.create("*"));
-      router.route("/kabassu/results/*").handler(StaticHandler.create(options.getResultsDir()).setCachingEnabled(false));
-      server.requestHandler(router).rxListen(options.getPort()).subscribe(
-          ok -> {
-            LOGGER.info("Kabassu Results Server has started. Listening on port {}",
-                options.getPort());
-            startFuture.complete();
-          },
-          error -> {
-            LOGGER.error("Unable to start Kabassu Main Server.", error.getCause());
-            startFuture.fail(error);
-          }
-      );
+    HttpServer server = vertx.createHttpServer();
+    Router router = Router.router(vertx);
+    router.route().handler(CorsHandler.create("*"));
+    router.route("/kabassu/results/*")
+        .handler(StaticHandler.create(options.getResultsDir()).setCachingEnabled(false));
+    server.requestHandler(router).rxListen(options.getPort()).subscribe(
+        ok -> {
+          LOGGER.info("Kabassu Results Server has started. Listening on port {}",
+              options.getPort());
+          startFuture.complete();
+        },
+        error -> {
+          LOGGER.error("Unable to start Kabassu Main Server.", error.getCause());
+          startFuture.fail(error);
+        }
+    );
   }
 
 }
