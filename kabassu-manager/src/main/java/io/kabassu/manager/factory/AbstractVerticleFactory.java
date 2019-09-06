@@ -33,6 +33,7 @@ public abstract class AbstractVerticleFactory implements VerticleFactory {
     return true;
   }
 
+  @Override
   public void resolve(String id, DeploymentOptions deploymentOptions, ClassLoader classLoader,
       Promise<String> resolution) {
     String identifier = VerticleFactory.removePrefix(id);
@@ -47,7 +48,7 @@ public abstract class AbstractVerticleFactory implements VerticleFactory {
         changeBlockingTime(deploymentOptions);
         LOGGER.info("{} is worker", verticle);
       }
-      //ModuleJarLoader.checkClasspath(deploymentOptions.getConfig().getString("modules_directory"));
+      //TODO ModuleJarLoader.checkClasspath(deploymentOptions.getConfig().getString("modules_directory")); - check later
       resolution.complete(verticle);
     } catch (Exception e) {
       resolution.fail(e);

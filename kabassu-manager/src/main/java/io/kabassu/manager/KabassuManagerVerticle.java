@@ -24,7 +24,7 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableTransformer;
 import io.vertx.config.ConfigRetrieverOptions;
 import io.vertx.core.DeploymentOptions;
-import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
@@ -53,7 +53,7 @@ public class KabassuManagerVerticle extends AbstractVerticle {
   private DeploymentManager deploymentManager;
 
   @Override
-  public void start(Future<Void> startFuture) throws Exception {
+  public void start(Promise<Void> startFuture) throws Exception {
 
     updateOption(config().getJsonObject(CONFIG_OVERRIDE), RUNMODE, System.getProperty(RUNMODE),
         true);
@@ -81,7 +81,7 @@ public class KabassuManagerVerticle extends AbstractVerticle {
   }
 
   private void redeployVerticles(List<ModuleDeployInfo> moduleDeployInfos,
-      Future<Void> startFuture) {
+      Promise<Void> startFuture) {
     Observable.fromIterable(moduleDeployInfos)
         .filter(
             moduleDeployInfo -> moduleDeployInfo.getDeployStatus().equals(DeployStatus.UNDEPLOY)
@@ -113,7 +113,7 @@ public class KabassuManagerVerticle extends AbstractVerticle {
     }
   }
 
-  private void deployVerticles(Future<Void> startFuture, Set<String> modules) {
+  private void deployVerticles(Promise<Void> startFuture, Set<String> modules) {
     Observable.fromIterable(modules)
         .flatMap(module -> deployVerticle(module)
             .onErrorResumeNext(
@@ -145,7 +145,7 @@ public class KabassuManagerVerticle extends AbstractVerticle {
   private Observable<Pair<String, String>> verticleCouldNotBeDeployed(Object module,
       Throwable throwable) {
     LOGGER.warn("Can't deploy {}: {}", module, throwable.getMessage());
-    LOGGER.error("",throwable);
+    LOGGER.error("", throwable);
     deploymentManager.getDeployedModules().remove(module);
     return Observable.empty();
   }

@@ -21,7 +21,6 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
@@ -44,14 +43,15 @@ public final class ModuleJarLoader {
     files.stream()
         .filter(file -> file.getName().endsWith(".jar"))
         .filter(file -> !jars.contains(modulesPath + file.getName()))
-        .forEach(jar -> loadLibrary(jar,modulesPath));
+        .forEach(jar -> loadLibrary(jar, modulesPath));
 
   }
 
-  private static void loadLibrary(File jar,String modulePath) {
-    try{
+  private static void loadLibrary(File jar, String modulePath) {
+    try {
       ModuleLoadAgent.addToClassPath(jar);
-      System.setProperty(JAVA_CLASS_PATH, System.getProperty(JAVA_CLASS_PATH)+";"+modulePath+jar.getName());
+      System.setProperty(JAVA_CLASS_PATH,
+          System.getProperty(JAVA_CLASS_PATH) + ";" + modulePath + jar.getName());
     } catch (IOException e) {
       LOGGER.error("Can't add jar to classpath: ", e);
     }
