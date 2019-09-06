@@ -2,7 +2,7 @@
  
 [![Build Status](https://travis-ci.org/Kabassu/kabassu.svg?branch=master)](https://travis-ci.org/Kabassu/kabassu)
 
-[![Quality Gate](https://sonarcloud.io/api/badges/gate?key=io.kabassu)](https://sonarcloud.io/dashboard?id=io.kabassu)
+[![Quality Gate](https://sonarcloud.io/api/project_badges/gate?key=io.kabassu)](https://sonarcloud.io/dashboard?id=io.kabassu)
 
 # Description
 The goal of Kabassu is to create test central, place where users can gather different tests for different application, run them against different enviroments and configurations
