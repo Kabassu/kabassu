@@ -1,5 +1,6 @@
 package io.kabassu.mongo.handlers;
 
+import io.kabassu.commons.constants.JsonFields;
 import io.kabassu.mongo.configuration.KabassuMongoConfiguration;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
@@ -23,7 +24,7 @@ public class MongoGetAllHandler extends AbstractMongoHandler<JsonObject> {
   public void handle(Message<JsonObject> event) {
     JsonObject request = event.body();
     Promise<JsonObject> getDataPromise = getData(request);
-    Promise<Long> countItemsPromise = countItems(request.getString("collection"));
+    Promise<Long> countItemsPromise = countItems(request.getString(JsonFields.COLLECTION));
     CompositeFuture
       .all(getDataPromise.future(), countItemsPromise.future())
       .setHandler(
@@ -44,7 +45,7 @@ public class MongoGetAllHandler extends AbstractMongoHandler<JsonObject> {
     findOptions.setLimit(request.getInteger("pageSize"));
     findOptions.setSkip(request.getInteger("pageSize") * request.getInteger("page"));
     findOptions.setSort(new JsonObject().put("created",1));
-    client.findWithOptions(request.getString("collection"), new JsonObject(), findOptions, res -> {
+    client.findWithOptions(request.getString(JsonFields.COLLECTION), new JsonObject(), findOptions, res -> {
       if (res.succeeded()) {
         promise.complete(new JsonObject().put("results", res.result()));
       } else {
@@ -56,7 +57,7 @@ public class MongoGetAllHandler extends AbstractMongoHandler<JsonObject> {
       return promise;
     } catch (Exception e) {
       LOGGER.error("Error during getting data from collection {}",
-        request.getString("collection"), e);
+        request.getString(JsonFields.COLLECTION), e);
       promise.complete(new JsonObject().put("error", e.getMessage()));
       LOGGER.error("Problem during retrieving data", e);
       return promise;

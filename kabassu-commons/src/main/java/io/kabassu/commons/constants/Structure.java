@@ -16,15 +16,10 @@
 
 package io.kabassu.commons.constants;
 
-public class JsonFields {
+public class Structure {
 
-  private JsonFields(){}
+  private Structure(){}
 
-  public static final String ADDITIONAL_PARAMETERS = "additionalParameters";
-  public static final String COLLECTION = "collection";
-  public static final String CONFIGURATION_ID = "configurationId";
-  public static final String CONFIGURATION_PARAMETERS = "configurationParameters";
-  public static final String DEFINITION = "definition";
-  public static final String SUITE_ID = "suiteId";
-  public static final String TEST_REQUEST = "testRequest";
+  public static final String HISTORY = "history";
+
 }

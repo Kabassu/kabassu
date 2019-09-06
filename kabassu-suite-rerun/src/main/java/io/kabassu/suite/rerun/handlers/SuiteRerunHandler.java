@@ -17,6 +17,7 @@
 package io.kabassu.suite.rerun.handlers;
 
 import io.kabassu.commons.constants.EventBusAdresses;
+import io.kabassu.commons.constants.JsonFields;
 import io.kabassu.commons.constants.MessagesFields;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
@@ -143,7 +144,7 @@ public class SuiteRerunHandler implements Handler<Message<JsonObject>> {
     suiteRun.getJsonArray("history").add(new JsonObject().put("date", new Date().getTime())
       .put("event", "Suite Execution rerun started"));
     return new JsonObject().put("new", suiteRun)
-      .put("collection", "kabassu-suite-runs").put("id", suiteRun.getString("_id"));
+      .put(JsonFields.COLLECTION, "kabassu-suite-runs").put("id", suiteRun.getString("_id"));
   }
 
   private JsonObject updateHistory(JsonObject testRequest) {
@@ -152,6 +153,6 @@ public class SuiteRerunHandler implements Handler<Message<JsonObject>> {
       new JsonObject().put("date", new Date().getTime())
         .put("event", "Request rerun from suite started"));
     return new JsonObject().put("new", testRequest)
-      .put("collection", "kabassu-requests").put("id", testRequest.getString("_id"));
+      .put(JsonFields.COLLECTION, "kabassu-requests").put("id", testRequest.getString("_id"));
   }
 }

@@ -1,6 +1,7 @@
 package io.kabassu.files.retriever.retrievers;
 
 import io.kabassu.commons.configuration.ConfigurationRetriever;
+import io.kabassu.commons.constants.CommandLines;
 import io.kabassu.commons.constants.JsonFields;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
@@ -48,18 +49,18 @@ public class GitFilesRetriever extends AbstractFileRetriever {
     ProcessBuilder processBuilder = new ProcessBuilder();
     processBuilder.directory(checkoutDirectory);
     if (SystemUtils.IS_OS_WINDOWS) {
-      processBuilder.command("cmd.exe", "/c", "git checkout " + branch);
+      processBuilder.command(CommandLines.CMD, "/c", "git checkout " + branch);
     } else {
-      processBuilder.command("bash", "-c", "git checkout " + branch);
+      processBuilder.command(CommandLines.BASH, "-c", "git checkout " + branch);
     }
     Process process = processBuilder.start();
     process.waitFor();
     processBuilder = new ProcessBuilder();
     processBuilder.directory(checkoutDirectory);
     if (SystemUtils.IS_OS_WINDOWS) {
-      processBuilder.command("cmd.exe", "/c", "git pull");
+      processBuilder.command(CommandLines.CMD, "/c", "git pull");
     } else {
-      processBuilder.command("bash", "-c", "git pull");
+      processBuilder.command(CommandLines.BASH, "-c", "git pull");
     }
     process = processBuilder.start();
     process.waitFor();
@@ -70,9 +71,9 @@ public class GitFilesRetriever extends AbstractFileRetriever {
     ProcessBuilder processBuilder = new ProcessBuilder();
     processBuilder.directory(requestDirectory);
     if (SystemUtils.IS_OS_WINDOWS) {
-      processBuilder.command("cmd.exe", "/c", "git clone " + repository);
+      processBuilder.command(CommandLines.CMD, "/c", "git clone " + repository);
     } else {
-      processBuilder.command("bash", "-c", "git clone " + repository);
+      processBuilder.command(CommandLines.BASH, "-c", "git clone " + repository);
     }
     Process process = processBuilder.start();
     process.waitFor();

@@ -52,7 +52,7 @@ public class SuiteDispatcherHandler implements Handler<Message<JsonObject>> {
     testSuiteRequest.getJsonArray("definitionsData")
       .forEach(definitionData -> {
         JsonObject testRequest = mapTestRequest((JsonObject) definitionData,
-          testSuiteRequest.getString("suiteId"));
+          testSuiteRequest.getString(JsonFields.SUITE_ID));
         createdRequestsPromises.add(createRequest(testRequest));
       });
     List<Future> futures = createdRequestsPromises.stream().map(Promise::future)
@@ -60,7 +60,7 @@ public class SuiteDispatcherHandler implements Handler<Message<JsonObject>> {
     CompositeFuture.all(futures)
       .setHandler(completedFutures -> {
         if (completedFutures.succeeded()) {
-          createTestSuiteRun(futures, testSuiteRequest.getString("suiteId"));
+          createTestSuiteRun(futures, testSuiteRequest.getString(JsonFields.SUITE_ID));
           runTests(futures);
         }
       });
@@ -79,7 +79,7 @@ public class SuiteDispatcherHandler implements Handler<Message<JsonObject>> {
     JsonObject suiteRunRequest = new JsonObject();
     JsonArray testRequestsId = new JsonArray();
     futures.forEach(future -> testRequestsId.add(((JsonObject) future.result()).getString("_id")));
-    suiteRunRequest.put("suiteId", suiteId).put("requests", testRequestsId)
+    suiteRunRequest.put(JsonFields.SUITE_ID, suiteId).put("requests", testRequestsId)
       .put("history", new JsonArray().add(new JsonObject().put("date", new Date().getTime()).put("event","Suite run created and started")));
     vertx.eventBus()
       .send("kabassu.database.mongo.addsuiterun", suiteRunRequest);
@@ -89,10 +89,10 @@ public class SuiteDispatcherHandler implements Handler<Message<JsonObject>> {
   private JsonObject mapTestRequest(JsonObject testRequestData, String suiteId) {
     JsonObject preparedRequest=  new JsonObject()
       .put("definitionId", testRequestData.getString("definitionId"))
-      .put("configurationId", testRequestData.getString("configurationId"))
+      .put(JsonFields.CONFIGURATION_ID, testRequestData.getString(JsonFields.CONFIGURATION_ID))
       .put(
         JsonFields.ADDITIONAL_PARAMETERS, testRequestData.getJsonObject(JsonFields.ADDITIONAL_PARAMETERS, new JsonObject()))
-      .put("suiteId", suiteId)
+      .put(JsonFields.SUITE_ID, suiteId)
       .put("description", "Created for suite configuration: " + suiteId)
       .put("status", "started")
       .put("history", new JsonArray().add(new JsonObject().put("date", new Date().getTime())

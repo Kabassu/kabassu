@@ -86,7 +86,7 @@ public class KabassuResultsRetrieverMainHandler implements Handler<Message<JsonO
     testRequest.put("status","finished");
     testRequest.getJsonArray("history").add(new JsonObject().put("date",new Date().getTime()).put("event","Reports downloaded"));
     JsonObject updateRequest = new JsonObject().put("new",testRequest)
-      .put("collection","kabassu-requests").put("id",testRequest.getString("_id"));
+      .put(JsonFields.COLLECTION,"kabassu-requests").put("id",testRequest.getString("_id"));
     testRequest.remove(JsonFields.CONFIGURATION_PARAMETERS);
     vertx.eventBus().send("kabassu.database.mongo.replacedocument", updateRequest);
   }

@@ -19,6 +19,7 @@ package io.kabassu.server.handlers;
 import io.vertx.core.Handler;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.ext.web.RoutingContext;
+import java.util.Arrays;
 import org.apache.commons.lang3.StringUtils;
 
 public class ServerRoutingHandlersFactory {
@@ -34,31 +35,15 @@ public class ServerRoutingHandlersFactory {
     if (StringUtils.isEmpty(routingHandlerType) || routingHandlerType.equalsIgnoreCase("default")) {
       return new DefaultServerRoutingHandler(vertx, address);
     } else {
-      if (routingHandlerType.equalsIgnoreCase("available")) {
-        return new AvailableServerRoutingHandler(vertx, address);
-      }
-
-      if (routingHandlerType.equalsIgnoreCase("results")) {
-        return new ResultsServerRoutingHandler(vertx, address);
-      }
-      if (routingHandlerType.equalsIgnoreCase("testmanager")) {
-        return new TestManagerServerRoutingHandler(vertx, address);
-      }
-      if (routingHandlerType.equalsIgnoreCase("adddata")) {
-        return new AddDataRoutingHandler(vertx, address);
-      }
-      if (routingHandlerType.equalsIgnoreCase("getdatabyid")) {
-        return new GetByIdRoutingHandler(vertx, address);
-      }
-      if (routingHandlerType.equalsIgnoreCase("getall")) {
-        return new GetAllRoutingHandler(vertx, address);
-      }
-      if (routingHandlerType.equalsIgnoreCase("getallbyfield")) {
-        return new GetAllByFieldRoutingHandler(vertx, address);
-      }
+      return Arrays.stream(ServerHandlers.values())
+        .filter(serverHandlers -> serverHandlers.getLabel().equals(routingHandlerType))
+        .findFirst()
+        .orElseThrow(
+          () -> new IllegalArgumentException("Unknown type of handler: " + routingHandlerType))
+        .gerRoutingHandler(vertx, address);
     }
 
-    throw new IllegalArgumentException("Unknown type of handler: " + routingHandlerType);
+
   }
 
 }

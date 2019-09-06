@@ -16,6 +16,7 @@
 
 package io.kabassu.mongo.handlers;
 
+import io.kabassu.commons.constants.JsonFields;
 import io.kabassu.mongo.configuration.KabassuMongoConfiguration;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.json.JsonObject;
@@ -36,7 +37,7 @@ public class MongoReplaceDocumentHandler extends AbstractMongoHandler<JsonObject
   public void handle(Message<JsonObject> event) {
     JsonObject request = event.body();
     request.getJsonObject("new").remove("_id");
-    client.findOneAndReplace(request.getString("collection"), new JsonObject().put("_id", request.getString("id")), request.getJsonObject("new"), res -> {
+    client.findOneAndReplace(request.getString(JsonFields.COLLECTION), new JsonObject().put("_id", request.getString("id")), request.getJsonObject("new"), res -> {
       if (res.succeeded()) {
         validateResult(event, res);
       } else {

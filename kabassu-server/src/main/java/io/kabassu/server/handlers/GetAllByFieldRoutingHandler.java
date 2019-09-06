@@ -16,6 +16,7 @@
 
 package io.kabassu.server.handlers;
 
+import io.kabassu.commons.constants.JsonFields;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.Vertx;
@@ -36,14 +37,14 @@ public class GetAllByFieldRoutingHandler implements Handler<RoutingContext> {
 
   @Override
   public void handle(RoutingContext routingContext) {
-    String collection = routingContext.request().getParam("collection");
+    String collection = routingContext.request().getParam(JsonFields.COLLECTION);
     String field = routingContext.request().getParam("field");
     String value = routingContext.request().getParam("value");
     String page = routingContext.request().getParam("page");
     String pageSize = routingContext.request().getParam("pagesize");
     if (StringUtils.isNoneBlank(collection, page, pageSize)) {
       getData(new JsonObject()
-          .put("collection", collection)
+          .put(JsonFields.COLLECTION, collection)
           .put("field", field)
           .put("value", value)
           .put("page", Integer.valueOf(page))

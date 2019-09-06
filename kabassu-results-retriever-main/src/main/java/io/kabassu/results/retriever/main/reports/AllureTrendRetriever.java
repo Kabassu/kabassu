@@ -1,5 +1,7 @@
 package io.kabassu.results.retriever.main.reports;
 
+import io.kabassu.commons.constants.CommandLines;
+import io.kabassu.commons.constants.Structure;
 import java.io.File;
 import java.io.IOException;
 import org.apache.commons.io.FileUtils;
@@ -20,7 +22,7 @@ public class AllureTrendRetriever extends ReportsRetriever {
     File[] directories = prepareDirectories();
     FileUtils.copyDirectory(new File(reportDir), directories[0]);
     path = directories[1].getCanonicalPath();
-    if(new File(directories[1],"history").exists()){
+    if(new File(directories[1], Structure.HISTORY).exists()){
       prepareHistory(directories);
     }
     generateReport(directories[2]);
@@ -35,18 +37,18 @@ public class AllureTrendRetriever extends ReportsRetriever {
     ProcessBuilder processBuilder = new ProcessBuilder();
     processBuilder.directory(directory);
     if(SystemUtils.IS_OS_WINDOWS){
-      processBuilder.command("cmd.exe", "/c", "allure generate --clean");
+      processBuilder.command(CommandLines.CMD, "/c", "allure generate --clean");
     } else {
-      processBuilder.command("bash", "-c", "allure generate --clean");
+      processBuilder.command(CommandLines.BASH, "-c", "allure generate --clean");
     }
     Process process = processBuilder.start();
     process.waitFor();
   }
 
   private void prepareHistory(File[] directories) throws IOException {
-    File history = new File(directories[0],"history");
+    File history = new File(directories[0],Structure.HISTORY);
     FileUtils.forceMkdir(history);
-    FileUtils.copyDirectory(new File(directories[1], "history"),history);
+    FileUtils.copyDirectory(new File(directories[1], Structure.HISTORY),history);
   }
 
   private File[] prepareDirectories() throws IOException {

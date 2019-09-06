@@ -79,8 +79,8 @@ public class TestContextHandler implements Handler<Message<JsonObject>> {
 
   private Promise<JsonObject> mergeRequestWithConfiguration(JsonObject testRequest) {
     Promise<JsonObject> promise = Promise.promise();
-    if (testRequest.containsKey("configurationId") && StringUtils
-      .isNotBlank(testRequest.getString("configurationId"))) {
+    if (testRequest.containsKey(JsonFields.CONFIGURATION_ID) && StringUtils
+      .isNotBlank(testRequest.getString(JsonFields.CONFIGURATION_ID))) {
       addConfiguration(promise, testRequest);
     } else {
       promise.complete(testRequest);
@@ -104,8 +104,8 @@ public class TestContextHandler implements Handler<Message<JsonObject>> {
             JsonObject definitionData = (JsonObject) eventResponse.result().body();
             if (definitionData != null && definitionData.containsKey("_id")) {
 
-              if (definitionData.containsKey("configurationId") && StringUtils
-                .isNotBlank(definitionData.getString("configurationId"))) {
+              if (definitionData.containsKey(JsonFields.CONFIGURATION_ID) && StringUtils
+                .isNotBlank(definitionData.getString(JsonFields.CONFIGURATION_ID))) {
                 addConfiguration(promise, definitionData);
               } else {
                 promise.complete(definitionData);
@@ -134,7 +134,7 @@ public class TestContextHandler implements Handler<Message<JsonObject>> {
     JsonObject jsonWithAdditionalParameters) {
     vertx.eventBus()
       .request("kabassu.database.mongo.getconfiguration",
-        jsonWithAdditionalParameters.getString("configurationId"),
+        jsonWithAdditionalParameters.getString(JsonFields.CONFIGURATION_ID),
         eventResponse -> {
           if (eventResponse.succeeded()) {
             JsonObject configurationData = (JsonObject) eventResponse.result().body();

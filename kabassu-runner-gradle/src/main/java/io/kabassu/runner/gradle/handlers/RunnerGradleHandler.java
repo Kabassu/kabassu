@@ -110,7 +110,7 @@ public class RunnerGradleHandler implements Handler<Message<JsonObject>> {
     testRequest.getJsonArray("history").add(new JsonObject().put("date", new Date().getTime())
       .put("event", "Test finished with: " + testResult));
     return new JsonObject().put("new", testRequest)
-      .put("collection", "kabassu-requests").put("id", testRequest.getString("_id"));
+      .put(JsonFields.COLLECTION, "kabassu-requests").put("id", testRequest.getString("_id"));
   }
 
 }

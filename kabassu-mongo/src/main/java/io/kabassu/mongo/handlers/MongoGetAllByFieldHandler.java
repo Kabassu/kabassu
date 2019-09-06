@@ -1,5 +1,6 @@
 package io.kabassu.mongo.handlers;
 
+import io.kabassu.commons.constants.JsonFields;
 import io.kabassu.mongo.configuration.KabassuMongoConfiguration;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
@@ -44,7 +45,7 @@ public class MongoGetAllByFieldHandler extends AbstractMongoHandler<JsonObject> 
     findOptions.setLimit(request.getInteger("pageSize"));
     findOptions.setSkip(request.getInteger("pageSize") * request.getInteger("page"));
     findOptions.setSort(new JsonObject().put("created",-1));
-    client.findWithOptions(request.getString("collection"), new JsonObject().put(request.getString("field"),request.getString("value")), findOptions, res -> {
+    client.findWithOptions(request.getString(JsonFields.COLLECTION), new JsonObject().put(request.getString("field"),request.getString("value")), findOptions, res -> {
       if (res.succeeded()) {
         promise.complete(new JsonObject().put("results", res.result()));
       } else {
@@ -56,7 +57,7 @@ public class MongoGetAllByFieldHandler extends AbstractMongoHandler<JsonObject> 
       return promise;
     } catch (Exception e) {
       LOGGER.error("Error during getting data from collection {}",
-        request.getString("collection"), e);
+        request.getString(JsonFields.COLLECTION), e);
       promise.complete(new JsonObject().put("error", e.getMessage()));
       LOGGER.error("Problem during retrieving data", e);
       return promise;
@@ -65,7 +66,7 @@ public class MongoGetAllByFieldHandler extends AbstractMongoHandler<JsonObject> 
 
   private Promise<Long> countItems(JsonObject request) {
     Promise<Long> promise = Promise.promise();
-    client.count(request.getString("collection"), new JsonObject().put(request.getString("field"),request.getString("value")), res -> {
+    client.count(request.getString(JsonFields.COLLECTION), new JsonObject().put(request.getString("field"),request.getString("value")), res -> {
       if (res.succeeded()) {
         long objects = res.result();
         promise.complete(objects);
@@ -77,7 +78,7 @@ public class MongoGetAllByFieldHandler extends AbstractMongoHandler<JsonObject> 
       return promise;
     } catch (Exception e) {
       LOGGER.error("Error during counting objects in collection {}",
-        request.getString("collection"), e);
+        request.getString(JsonFields.COLLECTION), e);
       promise.complete(0l);
       return promise;
     }

@@ -35,7 +35,7 @@ class HttpServerProvider {
     this.port = port;
   }
 
-  public SingleSource<? extends HttpServer> configureHttpServer(Router router) {
+  public SingleSource<HttpServer> configureHttpServer(Router router) {
     HttpServer httpServer = vertx.createHttpServer();
     httpServer
         .requestHandler(req -> routeSafe(req, router));

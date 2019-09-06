@@ -1,6 +1,7 @@
 package io.kabassu.test.rerun.handlers;
 
 import io.kabassu.commons.constants.EventBusAdresses;
+import io.kabassu.commons.constants.JsonFields;
 import io.kabassu.commons.constants.MessagesFields;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
@@ -45,7 +46,7 @@ public class TestRerunHandler implements Handler<Message<JsonObject>> {
     testRequest.put("status","started");
     testRequest.getJsonArray("history").add(new JsonObject().put("date",new Date().getTime()).put("event","Request rerun started"));
     return new JsonObject().put("new",testRequest)
-      .put("collection","kabassu-requests").put("id",testRequest.getString("_id"));
+      .put(JsonFields.COLLECTION,"kabassu-requests").put("id",testRequest.getString("_id"));
   }
 
 }

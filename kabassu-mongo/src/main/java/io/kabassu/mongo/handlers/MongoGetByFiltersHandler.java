@@ -1,5 +1,6 @@
 package io.kabassu.mongo.handlers;
 
+import io.kabassu.commons.constants.JsonFields;
 import io.kabassu.mongo.configuration.KabassuMongoConfiguration;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -47,7 +48,7 @@ public class MongoGetByFiltersHandler extends AbstractMongoHandler<JsonObject> {
     findOptions.setSkip(request.getInteger("pageSize") * request.getInteger("page"));
     findOptions.setSort(new JsonObject().put("created", -1));
     client
-      .findWithOptions(request.getString("collection"), filters,
+      .findWithOptions(request.getString(JsonFields.COLLECTION), filters,
         findOptions, res -> {
           if (res.succeeded()) {
             promise.complete(new JsonObject().put("results", res.result()));
@@ -60,7 +61,7 @@ public class MongoGetByFiltersHandler extends AbstractMongoHandler<JsonObject> {
       return promise;
     } catch (Exception e) {
       LOGGER.error("Error during getting data from collection {}",
-        request.getString("collection"), e);
+        request.getString(JsonFields.COLLECTION), e);
       promise.complete(new JsonObject().put("error", e.getMessage()));
       LOGGER.error("Problem during retrieving data", e);
       return promise;
@@ -82,7 +83,7 @@ public class MongoGetByFiltersHandler extends AbstractMongoHandler<JsonObject> {
 
   private Promise<Long> countItems(JsonObject request, JsonObject filters) {
     Promise<Long> promise = Promise.promise();
-    client.count(request.getString("collection"), filters, res -> {
+    client.count(request.getString(JsonFields.COLLECTION), filters, res -> {
       if (res.succeeded()) {
         long objects = res.result();
         promise.complete(objects);
@@ -94,7 +95,7 @@ public class MongoGetByFiltersHandler extends AbstractMongoHandler<JsonObject> {
       return promise;
     } catch (Exception e) {
       LOGGER.error("Error during counting objects in collection {}",
-        request.getString("collection"), e);
+        request.getString(JsonFields.COLLECTION), e);
       promise.complete(0l);
       return promise;
     }
