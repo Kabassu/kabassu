@@ -12,6 +12,11 @@
         "handler": "adddata"
       },
       {
+        "operationId": "addconfiguration",
+        "address": "kabassu.database.mongo.addconfiguration",
+        "handler": "adddata"
+      },
+      {
         "operationId": "addsuite",
         "address": "kabassu.database.mongo.addsuite",
         "handler": "adddata"
@@ -29,6 +34,11 @@
       {
         "operationId": "getrequest",
         "address": "kabassu.database.mongo.getrequest",
+        "handler": "getdatabyid"
+      },
+      {
+        "operationId": "getconfiguration",
+        "address": "kabassu.database.mongo.getconfiguration",
         "handler": "getdatabyid"
       },
       {

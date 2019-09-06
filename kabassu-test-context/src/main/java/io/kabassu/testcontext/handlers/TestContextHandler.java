@@ -26,6 +26,7 @@ import io.vertx.reactivex.core.Promise;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.eventbus.Message;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 
 public class TestContextHandler implements Handler<Message<JsonObject>> {
 
@@ -46,12 +47,11 @@ public class TestContextHandler implements Handler<Message<JsonObject>> {
   public void handle(Message<JsonObject> event) {
     event.body().getJsonArray(MessagesFields.TESTS_TO_RUN)
       .stream()
-      // TODO Write test plan implementation.map(testInfoObject -> mergeWithDefinitionAndConfiguration((JsonObject) testInfoObject))
       .forEach(
         testRequest -> {
           Promise<JsonObject> mergeWithDefinitionPromise = mergeWithDefinition(
             (JsonObject) testRequest);
-          Promise<JsonObject> mergeWithConfigurationPromise = mergeWithConfiguration(
+          Promise<JsonObject> mergeWithConfigurationPromise = mergeRequestWithConfiguration(
             (JsonObject) testRequest);
           CompositeFuture
             .all(mergeWithDefinitionPromise.future(), mergeWithConfigurationPromise.future())
@@ -60,11 +60,10 @@ public class TestContextHandler implements Handler<Message<JsonObject>> {
                 if (completedFutures.succeeded() && existingRunner(
                   mergeWithDefinitionPromise.future().result())) {
                   JsonObject completeTestResults = new JsonObject();
-                  completeTestResults.put("testRequest", (JsonObject) testRequest);
+                  completeTestResults.put("testRequest",
+                    (JsonObject) mergeWithConfigurationPromise.future().result());
                   completeTestResults
                     .put("definition", mergeWithDefinitionPromise.future().result());
-                  completeTestResults
-                    .put("configuration", mergeWithConfigurationPromise.future().result());
                   callRunner(completeTestResults);
                 }
               }
@@ -77,10 +76,22 @@ public class TestContextHandler implements Handler<Message<JsonObject>> {
     return runnersMap.containsKey(result.getString(RUNNER));
   }
 
-  private Promise<JsonObject> mergeWithConfiguration(JsonObject testRequest) {
+  private Promise<JsonObject> mergeRequestWithConfiguration(JsonObject testRequest) {
     Promise<JsonObject> promise = Promise.promise();
-    promise.complete(new JsonObject());
-    return promise;
+    if (testRequest.containsKey("configurationId") && StringUtils
+      .isNotBlank(testRequest.getString("configurationId"))) {
+      addConfiguration(promise, testRequest);
+    } else {
+      promise.complete(testRequest);
+    }
+    try {
+      return promise;
+    } catch (Exception e) {
+      LOGGER.error("Error during recovering configuration. configuration id {}",
+        testRequest.getString("configuration"), e);
+      promise.complete(new JsonObject().put(RUNNER, ""));
+      return promise;
+    }
   }
 
   private Promise<JsonObject> mergeWithDefinition(JsonObject testRequest) {
@@ -91,7 +102,13 @@ public class TestContextHandler implements Handler<Message<JsonObject>> {
           if (eventResponse.succeeded()) {
             JsonObject definitionData = (JsonObject) eventResponse.result().body();
             if (definitionData != null && definitionData.containsKey("_id")) {
-              promise.complete(definitionData);
+
+              if (definitionData.containsKey("configurationId") && StringUtils
+                .isNotBlank(definitionData.getString("configurationId"))) {
+                addConfiguration(promise, definitionData);
+              } else {
+                promise.complete(definitionData);
+              }
             } else {
               promise
                 .complete(new JsonObject().put(RUNNER, ""));
@@ -110,6 +127,29 @@ public class TestContextHandler implements Handler<Message<JsonObject>> {
       promise.complete(new JsonObject().put(RUNNER, ""));
       return promise;
     }
+  }
+
+  private void addConfiguration(Promise<JsonObject> promise,
+    JsonObject jsonWithAdditionalParameters) {
+    vertx.eventBus()
+      .request("kabassu.database.mongo.getconfiguration",
+        jsonWithAdditionalParameters.getString("configurationId"),
+        eventResponse -> {
+          if (eventResponse.succeeded()) {
+            JsonObject configurationData = (JsonObject) eventResponse.result().body();
+            if (configurationData != null && configurationData.containsKey("_id")) {
+              promise.complete(
+                jsonWithAdditionalParameters.put("configurationParameters", configurationData.getJsonObject("parameters")));
+            } else {
+              promise
+                .complete(jsonWithAdditionalParameters);
+            }
+          } else {
+            promise
+              .complete(jsonWithAdditionalParameters);
+          }
+        }
+      );
   }
 
   private void callRunner(JsonObject completeTestRequest) {

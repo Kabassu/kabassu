@@ -17,6 +17,7 @@
 package io.kabassu.runner.gradle.handlers;
 
 import io.kabassu.commons.checks.FilesDownloadChecker;
+import io.kabassu.commons.configuration.ConfigurationRetriever;
 import io.kabassu.runner.gradle.configuration.KabassuRunnerGradleConfiguration;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
@@ -49,7 +50,8 @@ public class RunnerGradleHandler implements Handler<Message<JsonObject>> {
   public void handle(Message<JsonObject> event) {
 
     if (FilesDownloadChecker
-      .checkIfFilesRetrieveIsRequired(event.body().getJsonObject("definition").getString("locationType"))) {
+      .checkIfFilesRetrieveIsRequired(
+        event.body().getJsonObject("definition").getString("locationType"))) {
       vertx.eventBus().rxRequest("kabassu.filesretriever",
         event.body()).toObservable()
         .doOnNext(
@@ -67,17 +69,20 @@ public class RunnerGradleHandler implements Handler<Message<JsonObject>> {
     String testResult = "Failure";
     JsonObject testDefinition = fullRequest.getJsonObject("definition");
     try (ProjectConnection connection = GradleConnector.newConnector()
-      .forProjectDirectory(new File(testDefinition.getJsonObject("additionalParameters", new JsonObject()).getString("location"))).connect()) {
+      .forProjectDirectory(
+        new File(ConfigurationRetriever.getParameter(testDefinition, "location"))).connect()) {
       BuildLauncher buildLauncher = connection.newBuild();
-      if (testDefinition.getJsonObject("additionalParameters", new JsonObject()).containsKey("runnerOptions")) {
-        String[] runnerOptions = testDefinition.getJsonObject("additionalParameters").getString("runnerOptions").split(" ");
+      if (ConfigurationRetriever.containsParameter(testDefinition, "runnerOptions")) {
+        String[] runnerOptions = ConfigurationRetriever
+          .getParameter(testDefinition, "runnerOptions").split(" ");
         buildLauncher.forTasks(runnerOptions);
       } else {
         buildLauncher.forTasks(new String[0]);
       }
-      if (fullRequest.getJsonObject("testRequest").getJsonObject("additionalParameters", new JsonObject()).containsKey("jvm")) {
+      if (ConfigurationRetriever.containsParameter(fullRequest.getJsonObject("testRequest")
+        ,"jvm")) {
         buildLauncher.setJavaHome(new File(configuration.getJvmsMap()
-          .get(fullRequest.getJsonObject("testRequest").getJsonObject("additionalParameters").getString("jvm"))));
+          .get(ConfigurationRetriever.getParameter(fullRequest.getJsonObject("testRequest"),"jvm"))));
       }
       buildLauncher.setStandardInput(new ByteArrayInputStream("consume this!".getBytes()));
       buildLauncher.run();

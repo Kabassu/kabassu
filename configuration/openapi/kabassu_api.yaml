@@ -32,6 +32,20 @@ paths:
       responses:
         '200':
           description: Retrieved object
+  /kabassu/getconfiguration/{id}:
+    get:
+      operationId: getconfiguration
+      summary: get configuration by id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+           type: string
+          description: Configuration ID
+      responses:
+        '200':
+          description: Retrieved object        
   /kabassu/getsuiterun/{id}:
     get:
       operationId: getsuiterun
@@ -167,8 +181,6 @@ paths:
                   name: test
                   runner: gradle
                   locationType: filesystem
-                  location: '../junit5-test'
-              
       responses:
         '201':
           description: Added
@@ -180,6 +192,28 @@ paths:
                   id:
                     type: integer
                     description: Test Definition Id
+  /kabassu/addconfiguration:
+    post:
+      operationId: addconfiguration
+      summary: Adds a new set of configuration parameters
+      requestBody:
+        description: JSON File containing configuration parameters
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Configuration'
+      responses:
+        '201':
+          description: Added
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: Configuration Id
   /kabassu/addsuite:
     post:
       operationId: addsuite
@@ -270,14 +304,12 @@ components:
             type: string
           runner:
             type: string
-          runnerOptions:
-            type: array
-            items:
-                type: string
+          configurationId:
+            type: string
           locationType:
             type: string
-          location:
-            type: string
+          additionalParameters:
+            type: object
           reports:
             type: array
             items:
@@ -326,6 +358,17 @@ components:
           type: string
         additionalParameters:
           type: object
+    Configuration:
+      type: object
+      properties: 
+        name: 
+          type: string
+        description: 
+          type: string
+        suggestedType:
+          type: string
+        parameters:
+          type: object      
     SuiteRun:
       type: object
       properties: 

@@ -16,6 +16,7 @@
 
 package io.kabassu.results.retriever.main.handlers;
 
+import io.kabassu.commons.configuration.ConfigurationRetriever;
 import io.kabassu.results.retriever.main.configuration.KabassuResultsRetrieverMainConfiguration;
 import io.kabassu.results.retriever.main.reports.ReportsRetriever;
 import io.kabassu.results.retriever.main.reports.ReportsRetrieverFactory;
@@ -61,7 +62,7 @@ public class KabassuResultsRetrieverMainHandler implements Handler<Message<JsonO
     reports.forEach(report -> {
       ReportsRetriever reportsRetriever = reportsRetrieverFactory
         .getReportsRetriever(report, testData.getJsonObject("testRequest").getString("_id"),
-          testData.getJsonObject("definition").getJsonObject("additionalParameters").getString("location"));
+          ConfigurationRetriever.getParameter(testData.getJsonObject("definition"),"location"));
       try {
         downloadReports.add(
           new JsonObject().put("location", reportsRetriever.retrieveReport()).put("downloadPath",
@@ -84,6 +85,7 @@ public class KabassuResultsRetrieverMainHandler implements Handler<Message<JsonO
     testRequest.getJsonArray("history").add(new JsonObject().put("date",new Date().getTime()).put("event","Reports downloaded"));
     JsonObject updateRequest = new JsonObject().put("new",testRequest)
       .put("collection","kabassu-requests").put("id",testRequest.getString("_id"));
+    testRequest.remove("configurationParameters");
     vertx.eventBus().send("kabassu.database.mongo.replacedocument", updateRequest);
   }
 }
