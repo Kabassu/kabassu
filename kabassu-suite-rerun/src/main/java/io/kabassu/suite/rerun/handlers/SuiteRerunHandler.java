@@ -46,14 +46,13 @@ public class SuiteRerunHandler implements Handler<Message<JsonObject>> {
   @Override
   public void handle(Message<JsonObject> event) {
     event.reply(new JsonObject().put("status", "in progress"));
-    JsonObject testSuiteRequest = event.body();
     vertx.eventBus()
       .rxRequest("kabassu.database.mongo.getsuiterun", event.body().getString("suiterunId"))
       .toObservable()
       .doOnNext(
         eventResponse -> {
-          JsonObject updateHistory = updateSuiteHistory((JsonObject) eventResponse.body());
-          vertx.eventBus().send("kabassu.database.mongo.replacedocument", updateHistory);
+          vertx.eventBus().send("kabassu.database.mongo.replacedocument",
+            updateSuiteHistory((JsonObject) eventResponse.body()));
 
           executeTests(((JsonObject) eventResponse.body()).getJsonArray("requests"));
         }
@@ -74,7 +73,7 @@ public class SuiteRerunHandler implements Handler<Message<JsonObject>> {
   private void updateTests(List<Future> futures) {
     List<Future> updatedRequests = new ArrayList<>();
     futures.stream().filter(future -> ((JsonObject) future.result()).containsKey("new"))
-      .forEach(request -> updatedRequests.add(updateTest((JsonObject)request.result()).future()));
+      .forEach(request -> updatedRequests.add(updateTest((JsonObject) request.result()).future()));
     CompositeFuture.all(updatedRequests).setHandler(
       completedFutures -> {
         if (completedFutures.succeeded()) {
@@ -101,7 +100,7 @@ public class SuiteRerunHandler implements Handler<Message<JsonObject>> {
     try {
       return promise;
     } catch (Exception e) {
-      LOGGER.error("Error during creating  test request.", e);
+      LOGGER.error("Error during update  test request.", e);
       promise.complete(new JsonObject());
       return promise;
     }
@@ -110,7 +109,8 @@ public class SuiteRerunHandler implements Handler<Message<JsonObject>> {
   private void runTests(List<Future> futures) {
     JsonArray testRequests = new JsonArray();
     futures.stream().filter(future -> ((JsonObject) future.result()).containsKey("new"))
-      .forEach(future -> testRequests.add((JsonObject) ((JsonObject) future.result()).getJsonObject("new")));
+      .forEach(future -> testRequests
+        .add((JsonObject) ((JsonObject) future.result()).getJsonObject("new")));
     vertx.eventBus().send(EventBusAdresses.KABASSU_TEST_CONTEXT,
       new JsonObject()
         .put(MessagesFields.TESTS_TO_RUN, testRequests));
