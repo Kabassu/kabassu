@@ -85,6 +85,9 @@ subprojects {
     build.dependsOn(jar);
 
     test {
+
+        useJUnitPlatform()
+
         beforeTest { descriptor ->
             logger.lifecycle("Running test: " + descriptor)
         }

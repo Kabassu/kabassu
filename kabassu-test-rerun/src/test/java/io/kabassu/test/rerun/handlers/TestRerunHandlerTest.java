@@ -15,14 +15,15 @@
  *
  */
 
-package io.kabassu.testdispatcher.handlers;
+package io.kabassu.test.rerun.handlers;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import io.kabassu.commons.constants.MessagesFields;
 import io.kabassu.commons.testutils.DeploymentOptionsUtils;
-import io.kabassu.testdispatcher.KabassuTestDispatcherVerticle;
+import io.kabassu.test.rerun.KabassuTestRerunVerticle;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.junit5.Checkpoint;
 import io.vertx.junit5.VertxExtension;
@@ -35,43 +36,62 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(VertxExtension.class)
-class TestDispatcherHandlerTest {
+class TestRerunHandlerTest {
+
+  public static final String TEST_ID = "testId";
+  public static final String HISTORY = "history";
 
   Vertx vertx;
 
   @BeforeEach
   void setUp() {
     vertx = Vertx.vertx();
-    vertx.deployVerticle(KabassuTestDispatcherVerticle.class.getName(),
+    vertx.deployVerticle(KabassuTestRerunVerticle.class.getName(),
         DeploymentOptionsUtils.createDeploymentOptionsFromJson(new JsonObject()));
     EventBus eventBus = vertx.eventBus();
-    eventBus.consumer("kabassu.database.mongo.addrequest", message -> {
-      JsonObject request = (JsonObject) message.body();
-      message.reply(request.put("id", "testId"));
-    });
+    eventBus.consumer("kabassu.database.mongo.getrequest", message ->
+        message.reply(new JsonObject()
+            .put("_id", message.body())
+            .put(HISTORY, new JsonArray()
+                .add(new JsonObject()
+                    .put("event", "preevent"))))
+    );
+    eventBus.consumer("kabassu.database.mongo.replacedocument", message ->
+        message.reply(new JsonObject()
+            .put("_id", message.body())
+            .put(HISTORY, new JsonArray()
+                .add(new JsonObject()
+                    .put("event", "preevent"))))
+    );
   }
 
   @Test
-  void testSimpleRequest(VertxTestContext vertxTestContext) {
+  void testRerunRequest(VertxTestContext vertxTestContext) {
     Checkpoint addTestRequestCheckpoint = vertxTestContext.checkpoint();
     Checkpoint sendRequestCheckpoint = vertxTestContext.checkpoint();
 
     EventBus eventBus = vertx.eventBus();
-    eventBus.consumer("kabassu.test.context", message -> vertxTestContext.verify(() -> {
+    eventBus.consumer("kabassu.test.context", message -> vertxTestContext.verify(() ->{
       JsonObject request = (JsonObject) message.body();
-      assertThat(
-          request.getJsonArray(MessagesFields.TESTS_TO_RUN).getJsonObject(0).getString("_id"),
-          is("testId"));
+      assertThat(request.getJsonArray(MessagesFields.TESTS_TO_RUN).getJsonObject(0).getString("_id"), is(
+          TEST_ID));
       sendRequestCheckpoint.flag();
     }));
 
-    JsonObject message = new JsonObject();
-    vertx.eventBus().request("kabassu.runtestrequest", message, vertxTestContext.succeeding(
+    eventBus.consumer("kabassu.test.context", message -> vertxTestContext.verify(() ->{
+      JsonObject request = (JsonObject) message.body();
+      assertThat(request.getJsonArray(MessagesFields.TESTS_TO_RUN).getJsonObject(0).getString("_id"), is(
+          TEST_ID));
+      sendRequestCheckpoint.flag();
+    }));
+
+    vertx.eventBus().request("kabassu.reruntestrequest", new JsonObject().put("requestId", TEST_ID), vertxTestContext.succeeding(
         event -> vertxTestContext.verify(() -> {
           JsonObject response = (JsonObject) event.body();
-          assertThat(response.getString("id"), is("testId"));
+          assertThat(response.getString("_id"), is(TEST_ID));
           assertThat(response.getString("status"), is("started"));
-          assertThat(response.containsKey("history"), is(true));
+          assertThat(response.containsKey(HISTORY), is(true));
+          assertThat(response.getJsonArray(HISTORY).size(), is(2));
           addTestRequestCheckpoint.flag();
         })
     ));

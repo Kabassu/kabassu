@@ -32,7 +32,3 @@ jar {
         attributes 'Premain-Class':'io.kabassu.manager.agent.ModuleLoadAgent'
     }
 }
-
-test {
-    useJUnitPlatform()
-}

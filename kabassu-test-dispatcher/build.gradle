@@ -23,7 +23,3 @@ dependencies {
     implementation project(path: ':kabassu-commons')
     testImplementation project(path: ':kabassu-commons')
 }
-
-test {
-    useJUnitPlatform()
-}
