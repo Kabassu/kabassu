@@ -21,7 +21,7 @@ plugins {
     id 'jacoco'
 }
 
-def verAll = '0.1.0'
+def verAll = '0.2.0-SNAPSHOT'
 
 description = "Kabassu"
 defaultTasks = ['clean', 'build', 'prepareRunningInstance']
