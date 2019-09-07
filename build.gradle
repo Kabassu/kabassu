@@ -49,8 +49,8 @@ subprojects {
 
     //apply plugin: 'com.github.johnrengelman.shadow'
 
-    sourceCompatibility = '1.8'
-    targetCompatibility = '1.8'
+    sourceCompatibility = '12'
+    targetCompatibility = '12'
 
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
