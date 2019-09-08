@@ -4,7 +4,7 @@
 
 [![Quality Gate](https://sonarcloud.io/api/project_badges/quality_gate?project=io.kabassu)](https://sonarcloud.io/dashboard?id=io.kabassu)
 
-[**Official Page**](https://kabassu.io)
+## [**Official Page**](https://kabassu.io)
 
 # Description
 The goal of Kabassu is to create test central, place where users can gather different tests for different application, run them against different enviroments and configurations
