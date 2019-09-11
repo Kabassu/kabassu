@@ -21,13 +21,27 @@ import io.vertx.core.json.JsonObject;
 
 public class KabassuResultsServerConfiguration {
 
+  private final String certificatePath;
+
+  private final String password;
+
   private int port;
 
   private String resultsDir;
 
   public KabassuResultsServerConfiguration(JsonObject configuration) {
+    this.certificatePath = configuration.getString("cerificatePath");
+    this.password = configuration.getString("password");
     this.port = configuration.getInteger("port");
     this.resultsDir = configuration.getString("resultsDir");
+  }
+
+  public String getCertificatePath() {
+    return certificatePath;
+  }
+
+  public String getPassword() {
+    return password;
   }
 
   public int getPort() {

@@ -45,7 +45,7 @@ public class KabassuServerVerticle extends AbstractVerticle {
     LOGGER.info("Open API specification location [{}]",
         options.getRoutingSpecificationLocation());
 
-    HttpServerProvider httpServerProvider = new HttpServerProvider(vertx, options.getPort());
+    HttpServerProvider httpServerProvider = new HttpServerProvider(vertx, options.getPort(), options.getCertificatePath(), options.getPassword());
     RoutesProvider routesProvider = new RoutesProvider(vertx, options.getRoutingPath());
 
     OpenAPI3RouterFactory.rxCreate(vertx, options.getRoutingSpecificationLocation())

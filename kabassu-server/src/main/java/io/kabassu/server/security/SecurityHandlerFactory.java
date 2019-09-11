@@ -34,7 +34,7 @@ public class SecurityHandlerFactory {
   public Handler<RoutingContext> createSecurityHandler(SecurityMode securityHandlerType) {
 
     if (securityHandlerType.equals(SecurityMode.TOKEN)) {
-      return new SimpleTokenHandler(kabassuServerConfiguration.getSimpleToken());
+      return new SimpleTokenHandler("");
     }
 
     throw new IllegalArgumentException("Unknown type of security: " + securityHandlerType);
