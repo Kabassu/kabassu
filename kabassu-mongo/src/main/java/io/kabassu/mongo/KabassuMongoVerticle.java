@@ -90,6 +90,9 @@ public class KabassuMongoVerticle extends AbstractVerticle {
     consumers.add(vertx.eventBus()
       .consumer("kabassu.database.mongo.replacedocument",
         mongoHandlersProvider.provideReplaceDocumentHandler()));
+    consumers.add(vertx.eventBus()
+      .consumer("kabassu.database.mongo.checkuser",
+        mongoHandlersProvider.provideGetByFilterstHandler()));
   }
 
   @Override

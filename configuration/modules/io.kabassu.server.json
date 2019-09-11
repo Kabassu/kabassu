@@ -10,7 +10,7 @@
     "operations": [
       {
         "operationId": "login",
-        "address": "kabassu.database.mongo.getuser",
+        "address": "kabassu.database.mongo.checkuser",
         "handler": "login"
       },
       {

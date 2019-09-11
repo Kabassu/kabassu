@@ -17,14 +17,19 @@
 
 package io.kabassu.server.handlers;
 
+import io.kabassu.commons.constants.JsonFields;
 import io.kabassu.server.configuration.KabassuServerConfiguration;
 import io.kabassu.server.security.jwt.JWTProvider;
 import io.vertx.core.Handler;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.jwt.JWTOptions;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.http.HttpServerResponse;
 import io.vertx.reactivex.ext.web.RoutingContext;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import javax.xml.bind.DatatypeConverter;
 import org.apache.commons.lang3.StringUtils;
 
 public class JWTLoginHandler implements Handler<RoutingContext> {
@@ -46,33 +51,64 @@ public class JWTLoginHandler implements Handler<RoutingContext> {
     String loginInformation = routingContext.getBodyAsString();
     if (StringUtils.isNotEmpty(loginInformation)) {
 
-      JsonObject loginData = new JsonObject(loginInformation);
+      try {
+        login(new JsonObject(loginInformation), routingContext.request().response());
+      } catch (NoSuchAlgorithmException e) {
+        loginErrorFinish(routingContext.request().response());
+      }
 
-      String generateToken = JWTProvider.getProvider()
-        .generateToken(new JsonObject().put("username", loginData.getString("username")),generateOptions());
-
-      routingContext.request().response().putHeader("content-type", "application/json")
-        .end(new JsonObject().put("auth token", generateToken).encodePrettily());
-      //  addData(definition,routingContext.request().response());
     } else {
-      routingContext.request().response().putHeader("content-type", "application/json")
-        .end(new JsonObject().put("response", "Login Error").encodePrettily());
+      loginErrorFinish(routingContext.request().response());
     }
 
   }
 
   private JWTOptions generateOptions() {
     JWTOptions tokenOptions = new JWTOptions();
-    if(options.getExpiresInMinutes()!=null && options.getExpiresInMinutes()>0) {
+    if (options.getExpiresInMinutes() != null && options.getExpiresInMinutes() > 0) {
       tokenOptions.setExpiresInMinutes(options.getExpiresInMinutes());
     }
     return tokenOptions;
   }
 
-  private void addData(String definition, HttpServerResponse response) {
-    JsonObject message = new JsonObject(definition);
-    vertx.eventBus().rxRequest(address, message).toObservable().doOnNext(eventResponse ->
-      response.end(((JsonObject) eventResponse.body()).encodePrettily())
+  private void login(JsonObject loginData, HttpServerResponse response)
+    throws NoSuchAlgorithmException {
+    JsonObject loginRequest = new JsonObject()
+      .put(JsonFields.COLLECTION, "kabassu-users")
+      .put("page", 0)
+      .put("pageSize", 1)
+      .put("filters", new JsonArray()
+        .add(new JsonObject()
+          .put("filterName", JsonFields.USERNAME)
+          .put("filterValues", new JsonArray().add(loginData.getString(JsonFields.USERNAME))))
+        .add(new JsonObject()
+          .put("filterName", "password_hash")
+          .put("filterValues",new JsonArray().add(md5hash(loginData.getString("password_hash"))))));
+    vertx.eventBus().rxRequest(address, loginRequest).toObservable().doOnNext(eventResponse -> {
+
+        if (((JsonObject) eventResponse.body()).getInteger("allItems") == 0) {
+          loginErrorFinish(response);
+        } else {
+
+          response.putHeader("content-type", "application/json")
+            .end(new JsonObject().put("auth token", JWTProvider.getProvider()
+              .generateToken(new JsonObject().put("username", loginData.getString(JsonFields.USERNAME)),
+                generateOptions())).encodePrettily());
+
+        }
+      }
     ).subscribe();
+  }
+
+  private void loginErrorFinish(HttpServerResponse response) {
+    response.putHeader("content-type", "application/json")
+      .end(new JsonObject().put("response", "Login Error").encodePrettily());
+  }
+
+  private String md5hash(String passwordHash) throws NoSuchAlgorithmException {
+    MessageDigest md = MessageDigest.getInstance("MD5");
+    md.update(passwordHash.getBytes());
+    return DatatypeConverter
+      .printHexBinary(md.digest());
   }
 }
