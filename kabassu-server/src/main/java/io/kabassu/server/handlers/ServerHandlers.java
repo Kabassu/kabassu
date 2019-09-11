@@ -75,7 +75,7 @@ public enum ServerHandlers {
   LOGIN("login") {
     @Override
     public Handler<RoutingContext> gerRoutingHandler(Vertx vertx, String address, KabassuServerConfiguration options) {
-      return new JWTLoginHandler(vertx, address);
+      return new JWTLoginHandler(vertx, address, options);
     }
   };
 
