@@ -15,6 +15,7 @@
  *
  */
 dependencies {
+    implementation group: 'io.vertx', name: 'vertx-auth-jwt', version: vertxVersion
     implementation group: 'io.vertx', name: 'vertx-core', version: vertxVersion
     implementation group: 'io.vertx', name: 'vertx-rx-java2', version: vertxVersion
     implementation group: 'io.vertx', name: 'vertx-web', version: vertxVersion

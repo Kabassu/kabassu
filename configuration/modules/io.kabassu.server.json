@@ -6,7 +6,13 @@
     "security": "jwt",
     "cerificatePath": "certificate/dev.p12",
     "password": "developer",
+    "jwtSecret": "jwt_secret_change_me",
     "operations": [
+      {
+        "operationId": "login",
+        "address": "kabassu.database.mongo.getuser",
+        "handler": "login"
+      },
       {
         "operationId": "adddefinition",
         "address": "kabassu.database.mongo.adddefinition",

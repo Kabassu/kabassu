@@ -3,7 +3,24 @@ info:
   title: Kabassu API
   description: API for Kabassu system
   version: 0.0.1
+security: 
+  - bearerAuth: []
 paths:
+  /kabassu/login:
+    post:
+      operationId: login
+      summary: login operation for kabassu
+      security: []
+      requestBody:
+        description: JSON File containing configuration parameters
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        '200':
+          description: Suite is running
   /kabassu/getrequest/{id}:
     get:
       operationId: getrequest
@@ -296,6 +313,11 @@ paths:
           description: Test is running
           
 components:
+  securitySchemes:
+    bearerAuth:            
+      type: http
+      scheme: bearer
+      bearerFormat: JWT  
   schemas:
     TestDefinition:
         type: object
@@ -396,4 +418,11 @@ components:
       type: object
       properties: 
         suiterunId: 
+          type: string
+    Login:
+      type: object
+      properties: 
+        username: 
+          type: string      
+        password_hash:
           type: string

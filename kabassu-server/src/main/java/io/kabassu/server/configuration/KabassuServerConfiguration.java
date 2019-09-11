@@ -37,6 +37,10 @@ public class KabassuServerConfiguration {
 
   private String routingSpecificationLocation;
 
+  private String jwtSecret;
+
+  private Integer expiresInMinutes;
+
   public KabassuServerConfiguration(JsonObject configuration) {
     this.certificatePath = configuration.getString("cerificatePath");
     this.password = configuration.getString("password");
@@ -45,8 +49,9 @@ public class KabassuServerConfiguration {
     mapOperations(configuration.getJsonArray("operations"));
     this.routingSpecificationLocation = configuration
         .getString("routingSpecificationLocation", "openapi/kabassu_api.yaml");
+    this.jwtSecret = configuration.getString("jwtSecret");
+    this.expiresInMinutes = configuration.getInteger("expiresInMinutes");
   }
-
 
   private void mapOperations(JsonArray operations) {
     if (operations != null) {
@@ -57,6 +62,14 @@ public class KabassuServerConfiguration {
                       StringUtils.EMPTY)))
       );
     }
+  }
+
+  public Integer getExpiresInMinutes() {
+    return expiresInMinutes;
+  }
+
+  public String getJwtSecret() {
+    return jwtSecret;
   }
 
   public String getCertificatePath() {
