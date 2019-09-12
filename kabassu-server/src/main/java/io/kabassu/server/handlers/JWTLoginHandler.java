@@ -27,9 +27,7 @@ import io.vertx.ext.jwt.JWTOptions;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.http.HttpServerResponse;
 import io.vertx.reactivex.ext.web.RoutingContext;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import javax.xml.bind.DatatypeConverter;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 
 public class JWTLoginHandler implements Handler<RoutingContext> {
@@ -51,11 +49,7 @@ public class JWTLoginHandler implements Handler<RoutingContext> {
     String loginInformation = routingContext.getBodyAsString();
     if (StringUtils.isNotEmpty(loginInformation)) {
 
-      try {
-        login(new JsonObject(loginInformation), routingContext.request().response());
-      } catch (NoSuchAlgorithmException e) {
-        loginErrorFinish(routingContext.request().response());
-      }
+      login(new JsonObject(loginInformation), routingContext.request().response());
 
     } else {
       loginErrorFinish(routingContext.request().response());
@@ -71,8 +65,7 @@ public class JWTLoginHandler implements Handler<RoutingContext> {
     return tokenOptions;
   }
 
-  private void login(JsonObject loginData, HttpServerResponse response)
-    throws NoSuchAlgorithmException {
+  private void login(JsonObject loginData, HttpServerResponse response) {
     JsonObject loginRequest = new JsonObject()
       .put(JsonFields.COLLECTION, "kabassu-users")
       .put("page", 0)
@@ -83,7 +76,8 @@ public class JWTLoginHandler implements Handler<RoutingContext> {
           .put("filterValues", new JsonArray().add(loginData.getString(JsonFields.USERNAME))))
         .add(new JsonObject()
           .put("filterName", "password_hash")
-          .put("filterValues",new JsonArray().add(md5hash(loginData.getString("password_hash"))))));
+          .put("filterValues",
+            new JsonArray().add(DigestUtils.sha256Hex(loginData.getString("password_hash"))))));
     vertx.eventBus().rxRequest(address, loginRequest).toObservable().doOnNext(eventResponse -> {
 
         if (((JsonObject) eventResponse.body()).getInteger("allItems") == 0) {
@@ -92,7 +86,8 @@ public class JWTLoginHandler implements Handler<RoutingContext> {
 
           response.putHeader("content-type", "application/json")
             .end(new JsonObject().put("auth token", JWTProvider.getProvider()
-              .generateToken(new JsonObject().put("username", loginData.getString(JsonFields.USERNAME)),
+              .generateToken(
+                new JsonObject().put("username", loginData.getString(JsonFields.USERNAME)),
                 generateOptions())).encodePrettily());
 
         }
@@ -105,10 +100,4 @@ public class JWTLoginHandler implements Handler<RoutingContext> {
       .end(new JsonObject().put("response", "Login Error").encodePrettily());
   }
 
-  private String md5hash(String passwordHash) throws NoSuchAlgorithmException {
-    MessageDigest md = MessageDigest.getInstance("MD5");
-    md.update(passwordHash.getBytes());
-    return DatatypeConverter
-      .printHexBinary(md.digest());
-  }
 }

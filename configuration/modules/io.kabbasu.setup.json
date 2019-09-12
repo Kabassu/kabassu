@@ -1,0 +1,13 @@
+{
+  "name": "standard:io.kabassu.setup",
+  "config": {
+    "verticle": "io.kabassu.setup.KabassuSetupVerticle",
+    "users": [
+      {
+        "username": "admin",
+        "password": "admin"
+      }
+    ]
+  }
+}
+

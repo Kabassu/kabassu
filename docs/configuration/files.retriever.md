@@ -1,4 +1,4 @@
-```
+```json
 {
   (...)
     "downloadDirectory":  "../../../test-dir"

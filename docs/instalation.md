@@ -18,3 +18,6 @@
 5. Take zip file from _distribution_ folder and uzip it in desired location
 6. Configure Kabassu using guidelines from [here](configuration/configuration.md)
 7. Run Kabassu using ```start.bat or start.sh```
+8. For next run change **setupMode** in _kabassu-config.json_ to **false**. It is also good idea to delete (or move)  _modules/io.kabassu.setup.json_. Thanks to this one module less will be started.
+
+Good idea is also changing certificate for ssl access - Kabassu endpoints are using https protocol. 

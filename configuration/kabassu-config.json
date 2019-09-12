@@ -1,5 +1,6 @@
 {
   "config": {
+    "setupMode": true,
     "runmode": "NORMAL",
     "security": "NONE",
     "modules_directory": "libs/"

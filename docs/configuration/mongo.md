@@ -1,4 +1,4 @@
-```
+```json
 {
 (...)
     "mongo-config": {
