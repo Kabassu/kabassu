@@ -85,7 +85,7 @@ public class JWTLoginHandler implements Handler<RoutingContext> {
         } else {
 
           response.putHeader("content-type", "application/json")
-            .end(new JsonObject().put("auth token", JWTProvider.getProvider()
+            .end(new JsonObject().put("auth_token", JWTProvider.getProvider()
               .generateToken(
                 new JsonObject().put("username", loginData.getString(JsonFields.USERNAME)),
                 generateOptions())).encodePrettily());
