@@ -1,0 +1,16 @@
+{
+    "name": "standard:io.kabassu.config.options",
+    "config": {
+        "verticle": "io.kabassu.config.options.KabassuConfigOptionsVerticle",
+        "configurations" : [
+          {
+            "fileName": "io.kabbasu.testcontext.json",
+            "options" : ["runners"]
+          },
+          {
+            "fileName": "io.kabbasu.runner.gradle.json",
+            "options" : ["jvm.$"]
+          }
+        ]
+    }
+}

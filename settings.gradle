@@ -32,4 +32,5 @@ include 'kabassu-suite-dispatcher'
 include 'kabassu-suite-rerun'
 include 'kabassu-files-retriever'
 include 'kabassu-setup'
+include 'kabassu-config-options'
 
