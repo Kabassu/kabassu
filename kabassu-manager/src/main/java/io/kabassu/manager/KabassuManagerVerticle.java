@@ -122,8 +122,8 @@ public class KabassuManagerVerticle extends AbstractVerticle {
           LOGGER.info("Kabassu STARTED {}", message);
           if (startFuture != null) {
             startFuture.complete();
-            if (config().getJsonObject(CONFIG_OVERRIDE).containsKey("setupMode") && config()
-              .getJsonObject(CONFIG_OVERRIDE).getBoolean("setupMode")) {
+            if (config().getJsonObject(CONFIG_OVERRIDE).containsKey("setupMode") && Boolean.TRUE.equals(config()
+              .getJsonObject(CONFIG_OVERRIDE).getBoolean("setupMode"))) {
               vertx.eventBus().send("kabassu.setup", "start");
             }
           }
