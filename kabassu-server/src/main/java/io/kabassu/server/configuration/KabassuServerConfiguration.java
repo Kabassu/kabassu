@@ -31,19 +31,27 @@ public class KabassuServerConfiguration {
 
   private String mainSecurityMode;
 
-  private String simpleToken;
+  private String certificatePath;
+
+  private String password;
 
   private String routingSpecificationLocation;
 
+  private String jwtSecret;
+
+  private Integer expiresInMinutes;
+
   public KabassuServerConfiguration(JsonObject configuration) {
+    this.certificatePath = configuration.getString("cerificatePath");
+    this.password = configuration.getString("password");
     this.port = configuration.getInteger("port");
     this.mainSecurityMode = configuration.getString("security");
     mapOperations(configuration.getJsonArray("operations"));
-    this.simpleToken = configuration.getString("simpleToken", "");
     this.routingSpecificationLocation = configuration
         .getString("routingSpecificationLocation", "openapi/kabassu_api.yaml");
+    this.jwtSecret = configuration.getString("jwtSecret");
+    this.expiresInMinutes = configuration.getInteger("expiresInMinutes");
   }
-
 
   private void mapOperations(JsonArray operations) {
     if (operations != null) {
@@ -56,16 +64,28 @@ public class KabassuServerConfiguration {
     }
   }
 
+  public Integer getExpiresInMinutes() {
+    return expiresInMinutes;
+  }
+
+  public String getJwtSecret() {
+    return jwtSecret;
+  }
+
+  public String getCertificatePath() {
+    return certificatePath;
+  }
+
+  public String getPassword() {
+    return password;
+  }
+
   public int getPort() {
     return port;
   }
 
   public List<RoutingPath> getRoutingPath() {
     return routingPath;
-  }
-
-  public String getSimpleToken() {
-    return simpleToken;
   }
 
   public String getRoutingSpecificationLocation() {

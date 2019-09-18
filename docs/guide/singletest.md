@@ -1,12 +1,30 @@
 # Single Test Guide
 
-Single Test in Kabassu is single test project that can be run with one command. Its creation and execution contains:   
-1. Create definition
-2. Create and run execution based on definition
-3. Get the status of execution
-4. Get the result
-5. View report
-6. Rerun test
+Use HTTPS protocol to connect to REST services
+
+Single Test in Kabassu is single test project that can be run with one command. Its creation and execution contains: 
+1. Login  
+2. Create definition
+3. Create and run execution based on definition
+4. Get the status of execution
+5. Get the result
+6. View report
+7. Rerun test
+
+## Login
+
+Kabassu is using JWT authentication. Each request has to contain header `Authorization: Bearer <token>`. _<token>_ can be retrieved using:  
+Endpoint: `POST /kabassu/login`
+
+Request:
+```json
+{
+  "username": "<name>",
+  "password_hash": "<password>"
+}
+```
+
+If both parameters are correct then token will be in the response. **It has to be used in ever other call**
 
 ## Create Definition
 

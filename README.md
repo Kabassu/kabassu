@@ -6,6 +6,8 @@
 
 ## [**Official Page**](https://kabassu.io)
 
+Below is documentation for version in master branch. Documentation on page is for latest released version
+
 # Description
 The goal of Kabassu is to create test central, place where users can gather different tests for different application, run them against different enviroments and configurations
 
@@ -30,6 +32,8 @@ Here you can find possible options [https://vertx.io/docs/vertx-mongo-client/jav
 
 6. Run start.bat or start.sh
 7. Application will use ports 8080 and 8090. They can be changed in server configuration files
+8. Decide if you want to change default users. More information(/docs/configuration/setup.md)
+9. For next run change setupMode in _kabassu-config.json_ to **false**.
 
 More detailed information can be found:  
 [Installation](/docs/instalation.md)  

@@ -17,6 +17,7 @@
 
 package io.kabassu.server.handlers;
 
+import io.kabassu.server.configuration.KabassuServerConfiguration;
 import io.vertx.core.Handler;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.ext.web.RoutingContext;
@@ -26,9 +27,11 @@ import org.apache.commons.lang3.StringUtils;
 public class ServerRoutingHandlersFactory {
 
   private Vertx vertx;
+  private KabassuServerConfiguration options;
 
-  public ServerRoutingHandlersFactory(Vertx vertx) {
+  public ServerRoutingHandlersFactory(Vertx vertx, KabassuServerConfiguration options) {
     this.vertx = vertx;
+    this.options = options;
   }
 
   public Handler<RoutingContext> createRoutingHandler(String routingHandlerType, String address) {
@@ -41,7 +44,7 @@ public class ServerRoutingHandlersFactory {
         .findFirst()
         .orElseThrow(
           () -> new IllegalArgumentException("Unknown type of handler: " + routingHandlerType))
-        .gerRoutingHandler(vertx, address);
+        .gerRoutingHandler(vertx, address, options);
     }
 
 

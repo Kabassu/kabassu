@@ -1,9 +1,28 @@
 #Test Suite
+
+Use HTTPS protocol to connect to REST services
+
 Test suite is set of definitions that can be run together. After creation it can be run and test executions for all definitions are created. 
-1. Create test suite
-2. Create and run suite execution
-3. Get the status and results of every test execution in suite
-4. Rerun test execution
+1. Login
+2. Create test suite
+3. Create and run suite execution
+4. Get the status and results of every test execution in suite
+5. Rerun test execution
+
+## Login
+
+Kabassu is using JWT authentication. Each request has to contain header `Authorization: Bearer <token>`. _<token>_ can be retrieved using:  
+Endpoint: `POST /kabassu/login`
+
+Request:
+```json
+{
+  "username": "<name>",
+  "password_hash": "<password>"
+}
+```
+
+If both parameters are correct then token will be in the response. **It has to be used in ever other call**
 
 ## Create test suite
 Endpoint: ``POST /kabassu/addsuite``  

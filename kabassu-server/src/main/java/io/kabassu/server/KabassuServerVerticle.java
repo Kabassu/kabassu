@@ -18,6 +18,7 @@
 package io.kabassu.server;
 
 import io.kabassu.server.configuration.KabassuServerConfiguration;
+import io.kabassu.server.security.jwt.JWTProvider;
 import io.vertx.core.Context;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
@@ -44,9 +45,9 @@ public class KabassuServerVerticle extends AbstractVerticle {
     LOGGER.info("Starting <{}>", this.getClass().getSimpleName());
     LOGGER.info("Open API specification location [{}]",
         options.getRoutingSpecificationLocation());
-
-    HttpServerProvider httpServerProvider = new HttpServerProvider(vertx, options.getPort());
-    RoutesProvider routesProvider = new RoutesProvider(vertx, options.getRoutingPath());
+    JWTProvider.initializeProvider(vertx,options.getJwtSecret());
+    HttpServerProvider httpServerProvider = new HttpServerProvider(vertx, options.getPort(), options.getCertificatePath(), options.getPassword());
+    RoutesProvider routesProvider = new RoutesProvider(vertx, options);
 
     OpenAPI3RouterFactory.rxCreate(vertx, options.getRoutingSpecificationLocation())
         .doOnSuccess(routesProvider::configureRouting)

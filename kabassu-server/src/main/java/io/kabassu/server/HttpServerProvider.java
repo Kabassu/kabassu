@@ -18,8 +18,10 @@ package io.kabassu.server;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.reactivex.SingleSource;
+import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
+import io.vertx.core.net.JksOptions;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.http.HttpServer;
 import io.vertx.reactivex.core.http.HttpServerRequest;
@@ -29,15 +31,21 @@ class HttpServerProvider {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(HttpServerProvider.class);
   private final Vertx vertx;
+  private final String certificationPath;
+  private final String password;
   private final int port;
 
-  public HttpServerProvider(Vertx vertx, int port) {
+
+  public HttpServerProvider(Vertx vertx, int port, String certificatePath, String password) {
     this.vertx = vertx;
     this.port = port;
+    this.certificationPath = certificatePath;
+    this.password = password;
   }
 
   public SingleSource<HttpServer> configureHttpServer(Router router) {
-    HttpServer httpServer = vertx.createHttpServer();
+    HttpServer httpServer = vertx.createHttpServer(new HttpServerOptions().setSsl(true).setKeyStoreOptions(
+      new JksOptions().setPath(certificationPath).setPassword(password)));
     httpServer
         .requestHandler(req -> routeSafe(req, router));
     return httpServer.rxListen(port);

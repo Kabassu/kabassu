@@ -5,6 +5,12 @@ Not every file has to be changed, in fact if file is not described here the the 
 
 **Also please change only described parameters and make sure that configuration file is still valid json file after these changes**
 
+Main configuration file: _kabassu-config.json_
+**setupMode** - it allow to set required parameters in database for the first run of kabassu. After first run it should be set to **false**
+
+In _modules_ directory:
+
+1. [io.kabassu.setup.json](setup.md) - setup configuration. Used for setting start parameters in database. Usually deleted after first start.
 1. [io.kabassu.server.json](server.md) - server configuration. Has to be changed only if you want to change default port  
 2. [io.kabassu.runner.gradle.json](runner.gradle.md) - runner responsible for running all test that use _gradle_ here JVM are set  
 **Need to be changed before start**   

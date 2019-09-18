@@ -44,8 +44,8 @@ public class KabassuTestRegisterTest {
     vertx = Vertx.vertx();
     vertx.deployVerticle(KabassuTestRegisterVerticle.class.getName(),
         testContext.asyncAssertSuccess());
-    vertx.deployVerticle(KabassuStorageMemoryVerticle.class.getName(), DeploymentOptionsUtils
-            .createDeploymentOptionsFromJson("{      \"runmode\": \"demo\"\n}"),
+    vertx.deployVerticle(KabassuStorageMemoryVerticle.class.getName(),
+    vertx.deployVerticle(KabassuStorageMemoryVerticle.class.getName(),
         testContext.asyncAssertSuccess());
   }
 

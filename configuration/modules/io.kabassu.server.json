@@ -3,9 +3,16 @@
   "config": {
     "verticle": "io.kabassu.server.KabassuServerVerticle",
     "port": 8080,
-    "security": "token",
-    "simpleToken": "s1mplet0ken",
+    "security": "jwt",
+    "cerificatePath": "certificate/dev.p12",
+    "password": "developer",
+    "jwtSecret": "jwt_secret_change_me",
     "operations": [
+      {
+        "operationId": "login",
+        "address": "kabassu.database.mongo.checkuser",
+        "handler": "login"
+      },
       {
         "operationId": "adddefinition",
         "address": "kabassu.database.mongo.adddefinition",

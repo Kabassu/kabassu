@@ -21,8 +21,10 @@ import io.kabassu.results.server.configuration.KabassuResultsServerConfiguration
 import io.vertx.core.Context;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
+import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
+import io.vertx.core.net.JksOptions;
 import io.vertx.reactivex.core.AbstractVerticle;
 import io.vertx.reactivex.core.http.HttpServer;
 import io.vertx.reactivex.ext.web.Router;
@@ -43,7 +45,8 @@ public class KabassuResultsServerVerticle extends AbstractVerticle {
 
   @Override
   public void start(Promise<Void> startFuture) throws Exception {
-    HttpServer server = vertx.createHttpServer();
+    HttpServer server = vertx.createHttpServer(new HttpServerOptions().setSsl(true).setKeyStoreOptions(
+      new JksOptions().setPath(options.getCertificatePath()).setPassword(options.getPassword())));
     Router router = Router.router(vertx);
     router.route().handler(CorsHandler.create("*"));
     router.route("/kabassu/results/*")
