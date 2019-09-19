@@ -77,6 +77,12 @@ public enum ServerHandlers {
     public Handler<RoutingContext> gerRoutingHandler(Vertx vertx, String address, KabassuServerConfiguration options) {
       return new JWTLoginHandler(vertx, address, options);
     }
+  },
+  GETOPTIONS("getoptions") {
+    @Override
+    public Handler<RoutingContext> gerRoutingHandler(Vertx vertx, String address, KabassuServerConfiguration options) {
+      return new GetOptionsHandler(vertx, address);
+    }
   };
 
   private final String label;

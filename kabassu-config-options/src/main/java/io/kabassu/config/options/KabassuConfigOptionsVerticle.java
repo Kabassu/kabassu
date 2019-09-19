@@ -42,7 +42,7 @@ public class KabassuConfigOptionsVerticle extends AbstractVerticle {
 
     consumer = vertx.eventBus()
       .consumer("kabassu.config.options",
-        new ConfigOptionsHandler(vertx, configuration.getAvailableOptions()));
+        new ConfigOptionsHandler(configuration));
   }
 
   @Override

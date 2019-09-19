@@ -47,6 +47,10 @@
         "operationId": "getconfiguration",
         "address": "kabassu.database.mongo.getconfiguration",
         "handler": "getdatabyid"
+      },{
+        "operationId": "getoptions",
+        "address": "kabassu.config.options",
+        "handler": "getoptions"
       },
       {
         "operationId": "getsuite",

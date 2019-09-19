@@ -20,25 +20,35 @@ package io.kabassu.config.options.configuration;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class KabassuConfigOptionsConfiguration {
 
-  private Map<String, String[]> availableOptions = new HashMap<>();
+  private Map<String, List<String>> availableOptions = new HashMap<>();
+
+  private String modulesDir;
 
   public KabassuConfigOptionsConfiguration(JsonObject configuration) {
     JsonArray runners = configuration.getJsonArray("configurations");
     runners.stream().forEach(runnerConfig -> {
       JsonObject runnerJson = (JsonObject) runnerConfig;
-      availableOptions.put(runnerJson.getString("fileName"), convertToArray(runnerJson.getJsonArray("options")));
+      availableOptions
+        .put(runnerJson.getString("fileName"), convertToArray(runnerJson.getJsonArray("options")));
     });
+    modulesDir = configuration.getString("modulesDir");
   }
 
-  private String[] convertToArray(JsonArray options) {
-    return new String[0];
+  private List<String> convertToArray(JsonArray options) {
+    return options.stream().map(o -> (String) o).collect(Collectors.toList());
   }
 
-  public Map<String, String[]> getAvailableOptions() {
+  public String getModulesDir() {
+    return modulesDir;
+  }
+
+  public Map<String, List<String>> getAvailableOptions() {
     return availableOptions;
   }
 }

@@ -35,6 +35,26 @@ paths:
       responses:
         '200':
           description: Retrieved object
+  /kabassu/getoptions/{file}/{option}:
+    get:
+      operationId: getoptions
+      summary: get test request by id
+      parameters:
+        - in: path
+          name: file
+          required: true
+          schema:
+           type: string
+          description: File to read
+        - in: path
+          name: option
+          required: true
+          schema:
+           type: string
+          description: option to read
+      responses:
+        '200':
+          description: Retrieved object        
   /kabassu/getsuite/{id}:
     get:
       operationId: getsuite

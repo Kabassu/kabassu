@@ -2,6 +2,7 @@
     "name": "standard:io.kabassu.config.options",
     "config": {
         "verticle": "io.kabassu.config.options.KabassuConfigOptionsVerticle",
+        "modulesDir": "./modules",
         "configurations" : [
           {
             "fileName": "io.kabbasu.testcontext.json",
@@ -9,7 +10,7 @@
           },
           {
             "fileName": "io.kabbasu.runner.gradle.json",
-            "options" : ["jvm.$"]
+            "options" : ["jvm"]
           }
         ]
     }
