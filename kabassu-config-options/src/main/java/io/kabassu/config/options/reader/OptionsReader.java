@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class OptionsReader {
 
@@ -43,7 +44,7 @@ public class OptionsReader {
   }
 
   private void readOptions(JsonObject config, String option, String file) {
-    String[] splitPaths = option.split(".");
+    String[] splitPaths = StringUtils.split(option,".");
     Object value = config.getValue(splitPaths[0]);
     if (splitPaths.length > 1) {
       for (int i = 1; i < splitPaths.length; i++) {

@@ -18,6 +18,7 @@
 package io.kabassu.server.handlers;
 
 import io.vertx.core.Handler;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.http.HttpServerResponse;
@@ -52,8 +53,15 @@ public class GetOptionsHandler implements Handler<RoutingContext> {
   }
 
   private void getData(JsonObject request, HttpServerResponse response) {
-    vertx.eventBus().rxRequest(address, request).toObservable().doOnNext(eventResponse ->
-      response.end(((JsonObject) eventResponse.body()).encodePrettily())
+    vertx.eventBus().rxRequest(address, request).toObservable().doOnNext(eventResponse -> {
+        if (eventResponse.body() instanceof JsonObject) {
+          response.end(((JsonObject) eventResponse.body()).encodePrettily());
+        } else if (eventResponse.body() instanceof JsonArray) {
+          response.end(((JsonArray) eventResponse.body()).encodePrettily());
+        } else {
+          response.end(eventResponse.body().toString());
+        }
+      }
     ).subscribe();
   }
 }
