@@ -11,12 +11,13 @@ Main configuration file: _kabassu-config.json_
 In _modules_ directory:
 
 1. [io.kabassu.setup.json](setup.md) - setup configuration. Used for setting start parameters in database. Usually deleted after first start.
-1. [io.kabassu.server.json](server.md) - server configuration. Has to be changed only if you want to change default port  
-2. [io.kabassu.runner.gradle.json](runner.gradle.md) - runner responsible for running all test that use _gradle_ here JVM are set  
+2. [io.kabassu.server.json](server.md) - server configuration. Has to be changed only if you want to change default port  
+3. [io.kabassu.runner.gradle.json](runner.gradle.md) - runner responsible for running all test that use _gradle_ here JVM are set  
 **Need to be changed before start**   
-3. [io.kabassu.results.retriever.main.json](retriever.main.md) - configuration for retrieving reports.
-4. [io.kabassu.mongo.json](mongo.md) - configuration of Mongo connection  
+4. [io.kabassu.results.retriever.main.json](retriever.main.md) - configuration for retrieving reports.
+5. [io.kabassu.mongo.json](mongo.md) - configuration of Mongo connection  
 **Need to be changed before start**   
-5.[io.kabassu.results.server.json](results.server.md) - configuration of server that will provide access to download reports in html format   
+6. [io.kabassu.results.server.json](results.server.md) - configuration of server that will provide access to download reports in html format   
 **Has to be changed if directory in _io.kabassu.results.retriever.main.json_ was changed**
-6. [io.kabassu.files.retriever.json](files.retriever.md) - configuration for getting test files from other places then local filesystem 
+7. [io.kabassu.files.retriever.json](files.retriever.md) - configuration for getting test files from other places then local filesystem 
+8. [io.kabassu.config.options.json](options.md) - configuration for options available as parameters - **SHOULD BE CHANGED ONLY IF CUSTOM MODULES ARE ADDED AND THEI OPTIONS SHOULD BE VISIBLE TO KABASSU GUI**
