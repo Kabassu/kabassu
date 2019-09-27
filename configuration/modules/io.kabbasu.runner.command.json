@@ -1,0 +1,7 @@
+{
+  "name": "longworker:io.kabassu.runner.command",
+  "config": {
+    "verticle": "io.kabassu.runner.command.KabassuRunnerCommandVerticle",
+    "address": "kabassu.runner.command"
+  }
+}
