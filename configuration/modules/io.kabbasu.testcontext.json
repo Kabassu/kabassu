@@ -6,6 +6,10 @@
       {
         "runner": "gradle",
         "address": "kabassu.runner.gradle"
+      },
+      {
+        "runner": "command",
+        "address": "kabassu.runner.command"
       }
     ]
   }

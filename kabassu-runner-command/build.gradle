@@ -15,22 +15,11 @@
  *
  */
 
-rootProject.name = 'kabassu-root'
-
-include 'kabassu-manager'
-include 'kabassu-server'
-include 'kabassu-commons'
-include 'kabassu-test-dispatcher'
-include 'kabassu-test-context'
-include 'kabassu-results-dispatcher'
-include 'kabassu-mongo'
-include 'kabassu-runner-gradle'
-include 'kabassu-runner-command'
-include 'kabassu-results-retriever-main'
-include 'kabassu-results-server'
-include 'kabassu-test-rerun'
-include 'kabassu-suite-dispatcher'
-include 'kabassu-suite-rerun'
-include 'kabassu-files-retriever'
-include 'kabassu-setup'
-
+dependencies {
+    implementation group: 'io.vertx', name: 'vertx-core', version: vertxVersion
+    implementation group: 'io.vertx', name: 'vertx-rx-java2', version: vertxVersion
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.8'
+    implementation group: 'org.gradle', name:'gradle-tooling-api', version:'5.1.1'
+    implementation project(path: ':kabassu-commons')
+}
