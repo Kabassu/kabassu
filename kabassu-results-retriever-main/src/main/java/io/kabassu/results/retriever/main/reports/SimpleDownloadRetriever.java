@@ -27,6 +27,11 @@ public class SimpleDownloadRetriever extends ReportsRetriever {
   private String path;
 
   protected SimpleDownloadRetriever(String reportType, String name, String reportDir,
+    String reportDownload, String startItem) {
+    super(reportType, name, reportDir, reportDownload, startItem);
+  }
+
+  protected SimpleDownloadRetriever(String reportType, String name, String reportDir,
       String reportDownload) {
     super(reportType, name, reportDir, reportDownload);
   }
@@ -40,7 +45,7 @@ public class SimpleDownloadRetriever extends ReportsRetriever {
   }
 
   public String retrieveLink() throws IOException {
-      return StringUtils.substringAfterLast(path,new File(reportDownload).getCanonicalPath()) + "/index.html";
+      return StringUtils.substringAfterLast(path,new File(reportDownload).getCanonicalPath()) + "/" + startItem;
   }
 
   private File prepareDirectory() throws IOException {

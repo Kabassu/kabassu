@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 
 public class KabassuResultsRetrieverMainHandler implements Handler<Message<JsonObject>> {
 
@@ -63,12 +64,19 @@ public class KabassuResultsRetrieverMainHandler implements Handler<Message<JsonO
     List<JsonObject> downloadReports = new ArrayList<>();
     reports.forEach(report -> {
       ReportsRetriever reportsRetriever = reportsRetrieverFactory
-        .getReportsRetriever(report, testData.getJsonObject(JsonFields.TEST_REQUEST).getString("_id"),
-          ConfigurationRetriever.getParameter(testData.getJsonObject(JsonFields.DEFINITION),"location"));
+        .getReportsRetriever(report,
+          testData.getJsonObject(JsonFields.TEST_REQUEST).getString("_id"),
+          ConfigurationRetriever
+            .getParameter(testData.getJsonObject(JsonFields.DEFINITION), "location")
+            + formatReportDir(ConfigurationRetriever
+            .getParameter(testData.getJsonObject(JsonFields.DEFINITION), "reportDir")),
+          ConfigurationRetriever
+            .getParameter(testData.getJsonObject(JsonFields.DEFINITION), "startHtml"));
       try {
         downloadReports.add(
           new JsonObject().put("location", reportsRetriever.retrieveReport()).put("downloadPath",
-            reportsRetriever.retrieveLink()).put("reportType",report).put("type",configuration.getReportsTypes().get(report).getString("type","multi")));
+            reportsRetriever.retrieveLink()).put("reportType", report)
+            .put("type", configuration.getReportsTypes().get(report).getString("type", "multi")));
       } catch (IOException | InterruptedException e) {
         LOGGER.error("Problem with report download", e);
         Thread.currentThread().interrupt();
@@ -83,11 +91,16 @@ public class KabassuResultsRetrieverMainHandler implements Handler<Message<JsonO
     updateHistory(testData.getJsonObject(JsonFields.TEST_REQUEST));
   }
 
+  private String formatReportDir(String reportDir) {
+    return StringUtils.isNotBlank(reportDir) ? "/" + reportDir : StringUtils.EMPTY;
+  }
+
   private void updateHistory(JsonObject testRequest) {
-    testRequest.put("status","finished");
-    testRequest.getJsonArray("history").add(new JsonObject().put("date",new Date().getTime()).put("event","Reports downloaded"));
-    JsonObject updateRequest = new JsonObject().put("new",testRequest)
-      .put(JsonFields.COLLECTION,"kabassu-requests").put("id",testRequest.getString("_id"));
+    testRequest.put("status", "finished");
+    testRequest.getJsonArray("history")
+      .add(new JsonObject().put("date", new Date().getTime()).put("event", "Reports downloaded"));
+    JsonObject updateRequest = new JsonObject().put("new", testRequest)
+      .put(JsonFields.COLLECTION, "kabassu-requests").put("id", testRequest.getString("_id"));
     testRequest.remove(JsonFields.CONFIGURATION_PARAMETERS);
     vertx.eventBus().send("kabassu.database.mongo.replacedocument", updateRequest);
   }

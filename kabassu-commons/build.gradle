@@ -16,4 +16,6 @@
  */
 dependencies {
     implementation group: 'io.vertx', name: 'vertx-core', version: vertxVersion
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
+
 }
