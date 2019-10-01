@@ -19,6 +19,7 @@ package io.kabassu.commons.configuration;
 
 import io.kabassu.commons.constants.JsonFields;
 import io.vertx.core.json.JsonObject;
+import org.apache.commons.lang3.StringUtils;
 
 public final class ConfigurationRetriever {
 
@@ -34,9 +35,10 @@ public final class ConfigurationRetriever {
   public static String getParameter(JsonObject dataWithConfig, String parameter) {
     if (dataWithConfig.containsKey(JsonFields.CONFIGURATION_PARAMETERS) && !dataWithConfig
       .getJsonObject(JsonFields.ADDITIONAL_PARAMETERS).containsKey(parameter)) {
-      return dataWithConfig.getJsonObject(JsonFields.CONFIGURATION_PARAMETERS).getString(parameter);
+      return dataWithConfig.getJsonObject(JsonFields.CONFIGURATION_PARAMETERS).getString(parameter, StringUtils.EMPTY);
     }
-    return dataWithConfig.getJsonObject(JsonFields.ADDITIONAL_PARAMETERS).getString(parameter);
+    return dataWithConfig.getJsonObject(JsonFields.ADDITIONAL_PARAMETERS).getString(parameter,
+      StringUtils.EMPTY);
   }
 
 }

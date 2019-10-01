@@ -25,13 +25,20 @@ public abstract class ReportsRetriever {
   protected final String name;
   protected final String reportDir;
   protected final String reportDownload;
+  protected final String startItem;
 
   protected ReportsRetriever(String reportType, String name, String reportDir,
       String reportConfiguration) {
+    this(reportType, name, reportDir, reportConfiguration, "index.html");
+  }
+
+  protected ReportsRetriever(String reportType, String name, String reportDir,
+    String reportConfiguration, String startItem) {
     this.reportType = reportType;
     this.name = name;
     this.reportDir = reportDir;
     this.reportDownload = reportConfiguration;
+    this.startItem = startItem;
   }
 
   public abstract String retrieveReport() throws IOException, InterruptedException;

@@ -25,15 +25,22 @@ public class ReportsRetrieverFactory {
     this.downloadDir = downloadDir;
   }
 
-  public ReportsRetriever getReportsRetriever(String reportType, String name, String reportDir){
-    if(reportType.equals("allure")){
-      return new SimpleDownloadRetriever(reportType, name, reportDir+"/build/reports/allure-report", downloadDir);
+  public ReportsRetriever getReportsRetriever(String reportType, String name, String reportDir,
+    String startItem) {
+    if (reportType.equals("allure")) {
+      return new SimpleDownloadRetriever(reportType, name,
+        reportDir + "/build/reports/allure-report", downloadDir);
     }
-    if(reportType.equals("allure-trend")){
-      return new AllureTrendRetriever(reportType, name, reportDir+"/build/allure-results", downloadDir);
+    if (reportType.equals("allure-trend")) {
+      return new AllureTrendRetriever(reportType, name, reportDir + "/build/allure-results",
+        downloadDir);
     }
-    if(reportType.equals("cucumber")){
-      return new SimpleDownloadRetriever(reportType, name, reportDir+"/build/cucumber-html-report", downloadDir);
+    if (reportType.equals("cucumber")) {
+      return new SimpleDownloadRetriever(reportType, name,
+        reportDir + "/build/cucumber-html-report", downloadDir);
+    }
+    if (reportType.equals("generic")) {
+      return new SimpleDownloadRetriever(reportType, name, reportDir, downloadDir, startItem);
     }
     throw new IllegalArgumentException("Unknown type of report:" + reportType);
   }
