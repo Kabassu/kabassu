@@ -89,9 +89,12 @@ public class RunnerCommandHandler implements Handler<Message<JsonObject>> {
         }
 
         process.waitFor();
-      } catch (IOException | InterruptedException ex) {
+      } catch (IOException ex) {
         LOGGER.error(ex);
         testResult = "Failure";
+      } catch (InterruptedException ex) {
+        LOGGER.error(ex);
+        Thread.currentThread().interrupt();
       }
     }
 
