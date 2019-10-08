@@ -20,6 +20,7 @@ package io.kabassu.testcontext.handlers;
 import io.kabassu.commons.constants.JsonFields;
 import io.kabassu.commons.constants.MessagesFields;
 import io.vertx.core.Handler;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
@@ -37,6 +38,8 @@ public class TestContextHandler implements Handler<Message<JsonObject>> {
 
   private final Vertx vertx;
 
+  private boolean rerun = false;
+
   private Map<String, String> runnersMap;
 
   public TestContextHandler(Vertx vertx,
@@ -47,8 +50,13 @@ public class TestContextHandler implements Handler<Message<JsonObject>> {
 
   @Override
   public void handle(Message<JsonObject> event) {
-    event.body().getJsonArray(MessagesFields.TESTS_TO_RUN)
-      .stream()
+    JsonArray tests = event.body().getJsonArray(MessagesFields.TESTS_TO_RUN);
+    rerun = false;
+    if (event.body().containsKey(MessagesFields.TESTS_TO_RERUN)) {
+      tests = event.body().getJsonArray(MessagesFields.TESTS_TO_RERUN);
+      rerun = true;
+    }
+    tests.stream()
       .forEach(
         testRequest -> {
           Promise<JsonObject> mergeWithDefinitionPromise = mergeWithDefinition(
@@ -141,7 +149,8 @@ public class TestContextHandler implements Handler<Message<JsonObject>> {
             JsonObject configurationData = (JsonObject) eventResponse.result().body();
             if (configurationData != null && configurationData.containsKey("_id")) {
               promise.complete(
-                jsonWithAdditionalParameters.put(JsonFields.CONFIGURATION_PARAMETERS, configurationData.getJsonObject("parameters")));
+                jsonWithAdditionalParameters.put(JsonFields.CONFIGURATION_PARAMETERS,
+                  configurationData.getJsonObject("parameters")));
             } else {
               promise
                 .complete(jsonWithAdditionalParameters);
@@ -155,8 +164,12 @@ public class TestContextHandler implements Handler<Message<JsonObject>> {
   }
 
   private void callRunner(JsonObject completeTestRequest) {
+    if (rerun) {
+      completeTestRequest.put("rerun", true);
+    }
     vertx.eventBus()
-      .send(runnersMap.get(completeTestRequest.getJsonObject(JsonFields.DEFINITION).getString(RUNNER)),
+      .send(
+        runnersMap.get(completeTestRequest.getJsonObject(JsonFields.DEFINITION).getString(RUNNER)),
         completeTestRequest);
   }
 

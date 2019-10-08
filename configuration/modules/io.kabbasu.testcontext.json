@@ -10,6 +10,10 @@
       {
         "runner": "command",
         "address": "kabassu.runner.command"
+      },
+      {
+        "runner": "aet",
+        "address": "kabassu.runner.aet"
       }
     ]
   }

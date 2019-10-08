@@ -25,6 +25,8 @@ public final class MessagesFields {
 
   public static final String TESTS_TO_RUN = "message_tests_to_run";
 
+  public static final String TESTS_TO_RERUN = "message_tests_to_rerun";
+
   public static final String RESULTS_STORAGE = "results_storage";
 
   public static final String TEST_RUN_ID = "test_run_id";

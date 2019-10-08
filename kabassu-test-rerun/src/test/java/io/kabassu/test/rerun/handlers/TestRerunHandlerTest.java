@@ -73,14 +73,14 @@ class TestRerunHandlerTest {
     EventBus eventBus = vertx.eventBus();
     eventBus.consumer("kabassu.test.context", message -> vertxTestContext.verify(() ->{
       JsonObject request = (JsonObject) message.body();
-      assertThat(request.getJsonArray(MessagesFields.TESTS_TO_RUN).getJsonObject(0).getString("_id"), is(
+      assertThat(request.getJsonArray(MessagesFields.TESTS_TO_RERUN).getJsonObject(0).getString("_id"), is(
           TEST_ID));
       sendRequestCheckpoint.flag();
     }));
 
     eventBus.consumer("kabassu.test.context", message -> vertxTestContext.verify(() ->{
       JsonObject request = (JsonObject) message.body();
-      assertThat(request.getJsonArray(MessagesFields.TESTS_TO_RUN).getJsonObject(0).getString("_id"), is(
+      assertThat(request.getJsonArray(MessagesFields.TESTS_TO_RERUN).getJsonObject(0).getString("_id"), is(
           TEST_ID));
       sendRequestCheckpoint.flag();
     }));

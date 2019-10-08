@@ -85,7 +85,7 @@ public class SuiteRerunHandler implements Handler<Message<JsonObject>> {
 
   private Promise<JsonObject> updateTest(JsonObject request) {
     return getPromiseWithRequest("kabassu.database.mongo.replacedocument", request,
-      "Error during updatign  test request.");
+      "Error during updating  test request.");
   }
 
   private void runTests(List<Future> futures) {
@@ -95,7 +95,7 @@ public class SuiteRerunHandler implements Handler<Message<JsonObject>> {
         .add((JsonObject) ((JsonObject) future.result()).getJsonObject("new")));
     vertx.eventBus().send(EventBusAdresses.KABASSU_TEST_CONTEXT,
       new JsonObject()
-        .put(MessagesFields.TESTS_TO_RUN, testRequests));
+        .put(MessagesFields.TESTS_TO_RERUN, testRequests));
   }
 
   private Promise<JsonObject> retrieveRequest(String request) {

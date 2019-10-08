@@ -15,23 +15,19 @@
  *
  */
 
-rootProject.name = 'kabassu-root'
+package io.kabassu.runner.configuration;
 
-include 'kabassu-manager'
-include 'kabassu-server'
-include 'kabassu-commons'
-include 'kabassu-test-dispatcher'
-include 'kabassu-test-context'
-include 'kabassu-results-dispatcher'
-include 'kabassu-mongo'
-include 'kabassu-runner-gradle'
-include 'kabassu-runner-command'
-include 'kabassu-results-retriever-main'
-include 'kabassu-results-server'
-include 'kabassu-test-rerun'
-include 'kabassu-suite-dispatcher'
-include 'kabassu-suite-rerun'
-include 'kabassu-files-retriever'
-include 'kabassu-setup'
-include 'kabassu-runner-aet'
+import io.vertx.core.json.JsonObject;
 
+public class KabassuRunnerAETConfiguration {
+
+  private String address;
+
+  public KabassuRunnerAETConfiguration(JsonObject configuration) {
+    this.address = configuration.getString("address");
+  }
+
+  public String getAddress() {
+    return address;
+  }
+}

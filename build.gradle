@@ -170,6 +170,7 @@ dependencies {
     deps project(':kabassu-suite-dispatcher')
     deps project(':kabassu-runner-gradle')
     deps project(':kabassu-runner-command')
+    deps project(':kabassu-runner-aet')
     deps project(':kabassu-test-context')
     deps project(':kabassu-test-rerun')
     deps project(':kabassu-suite-rerun')

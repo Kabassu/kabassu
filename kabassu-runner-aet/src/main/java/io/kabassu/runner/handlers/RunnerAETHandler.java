@@ -15,37 +15,35 @@
  *
  */
 
-package io.kabassu.runner.command.handlers;
+package io.kabassu.runner.handlers;
 
 import io.kabassu.commons.checks.FilesDownloadChecker;
 import io.kabassu.commons.configuration.ConfigurationRetriever;
-import io.kabassu.commons.constants.CommandLines;
 import io.kabassu.commons.constants.JsonFields;
-import io.kabassu.runner.command.configuration.KabassuRunnerCommandConfiguration;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.eventbus.Message;
-import java.io.BufferedReader;
+import io.vertx.reactivex.ext.web.client.WebClient;
+import io.vertx.reactivex.ext.web.multipart.MultipartForm;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.Date;
-import org.apache.commons.lang3.SystemUtils;
+import org.apache.commons.io.FileUtils;
 
-public class RunnerCommandHandler implements Handler<Message<JsonObject>> {
+public class RunnerAETHandler implements Handler<Message<JsonObject>> {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(RunnerCommandHandler.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(RunnerAETHandler.class);
+  public static final String SUITE = "suite";
 
   private Vertx vertx;
 
-  private KabassuRunnerCommandConfiguration configuration;
 
-  public RunnerCommandHandler(Vertx vertx, KabassuRunnerCommandConfiguration configuration) {
+  public RunnerAETHandler(Vertx vertx) {
     this.vertx = vertx;
-    this.configuration = configuration;
   }
 
   @Override
@@ -66,39 +64,60 @@ public class RunnerCommandHandler implements Handler<Message<JsonObject>> {
   }
 
   private void runTest(JsonObject fullRequest) {
+    boolean rerun = fullRequest.containsKey("rerun");
     fullRequest.remove("rerun");
-    String testResult = "Success";
+
+    String testResult = "FAILURE";
     JsonObject testDefinition = fullRequest.getJsonObject(JsonFields.DEFINITION);
-    if (ConfigurationRetriever.containsParameter(testDefinition, "runnerOptions")) {
-      String runnerOptions = ConfigurationRetriever
-        .getParameter(testDefinition, "runnerOptions");
 
-      ProcessBuilder processBuilder = new ProcessBuilder();
-      processBuilder
-        .directory(new File(ConfigurationRetriever.getParameter(testDefinition, "location")));
-      if (SystemUtils.IS_OS_WINDOWS) {
-        processBuilder.command(CommandLines.CMD, "/c", runnerOptions);
+    //definition:server,suite
+    //request: domain, pattern, name
+
+    if (ConfigurationRetriever.containsParameter(testDefinition, "server") && ConfigurationRetriever
+      .containsParameter(testDefinition, SUITE)) {
+      testResult = "SUCCESS";
+      String server = ConfigurationRetriever
+        .getParameter(testDefinition, "server");
+      String suite = ConfigurationRetriever
+        .getParameter(testDefinition, SUITE);
+      String port = "8181";
+      if(ConfigurationRetriever.containsParameter(testDefinition, "port")){
+        port = ConfigurationRetriever
+          .getParameter(testDefinition, "port");
+      }
+
+      if(rerun && fullRequest.getJsonObject(JsonFields.TEST_REQUEST).containsKey("correlationId")){
+        //TODO RERUN
       } else {
-        processBuilder.command(CommandLines.BASH, "-c", runnerOptions);
-      }
-      try {
-        Process process = processBuilder.start();
-        BufferedReader in = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-        String line;
-        if((line = in.readLine()) != null) {
-          testResult = "Failure";
-        }
+        try {
+          String suiteXML = FileUtils
+            .readFileToString(new File(testDefinition.getString("location"), suite),
+              Charset.defaultCharset());
 
-        process.waitFor();
-      } catch (IOException ex) {
-        LOGGER.error(ex);
-        testResult = "Failure";
-      } catch (InterruptedException ex) {
-        LOGGER.error(ex);
-        Thread.currentThread().interrupt();
+          MultipartForm form = MultipartForm.create()
+            .attribute(SUITE, suiteXML);
+          WebClient.create(vertx).post(Integer.valueOf(port), server,"/suite")
+            .sendMultipartForm(form, ar -> {
+              if (ar.succeeded()) {
+                // Ok
+              }
+            });
+
+        } catch (IOException e) {
+          LOGGER.error(
+            "Error while reading suite file: " + testDefinition.getString("location") + "/" + suite);
+          testResult = "FAILURE";
+          finishRun(fullRequest, testResult);
+        }
       }
+
+    } else {
+      finishRun(fullRequest, testResult);
     }
 
+  }
+
+  private void finishRun(JsonObject fullRequest, String testResult) {
     final String result = testResult;
     JsonObject updateHistory = updateHistory(fullRequest.getJsonObject(JsonFields.TEST_REQUEST),
       testResult);
@@ -111,8 +130,8 @@ public class RunnerCommandHandler implements Handler<Message<JsonObject>> {
               .put(JsonFields.TEST_REQUEST, updateHistory.getJsonObject("new")))
 
       ).subscribe();
-
   }
+
 
   private JsonObject updateHistory(JsonObject testRequest, String testResult) {
     testRequest.getJsonArray("history").add(new JsonObject().put("date", new Date().getTime())
