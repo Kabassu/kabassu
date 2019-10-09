@@ -141,7 +141,8 @@ public class TestContextHandler implements Handler<Message<JsonObject>> {
             JsonObject configurationData = (JsonObject) eventResponse.result().body();
             if (configurationData != null && configurationData.containsKey("_id")) {
               promise.complete(
-                jsonWithAdditionalParameters.put(JsonFields.CONFIGURATION_PARAMETERS, configurationData.getJsonObject("parameters")));
+                jsonWithAdditionalParameters.put(JsonFields.CONFIGURATION_PARAMETERS,
+                  configurationData.getJsonObject("parameters")));
             } else {
               promise
                 .complete(jsonWithAdditionalParameters);
@@ -156,7 +157,8 @@ public class TestContextHandler implements Handler<Message<JsonObject>> {
 
   private void callRunner(JsonObject completeTestRequest) {
     vertx.eventBus()
-      .send(runnersMap.get(completeTestRequest.getJsonObject(JsonFields.DEFINITION).getString(RUNNER)),
+      .send(
+        runnersMap.get(completeTestRequest.getJsonObject(JsonFields.DEFINITION).getString(RUNNER)),
         completeTestRequest);
   }
 

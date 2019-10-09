@@ -38,7 +38,7 @@ public class SimpleDownloadRetriever extends ReportsRetriever {
 
   @Override
   public String retrieveReport() throws IOException {
-    File directory = prepareDirectory();
+    File directory = new DirectoryCreator().prepareDirectory(reportDownload, name, reportType);
     FileUtils.copyDirectory(new File(reportDir), directory);
     path = directory.getCanonicalPath();
     return path;
@@ -48,16 +48,5 @@ public class SimpleDownloadRetriever extends ReportsRetriever {
       return StringUtils.substringAfterLast(path,new File(reportDownload).getCanonicalPath()) + "/" + startItem;
   }
 
-  private File prepareDirectory() throws IOException {
-    File reportDirectory = new File(reportDownload, name + "-" + reportType);
-    FileUtils.forceMkdir(reportDirectory);
-    int counter = 1;
-    File downloadDirectory = new File(reportDirectory, counter + "");
-    while (downloadDirectory.exists()) {
-      counter++;
-      downloadDirectory = new File(reportDirectory, counter + "");
-    }
-    FileUtils.forceMkdir(downloadDirectory);
-    return downloadDirectory;
-  }
+
 }

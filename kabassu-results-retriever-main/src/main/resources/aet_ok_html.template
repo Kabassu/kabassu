@@ -1,0 +1,18 @@
+<html>
+<body>
+<table>
+  <tr>
+    <td>{correlationId}</td>
+  </tr>
+  <tr>
+    <td><a href="{htmlReportUrl}">Go to HTML Report</a></td>
+  </tr>
+  <tr>
+    <td><a href="http://{statusUrl}">Get status</a></td>
+  </tr>
+  <tr>
+    <td><a href="http://{xunitReportUrl}">Get xunit report</a></td>
+  </tr>
+</table>
+</body>
+</html>
