@@ -17,7 +17,6 @@
 
 package io.kabassu.results.retriever.main.handlers;
 
-import io.kabassu.commons.configuration.ConfigurationRetriever;
 import io.kabassu.commons.constants.JsonFields;
 import io.kabassu.results.retriever.main.configuration.KabassuResultsRetrieverMainConfiguration;
 import io.kabassu.results.retriever.main.reports.ReportsRetriever;
@@ -33,7 +32,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.apache.commons.lang3.StringUtils;
 
 public class KabassuResultsRetrieverMainHandler implements Handler<Message<JsonObject>> {
 
@@ -65,13 +63,7 @@ public class KabassuResultsRetrieverMainHandler implements Handler<Message<JsonO
     reports.forEach(report -> {
       ReportsRetriever reportsRetriever = reportsRetrieverFactory
         .getReportsRetriever(report,
-          testData.getJsonObject(JsonFields.TEST_REQUEST).getString("_id"),
-          ConfigurationRetriever
-            .getParameter(testData.getJsonObject(JsonFields.DEFINITION), "location")
-            + formatReportDir(ConfigurationRetriever
-            .getParameter(testData.getJsonObject(JsonFields.DEFINITION), "reportDir")),
-          ConfigurationRetriever
-            .getParameter(testData.getJsonObject(JsonFields.DEFINITION), "startHtml"));
+          testData);
       try {
         downloadReports.add(
           new JsonObject().put("location", reportsRetriever.retrieveReport()).put("downloadPath",
@@ -89,10 +81,6 @@ public class KabassuResultsRetrieverMainHandler implements Handler<Message<JsonO
     testData.put("downloadedReports", new JsonArray(downloadReports));
     vertx.eventBus().send("kabassu.database.mongo.addresults", testData);
     updateHistory(testData.getJsonObject(JsonFields.TEST_REQUEST));
-  }
-
-  private String formatReportDir(String reportDir) {
-    return StringUtils.isNotBlank(reportDir) ? "/" + reportDir : StringUtils.EMPTY;
   }
 
   private void updateHistory(JsonObject testRequest) {

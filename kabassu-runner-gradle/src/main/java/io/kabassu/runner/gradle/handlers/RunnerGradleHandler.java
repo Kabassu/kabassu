@@ -66,7 +66,6 @@ public class RunnerGradleHandler implements Handler<Message<JsonObject>> {
   }
 
   private void runTest(JsonObject fullRequest) {
-    fullRequest.remove("rerun");
     String testResult = "Failure";
     JsonObject testDefinition = fullRequest.getJsonObject(JsonFields.DEFINITION);
     try (ProjectConnection connection = GradleConnector.newConnector()

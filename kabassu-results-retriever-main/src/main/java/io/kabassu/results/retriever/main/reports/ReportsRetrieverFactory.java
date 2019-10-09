@@ -17,6 +17,11 @@
 
 package io.kabassu.results.retriever.main.reports;
 
+import io.kabassu.commons.configuration.ConfigurationRetriever;
+import io.kabassu.commons.constants.JsonFields;
+import io.vertx.core.json.JsonObject;
+import org.apache.commons.lang3.StringUtils;
+
 public class ReportsRetrieverFactory {
 
   private final String downloadDir;
@@ -25,8 +30,15 @@ public class ReportsRetrieverFactory {
     this.downloadDir = downloadDir;
   }
 
-  public ReportsRetriever getReportsRetriever(String reportType, String name, String reportDir,
-    String startItem) {
+  public ReportsRetriever getReportsRetriever(String reportType, JsonObject testData) {
+    String name = testData.getJsonObject(JsonFields.TEST_REQUEST).getString("_id");
+    String reportDir =
+      ConfigurationRetriever.getParameter(testData.getJsonObject(JsonFields.DEFINITION), "location")
+        + formatReportDir(ConfigurationRetriever
+        .getParameter(testData.getJsonObject(JsonFields.DEFINITION), "reportDir"));
+    String startItem = ConfigurationRetriever
+      .getParameter(testData.getJsonObject(JsonFields.DEFINITION), "startHtml");
+
     if (reportType.equals("allure")) {
       return new SimpleDownloadRetriever(reportType, name,
         reportDir + "/build/reports/allure-report", downloadDir);
@@ -42,6 +54,13 @@ public class ReportsRetrieverFactory {
     if (reportType.equals("generic")) {
       return new SimpleDownloadRetriever(reportType, name, reportDir, downloadDir, startItem);
     }
+    if (reportType.equals("aet")) {
+      return new AETRetriever(reportType, name, reportDir, downloadDir,testData);
+    }
     throw new IllegalArgumentException("Unknown type of report:" + reportType);
+  }
+
+  private String formatReportDir(String reportDir) {
+    return StringUtils.isNotBlank(reportDir) ? "/" + reportDir : StringUtils.EMPTY;
   }
 }

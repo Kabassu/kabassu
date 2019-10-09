@@ -49,7 +49,7 @@ public class TestRerunHandler implements Handler<Message<JsonObject>> {
                 event.reply(updateHistory.getJsonObject("new"));
                 vertx.eventBus().send(EventBusAdresses.KABASSU_TEST_CONTEXT,
                   new JsonObject()
-                    .put(MessagesFields.TESTS_TO_RERUN,
+                    .put(MessagesFields.TESTS_TO_RUN,
                       new JsonArray()
                         .add(updateHistory.getJsonObject("new"))));
               }

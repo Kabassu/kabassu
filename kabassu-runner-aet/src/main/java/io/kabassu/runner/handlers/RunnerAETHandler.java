@@ -27,6 +27,7 @@ import io.vertx.core.logging.LoggerFactory;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.eventbus.Message;
 import io.vertx.reactivex.ext.web.client.WebClient;
+import io.vertx.reactivex.ext.web.codec.BodyCodec;
 import io.vertx.reactivex.ext.web.multipart.MultipartForm;
 import java.io.File;
 import java.io.IOException;
@@ -37,7 +38,15 @@ import org.apache.commons.io.FileUtils;
 public class RunnerAETHandler implements Handler<Message<JsonObject>> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(RunnerAETHandler.class);
-  public static final String SUITE = "suite";
+
+  private static final String DOMAIN = "domain";
+  private static final String SUITE = "suite";
+
+  private static final String FAILURE = "FAILURE";
+  private static final String SUCESSS = "SUCCESS";
+  private static final String CORRELATION_ID = "correlationId";
+  private static final String PATTERN = "pattern";
+  private static final String NAME = "name";
 
   private Vertx vertx;
 
@@ -64,10 +73,7 @@ public class RunnerAETHandler implements Handler<Message<JsonObject>> {
   }
 
   private void runTest(JsonObject fullRequest) {
-    boolean rerun = fullRequest.containsKey("rerun");
-    fullRequest.remove("rerun");
 
-    String testResult = "FAILURE";
     JsonObject testDefinition = fullRequest.getJsonObject(JsonFields.DEFINITION);
 
     //definition:server,suite
@@ -75,46 +81,81 @@ public class RunnerAETHandler implements Handler<Message<JsonObject>> {
 
     if (ConfigurationRetriever.containsParameter(testDefinition, "server") && ConfigurationRetriever
       .containsParameter(testDefinition, SUITE)) {
-      testResult = "SUCCESS";
       String server = ConfigurationRetriever
         .getParameter(testDefinition, "server");
       String suite = ConfigurationRetriever
         .getParameter(testDefinition, SUITE);
       String port = "8181";
-      if(ConfigurationRetriever.containsParameter(testDefinition, "port")){
+      if (ConfigurationRetriever.containsParameter(testDefinition, "port")) {
         port = ConfigurationRetriever
           .getParameter(testDefinition, "port");
       }
 
-      if(rerun && fullRequest.getJsonObject(JsonFields.TEST_REQUEST).containsKey("correlationId")){
-        //TODO RERUN
-      } else {
-        try {
-          String suiteXML = FileUtils
-            .readFileToString(new File(testDefinition.getString("location"), suite),
-              Charset.defaultCharset());
+      try {
+        String suiteXML = FileUtils
+          .readFileToString(
+            new File(ConfigurationRetriever.getParameter(testDefinition, "location"), suite),
+            Charset.defaultCharset());
 
-          MultipartForm form = MultipartForm.create()
-            .attribute(SUITE, suiteXML);
-          WebClient.create(vertx).post(Integer.valueOf(port), server,"/suite")
-            .sendMultipartForm(form, ar -> {
-              if (ar.succeeded()) {
-                // Ok
-              }
-            });
+        MultipartForm form = MultipartForm.create();
 
-        } catch (IOException e) {
-          LOGGER.error(
-            "Error while reading suite file: " + testDefinition.getString("location") + "/" + suite);
-          testResult = "FAILURE";
-          finishRun(fullRequest, testResult);
+        form.attribute(SUITE, suiteXML);
+        if (ConfigurationRetriever
+          .containsParameter(fullRequest.getJsonObject(JsonFields.TEST_REQUEST),
+            DOMAIN)) {
+          form.attribute(DOMAIN, ConfigurationRetriever
+            .getParameter(fullRequest.getJsonObject(JsonFields.TEST_REQUEST), DOMAIN));
         }
+        if (ConfigurationRetriever
+          .containsParameter(fullRequest.getJsonObject(JsonFields.TEST_REQUEST),
+            PATTERN)) {
+          form.attribute(PATTERN,
+            ConfigurationRetriever.getParameter(fullRequest.getJsonObject(JsonFields.TEST_REQUEST),
+              PATTERN));
+        }
+        if (ConfigurationRetriever
+          .containsParameter(fullRequest.getJsonObject(JsonFields.TEST_REQUEST),
+            NAME)) {
+          form.attribute(NAME,
+            ConfigurationRetriever.getParameter(fullRequest.getJsonObject(JsonFields.TEST_REQUEST),
+              NAME));
+        }
+        sendRequest(fullRequest, server, port, form, "/suite");
+
+      } catch (IOException e) {
+        LOGGER.error(
+          "Error while reading suite file: " + testDefinition.getString("location") + "/"
+            + suite);
+        finishRun(fullRequest, FAILURE);
       }
 
+
     } else {
-      finishRun(fullRequest, testResult);
+      finishRun(fullRequest, FAILURE);
     }
 
+  }
+
+  private void sendRequest(JsonObject fullRequest, String server, String port, MultipartForm form,
+    String path) {
+    WebClient.create(vertx).post(Integer.valueOf(port), server, path)
+      .as(BodyCodec.jsonObject())
+      .sendMultipartForm(form, ar -> {
+        if (ar.succeeded()) {
+          JsonObject result = ar.result().body();
+          if (result.containsKey(CORRELATION_ID)) {
+            fullRequest.getJsonObject(JsonFields.TEST_REQUEST)
+              .put(CORRELATION_ID, result.getString(CORRELATION_ID));
+            fullRequest.getJsonObject(JsonFields.TEST_REQUEST).put("aetResponse", result);
+            finishRun(fullRequest, SUCESSS);
+          } else {
+            fullRequest.getJsonObject(JsonFields.TEST_REQUEST).put("aetResponse", result);
+            finishRun(fullRequest, FAILURE);
+          }
+        } else {
+          finishRun(fullRequest, FAILURE);
+        }
+      });
   }
 
   private void finishRun(JsonObject fullRequest, String testResult) {

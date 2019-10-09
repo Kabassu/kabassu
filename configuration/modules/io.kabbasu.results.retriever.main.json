@@ -23,6 +23,11 @@
         "id": "generic",
         "retriever": "generic-retriever",
         "type": "multi"
+      },
+      {
+        "id": "aet",
+        "retriever": "aet-retriever",
+        "type": "multi"
       }
     ],
     "defaultReports": "allure",

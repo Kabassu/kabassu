@@ -66,7 +66,6 @@ public class RunnerCommandHandler implements Handler<Message<JsonObject>> {
   }
 
   private void runTest(JsonObject fullRequest) {
-    fullRequest.remove("rerun");
     String testResult = "Success";
     JsonObject testDefinition = fullRequest.getJsonObject(JsonFields.DEFINITION);
     if (ConfigurationRetriever.containsParameter(testDefinition, "runnerOptions")) {

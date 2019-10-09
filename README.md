@@ -42,6 +42,6 @@ More detailed information can be found:
 # API
 
 Kabassu is run by calling series of rest services. All available endpoints can be found in OpenApi specification _configuration/openapi_   
-[Guide for single test](docs/guide/singletest.md) and [Guide for test suit](docs/guide/testsuite.md) explain using of API  
+[Guide for single test](docs/guide/singletest.md),  [Guide for test suit](docs/guide/testsuite.md)and [Guide for AET](docs/guide/aettest.md) explain using of API
 
 Every endpoint can be found [here](configuration/openapi/kabassu_api.yaml) in OpenApi 3 format that can be opened using Swagger Editor

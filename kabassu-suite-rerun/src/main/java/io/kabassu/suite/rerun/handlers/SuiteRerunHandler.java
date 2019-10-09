@@ -95,7 +95,7 @@ public class SuiteRerunHandler implements Handler<Message<JsonObject>> {
         .add((JsonObject) ((JsonObject) future.result()).getJsonObject("new")));
     vertx.eventBus().send(EventBusAdresses.KABASSU_TEST_CONTEXT,
       new JsonObject()
-        .put(MessagesFields.TESTS_TO_RERUN, testRequests));
+        .put(MessagesFields.TESTS_TO_RUN, testRequests));
   }
 
   private Promise<JsonObject> retrieveRequest(String request) {
