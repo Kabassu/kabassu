@@ -24,7 +24,6 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.reactivex.core.Vertx;
-import io.vertx.reactivex.core.eventbus.Message;
 import io.vertx.reactivex.ext.web.client.WebClient;
 import io.vertx.reactivex.ext.web.codec.BodyCodec;
 import io.vertx.reactivex.ext.web.multipart.MultipartForm;
