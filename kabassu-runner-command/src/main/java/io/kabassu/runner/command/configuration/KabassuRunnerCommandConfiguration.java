@@ -18,8 +18,6 @@
 package io.kabassu.runner.command.configuration;
 
 import io.vertx.core.json.JsonObject;
-import java.util.HashMap;
-import java.util.Map;
 
 public class KabassuRunnerCommandConfiguration {
 

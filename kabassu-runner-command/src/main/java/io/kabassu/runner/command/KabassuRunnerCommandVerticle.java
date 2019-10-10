@@ -41,7 +41,7 @@ public class KabassuRunnerCommandVerticle extends AbstractVerticle {
   public void start() throws Exception {
 
     consumer = vertx.eventBus()
-      .consumer(configuration.getAddress(), new RunnerCommandHandler(vertx, configuration));
+      .consumer(configuration.getAddress(), new RunnerCommandHandler(vertx));
   }
 
   @Override
