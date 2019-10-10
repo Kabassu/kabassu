@@ -17,10 +17,9 @@
 
 package io.kabassu.runner.handlers;
 
-import io.kabassu.commons.checks.FilesDownloadChecker;
 import io.kabassu.commons.configuration.ConfigurationRetriever;
 import io.kabassu.commons.constants.JsonFields;
-import io.vertx.core.Handler;
+import io.kabassu.runner.AbstractRunner;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
@@ -35,7 +34,7 @@ import java.nio.charset.Charset;
 import java.util.Date;
 import org.apache.commons.io.FileUtils;
 
-public class RunnerAETHandler implements Handler<Message<JsonObject>> {
+public class RunnerAETHandler extends AbstractRunner {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(RunnerAETHandler.class);
 
@@ -48,37 +47,12 @@ public class RunnerAETHandler implements Handler<Message<JsonObject>> {
   private static final String PATTERN = "pattern";
   private static final String NAME = "name";
 
-  private Vertx vertx;
-
-
   public RunnerAETHandler(Vertx vertx) {
-    this.vertx = vertx;
+    super(vertx);
   }
 
-  @Override
-  public void handle(Message<JsonObject> event) {
-
-    if (FilesDownloadChecker
-      .checkIfFilesRetrieveIsRequired(
-        event.body().getJsonObject(JsonFields.DEFINITION).getString("locationType"))) {
-      vertx.eventBus().rxRequest("kabassu.filesretriever",
-        event.body()).toObservable()
-        .doOnNext(
-          eventResponse ->
-            runTest((JsonObject) eventResponse.body())
-        ).subscribe();
-    } else {
-      runTest(event.body());
-    }
-  }
-
-  private void runTest(JsonObject fullRequest) {
-
+  protected void runTest(JsonObject fullRequest) {
     JsonObject testDefinition = fullRequest.getJsonObject(JsonFields.DEFINITION);
-
-    //definition:server,suite
-    //request: domain, pattern, name
-
     if (ConfigurationRetriever.containsParameter(testDefinition, "server") && ConfigurationRetriever
       .containsParameter(testDefinition, SUITE)) {
       String server = ConfigurationRetriever
@@ -159,7 +133,6 @@ public class RunnerAETHandler implements Handler<Message<JsonObject>> {
   }
 
   private void finishRun(JsonObject fullRequest, String testResult) {
-    final String result = testResult;
     JsonObject updateHistory = updateHistory(fullRequest.getJsonObject(JsonFields.TEST_REQUEST),
       testResult);
     vertx.eventBus().rxRequest("kabassu.database.mongo.replacedocument", updateHistory)
@@ -167,7 +140,7 @@ public class RunnerAETHandler implements Handler<Message<JsonObject>> {
       .doOnNext(
         eventResponse ->
           vertx.eventBus().send("kabassu.results.dispatcher",
-            fullRequest.put("result", result)
+            fullRequest.put("result", testResult)
               .put(JsonFields.TEST_REQUEST, updateHistory.getJsonObject("new")))
 
       ).subscribe();

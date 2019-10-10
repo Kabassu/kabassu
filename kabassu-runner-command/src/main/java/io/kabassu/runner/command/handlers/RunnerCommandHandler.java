@@ -17,17 +17,14 @@
 
 package io.kabassu.runner.command.handlers;
 
-import io.kabassu.commons.checks.FilesDownloadChecker;
 import io.kabassu.commons.configuration.ConfigurationRetriever;
 import io.kabassu.commons.constants.CommandLines;
 import io.kabassu.commons.constants.JsonFields;
-import io.kabassu.runner.command.configuration.KabassuRunnerCommandConfiguration;
-import io.vertx.core.Handler;
+import io.kabassu.runner.AbstractRunner;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.reactivex.core.Vertx;
-import io.vertx.reactivex.core.eventbus.Message;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -35,37 +32,15 @@ import java.io.InputStreamReader;
 import java.util.Date;
 import org.apache.commons.lang3.SystemUtils;
 
-public class RunnerCommandHandler implements Handler<Message<JsonObject>> {
+public class RunnerCommandHandler extends AbstractRunner {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(RunnerCommandHandler.class);
 
-  private Vertx vertx;
-
-  private KabassuRunnerCommandConfiguration configuration;
-
-  public RunnerCommandHandler(Vertx vertx, KabassuRunnerCommandConfiguration configuration) {
-    this.vertx = vertx;
-    this.configuration = configuration;
+  public RunnerCommandHandler(Vertx vertx) {
+    super(vertx);
   }
 
-  @Override
-  public void handle(Message<JsonObject> event) {
-
-    if (FilesDownloadChecker
-      .checkIfFilesRetrieveIsRequired(
-        event.body().getJsonObject(JsonFields.DEFINITION).getString("locationType"))) {
-      vertx.eventBus().rxRequest("kabassu.filesretriever",
-        event.body()).toObservable()
-        .doOnNext(
-          eventResponse ->
-            runTest((JsonObject) eventResponse.body())
-        ).subscribe();
-    } else {
-      runTest(event.body());
-    }
-  }
-
-  private void runTest(JsonObject fullRequest) {
+  protected void runTest(JsonObject fullRequest) {
     String testResult = "Success";
     JsonObject testDefinition = fullRequest.getJsonObject(JsonFields.DEFINITION);
     if (ConfigurationRetriever.containsParameter(testDefinition, "runnerOptions")) {
@@ -83,8 +58,7 @@ public class RunnerCommandHandler implements Handler<Message<JsonObject>> {
       try {
         Process process = processBuilder.start();
         BufferedReader in = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-        String line;
-        if((line = in.readLine()) != null) {
+        if (in.ready()) {
           testResult = "Failure";
         }
 

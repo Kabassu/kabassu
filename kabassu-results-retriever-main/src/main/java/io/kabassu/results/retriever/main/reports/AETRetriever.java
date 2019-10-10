@@ -34,7 +34,7 @@ public class AETRetriever extends ReportsRetriever {
   }
 
   private String fillTemplate() throws IOException {
-    String report = StringUtils.EMPTY;
+    String report;
     if (!testData.getJsonObject(JsonFields.TEST_REQUEST).containsKey(AET_RESPONSE) || !testData
       .getJsonObject(JsonFields.TEST_REQUEST).getJsonObject(AET_RESPONSE)
       .containsKey(CORRELATION_ID)) {
