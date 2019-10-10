@@ -24,7 +24,7 @@ import io.vertx.core.json.JsonObject;
 
 public class ModuleConfigStoreFactory implements ConfigStoreFactory {
 
-  public static final String STORE_NAME = "kabbasu-modules";
+  public static final String STORE_NAME = "kabassu-modules";
 
   @Override
   public String name() {

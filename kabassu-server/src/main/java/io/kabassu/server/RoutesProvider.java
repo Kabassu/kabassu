@@ -62,7 +62,7 @@ class RoutesProvider {
     if (options.getRoutingPath() == null || options.getRoutingPath().isEmpty()) {
       LOGGER.warn(
         "The server configuration does not contain any operation defined. Please check your "
-          + "configuration [io.kabbasu.server.json -> config.operations]");
+          + "configuration [io.kabassu.server.json -> config.operations]");
     }
   }
 

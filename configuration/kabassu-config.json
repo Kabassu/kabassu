@@ -8,7 +8,7 @@
   "modules": {
     "stores": [
       {
-        "type":"kabbasu-modules",
+        "type":"kabassu-modules",
         "optional":false,
         "config":{
           "path":"./modules"

@@ -65,7 +65,7 @@ public class KabassuManagerVerticle extends AbstractVerticle {
         deploymentManager = new DeploymentManager(configuration.getJsonArray(MODULE_KEY));
         deployVerticles(startFuture, deploymentManager.getDeployedModules().keySet());
       } else {
-        LOGGER.fatal("Unable to start Kabbasu", ar.cause());
+        LOGGER.fatal("Unable to start Kabassu", ar.cause());
         startFuture.fail(ar.cause());
       }
     });
