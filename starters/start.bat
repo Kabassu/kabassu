@@ -1,1 +1,1 @@
-java -javaagent:libs/kabassu-manager-0.2.0.jar -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Dlogback.configurationFile=logback.xml -cp "libs/*" io.kabassu.manager.LogbackLauncher -conf kabassu-config.json
+java -javaagent:libs/kabassu-manager-0.3.0-SNAPSHOT.jar -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Dlogback.configurationFile=logback.xml -cp "libs/*" io.kabassu.manager.LogbackLauncher -conf kabassu-config.json
