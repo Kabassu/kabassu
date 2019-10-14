@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: Kabassu API
   description: API for Kabassu system
-  version: 0.0.1
+  version: 0.3.0
 security: 
   - bearerAuth: []
 paths:
@@ -35,6 +35,26 @@ paths:
       responses:
         '200':
           description: Retrieved object
+  /kabassu/getoptions/{file}/{option}:
+    get:
+      operationId: getoptions
+      summary: get test request by id
+      parameters:
+        - in: path
+          name: file
+          required: true
+          schema:
+           type: string
+          description: File to read
+        - in: path
+          name: option
+          required: true
+          schema:
+           type: string
+          description: option to read
+      responses:
+        '200':
+          description: Retrieved object        
   /kabassu/getsuite/{id}:
     get:
       operationId: getsuite
@@ -49,6 +69,20 @@ paths:
       responses:
         '200':
           description: Retrieved object
+  /kabassu/getview/{id}:
+    get:
+      operationId: getview
+      summary: get test suite by id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+           type: string
+          description: View ID
+      responses:
+        '200':
+          description: Retrieved object        
   /kabassu/getconfiguration/{id}:
     get:
       operationId: getconfiguration
@@ -143,6 +177,34 @@ paths:
       responses:
         '200':
           description: filtered data
+  /kabassu/addview/:
+    post:
+      operationId: addview
+      summary: add execution to view
+      requestBody:
+        description: JSON File containing all filters data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddView'
+      responses:
+        '200':
+          description: add view        
+  /kabassu/updateview/:
+    post:
+      operationId: updateview
+      summary: remove execution from view
+      requestBody:
+        description: JSON File containing all filters data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateArray'
+      responses:
+        '200':
+          description: remove from view        
   /kabassu/getallbyfield/{collection}/{field}/{value}/{page}/{pagesize}:
     get:
       operationId: getallbyfield
@@ -374,8 +436,8 @@ components:
           type: string
         configurationId: 
           type: string
-        jvm:
-          type: string
+        viewId: 
+          type: string  
         description:
           type: string
         additionalParameters:
@@ -396,6 +458,8 @@ components:
       properties: 
         suiteId: 
           type: string
+        viewId: 
+          type: string    
         definitionsData: 
           type: array
           items: 
@@ -426,3 +490,27 @@ components:
           type: string      
         password_hash:
           type: string
+    UpdateArray:
+      type: object
+      properties: 
+        id: 
+          type: string
+        collection:
+          type: string
+        field:
+          type: string
+        value:
+          type: string  
+        operation: 
+          type: string  
+    AddView:
+      type: object
+      properties: 
+        name: 
+          type: string
+        description:
+          type: string
+        executionId:
+          type: array
+          items:
+            type: string

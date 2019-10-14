@@ -72,6 +72,12 @@ public enum ServerHandlers {
       return new GetAllByFieldRoutingHandler(vertx, address);
     }
   },
+  UPDATEARRAY("updatearray") {
+    @Override
+    public Handler<RoutingContext> gerRoutingHandler(Vertx vertx, String address, KabassuServerConfiguration options) {
+      return new UpdateArrayRoutingHandler(vertx, address);
+    }
+  },
   LOGIN("login") {
     @Override
     public Handler<RoutingContext> gerRoutingHandler(Vertx vertx, String address, KabassuServerConfiguration options) {

@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 
 public class SuiteDispatcherHandler implements Handler<Message<JsonObject>> {
 
@@ -61,7 +62,7 @@ public class SuiteDispatcherHandler implements Handler<Message<JsonObject>> {
     CompositeFuture.all(futures)
       .setHandler(completedFutures -> {
         if (completedFutures.succeeded()) {
-          createTestSuiteRun(futures, testSuiteRequest.getString(JsonFields.SUITE_ID));
+          createTestSuiteRun(futures, testSuiteRequest.getString(JsonFields.SUITE_ID), testSuiteRequest.getString("viewId"));
           runTests(futures);
         }
       });
@@ -76,14 +77,20 @@ public class SuiteDispatcherHandler implements Handler<Message<JsonObject>> {
         .put(MessagesFields.TESTS_TO_RUN, testRequests));
   }
 
-  private void createTestSuiteRun(List<Future> futures, String suiteId) {
+  private void createTestSuiteRun(List<Future> futures, String suiteId, String viewId) {
     JsonObject suiteRunRequest = new JsonObject();
     JsonArray testRequestsId = new JsonArray();
     futures.forEach(future -> testRequestsId.add(((JsonObject) future.result()).getString("_id")));
     suiteRunRequest.put(JsonFields.SUITE_ID, suiteId).put("requests", testRequestsId)
       .put("history", new JsonArray().add(new JsonObject().put("date", new Date().getTime()).put("event","Suite run created and started")));
     vertx.eventBus()
-      .send("kabassu.database.mongo.addsuiterun", suiteRunRequest);
+      .rxRequest("kabassu.database.mongo.addsuiterun", suiteRunRequest).toObservable()
+      .doOnNext(
+        eventResponse -> {
+          if(StringUtils.isNotBlank(viewId)){
+            updateView(viewId,((JsonObject) eventResponse.body()).getString("id"));
+          }
+        }).subscribe();
 
   }
 
@@ -98,6 +105,11 @@ public class SuiteDispatcherHandler implements Handler<Message<JsonObject>> {
       .put("status", "started")
       .put("history", new JsonArray().add(new JsonObject().put("date", new Date().getTime())
         .put("event", "Request created with test suite and started")));
+  }
+
+  private void updateView(String id, String viewId) {
+    vertx.eventBus().send("kabassu.database.mongo.updatearray",
+      new JsonObject().put("id",viewId).put("collection","kabassu-views").put("field","suiteRunId").put("value",id));
   }
 
   private Promise<JsonObject> createRequest(JsonObject testRequest) {
