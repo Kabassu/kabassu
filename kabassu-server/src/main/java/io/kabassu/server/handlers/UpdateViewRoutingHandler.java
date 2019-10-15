@@ -24,13 +24,13 @@ import io.vertx.reactivex.core.http.HttpServerResponse;
 import io.vertx.reactivex.ext.web.RoutingContext;
 import org.apache.commons.lang3.StringUtils;
 
-public class UpdateArrayRoutingHandler implements Handler<RoutingContext> {
+public class UpdateViewRoutingHandler implements Handler<RoutingContext> {
 
   private Vertx vertx;
 
   private String address;
 
-  public UpdateArrayRoutingHandler(Vertx vertx, String address) {
+  public UpdateViewRoutingHandler(Vertx vertx, String address) {
     this.vertx = vertx;
     this.address = address;
   }
@@ -48,8 +48,8 @@ public class UpdateArrayRoutingHandler implements Handler<RoutingContext> {
   }
 
   private void addData(String requestString, HttpServerResponse response) {
-    JsonObject message = new JsonObject(requestString);
-    vertx.eventBus().rxRequest(address, message).toObservable().doOnNext(eventResponse ->
+    JsonObject request = new JsonObject(requestString).put("collection","kabassu-views");
+    vertx.eventBus().rxRequest(address, request).toObservable().doOnNext(eventResponse ->
         response.end(((JsonObject) eventResponse.body()).encodePrettily())
     ).subscribe();
   }

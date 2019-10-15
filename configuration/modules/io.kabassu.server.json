@@ -101,7 +101,7 @@
       {
         "operationId": "updateview",
         "address": "kabassu.database.mongo.updatearray",
-        "handler": "updatearray"
+        "handler": "updateview"
       }
     ]
   }
