@@ -107,7 +107,7 @@ public class SuiteDispatcherHandler implements Handler<Message<JsonObject>> {
         .put("event", "Request created with test suite and started")));
   }
 
-  private void updateView(String id, String viewId) {
+  private void updateView(String viewId, String id) {
     vertx.eventBus().send("kabassu.database.mongo.updatearray",
       new JsonObject().put("id",viewId).put("collection","kabassu-views").put("field","suiteRunId").put("value",id));
   }
