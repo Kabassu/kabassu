@@ -109,7 +109,7 @@ public class SuiteDispatcherHandler implements Handler<Message<JsonObject>> {
 
   private void updateView(String viewId, String id) {
     vertx.eventBus().send("kabassu.database.mongo.updatearray",
-      new JsonObject().put("id",viewId).put("collection","kabassu-views").put("field","suiteRunId").put("value",id));
+      new JsonObject().put("id",viewId).put("collection","kabassu-views").put("field","suiteRunId").put("value",id).put("operation","add"));
   }
 
   private Promise<JsonObject> createRequest(JsonObject testRequest) {
