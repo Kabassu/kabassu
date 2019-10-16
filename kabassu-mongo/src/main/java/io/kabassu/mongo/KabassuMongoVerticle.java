@@ -79,6 +79,12 @@ public class KabassuMongoVerticle extends AbstractVerticle {
         .consumer("kabassu.database.mongo.getsuite",
             mongoHandlersProvider.provideGetDataByIdHandler("kabassu-suites", "_id")));
     consumers.add(vertx.eventBus()
+      .consumer("kabassu.database.mongo.getview",
+        mongoHandlersProvider.provideGetDataByIdHandler("kabassu-views", "_id")));
+    consumers.add(vertx.eventBus()
+      .consumer("kabassu.database.mongo.addview",
+        mongoHandlersProvider.provideAddDataHandler("kabassu-views")));
+    consumers.add(vertx.eventBus()
       .consumer("kabassu.database.mongo.addrequest",
         mongoHandlersProvider.provideAddDataHandler("kabassu-requests")));
     consumers.add(vertx.eventBus()
@@ -93,6 +99,9 @@ public class KabassuMongoVerticle extends AbstractVerticle {
     consumers.add(vertx.eventBus()
       .consumer("kabassu.database.mongo.replacedocument",
         mongoHandlersProvider.provideReplaceDocumentHandler()));
+    consumers.add(vertx.eventBus()
+      .consumer("kabassu.database.mongo.updatearray",
+        mongoHandlersProvider.provideUpdateArrayHandler()));
     consumers.add(vertx.eventBus()
       .consumer("kabassu.database.mongo.checkuser",
         mongoHandlersProvider.provideGetByFilterstHandler()));

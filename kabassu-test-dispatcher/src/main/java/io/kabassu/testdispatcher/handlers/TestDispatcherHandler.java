@@ -42,6 +42,9 @@ public class TestDispatcherHandler implements Handler<Message<JsonObject>> {
       .doOnNext(
         eventResponse -> {
           event.reply(eventResponse.body());
+          if(requestWithStatus.containsKey("viewId")){
+            updateView(requestWithStatus.getString("viewId"),((JsonObject) eventResponse.body()).getString("id"));
+          }
           vertx.eventBus().send(EventBusAdresses.KABASSU_TEST_CONTEXT,
             new JsonObject()
               .put(MessagesFields.TESTS_TO_RUN,
@@ -50,6 +53,11 @@ public class TestDispatcherHandler implements Handler<Message<JsonObject>> {
                     .put("_id", ((JsonObject) eventResponse.body()).getString("id")))));
         }
       ).subscribe();
+  }
+
+  private void updateView(String viewId, String id) {
+    vertx.eventBus().send("kabassu.database.mongo.updatearray",
+      new JsonObject().put("id",viewId).put("collection","kabassu-views").put("field","executionId").put("value",id).put("operation","add"));
   }
 
   private JsonObject addStatusAndHistory(JsonObject request) {
