@@ -15,6 +15,8 @@
       {
         "id": "allure-junit-xml",
         "retriever": "allure-junit-xml-retriever",
+        "class": "io.kabassu.results.retriever.main.reports.AllureJUnitXMLRetriever",
+        "startItem": "index.html",
         "type": "multi"
       },
       {
