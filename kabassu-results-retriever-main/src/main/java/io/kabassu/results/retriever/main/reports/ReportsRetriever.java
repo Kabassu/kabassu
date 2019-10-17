@@ -17,28 +17,16 @@
 
 package io.kabassu.results.retriever.main.reports;
 
+import io.kabassu.results.retriever.main.configuration.ReportRetrieverConfiguration;
 import java.io.IOException;
 
 public abstract class ReportsRetriever {
 
-  protected final String reportType;
-  protected final String name;
-  protected final String reportDir;
-  protected final String reportDownload;
-  protected final String startItem;
+  protected final ReportRetrieverConfiguration configuration;
 
-  protected ReportsRetriever(String reportType, String name, String reportDir,
-      String reportConfiguration) {
-    this(reportType, name, reportDir, reportConfiguration, "index.html");
-  }
 
-  protected ReportsRetriever(String reportType, String name, String reportDir,
-    String reportConfiguration, String startItem) {
-    this.reportType = reportType;
-    this.name = name;
-    this.reportDir = reportDir;
-    this.reportDownload = reportConfiguration;
-    this.startItem = startItem;
+  protected ReportsRetriever(ReportRetrieverConfiguration configuration) {
+    this.configuration = configuration;
   }
 
   public abstract String retrieveReport() throws IOException, InterruptedException;

@@ -2,6 +2,7 @@ package io.kabassu.results.retriever.main.reports;
 
 import io.kabassu.commons.configuration.ConfigurationRetriever;
 import io.kabassu.commons.constants.JsonFields;
+import io.kabassu.results.retriever.main.configuration.ReportRetrieverConfiguration;
 import io.vertx.core.json.JsonObject;
 import java.io.File;
 import java.io.IOException;
@@ -12,21 +13,21 @@ import org.apache.commons.lang3.StringUtils;
 
 public class AETRetriever extends ReportsRetriever {
 
-  public static final String AET_RESPONSE = "aetResponse";
-  public static final String CORRELATION_ID = "correlationId";
+  private static final String AET_RESPONSE = "aetResponse";
+  private static final String CORRELATION_ID = "correlationId";
+
   private String path;
 
-  private JsonObject testData;
 
-  protected AETRetriever(String reportType, String name, String reportDir,
-    String reportDownload, JsonObject testData) {
-    super(reportType, name, reportDir, reportDownload);
-    this.testData = testData;
+  protected AETRetriever(ReportRetrieverConfiguration configuration) {
+    super(configuration);
   }
 
   @Override
   public String retrieveReport() throws IOException, InterruptedException {
-    File directory = new DirectoryCreator().prepareDirectory(reportDownload, name, reportType);
+    File directory = new DirectoryCreator()
+      .prepareDirectory(configuration.getReportDownload(), configuration.getName(),
+        configuration.getReportType());
     FileUtils.writeStringToFile(new File(directory, "index.html"), fillTemplate(),
       Charset.defaultCharset());
     path = directory.getCanonicalPath();
@@ -35,6 +36,7 @@ public class AETRetriever extends ReportsRetriever {
 
   private String fillTemplate() throws IOException {
     String report;
+    JsonObject testData = configuration.getAdditionalData();
     if (!testData.getJsonObject(JsonFields.TEST_REQUEST).containsKey(AET_RESPONSE) || !testData
       .getJsonObject(JsonFields.TEST_REQUEST).getJsonObject(AET_RESPONSE)
       .containsKey(CORRELATION_ID)) {
@@ -72,7 +74,8 @@ public class AETRetriever extends ReportsRetriever {
   }
 
   public String retrieveLink() throws IOException {
-    return StringUtils.substringAfterLast(path, new File(reportDownload).getCanonicalPath())
+    return StringUtils
+      .substringAfterLast(path, new File(configuration.getReportDownload()).getCanonicalPath())
       + "/index.html";
   }
 }

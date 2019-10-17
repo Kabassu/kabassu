@@ -7,26 +7,47 @@
       {
         "id": "allure",
         "retriever": "allure-retriever",
+        "class": "io.kabassu.results.retriever.main.reports.SimpleDownloadRetriever",
+        "reportDir": "/build/reports/allure-report",
+        "startItem": "index.html",
         "type": "multi"
+      },
+      {
+        "id": "allure-junit-xml",
+        "retriever": "allure-junit-xml-retriever",
+        "type": "multi"
+      },
+      {
+        "id": "allure-trend-junit-xml",
+        "retriever": "allure-trend-junit-xml-retriever",
+        "type": "single"
       },
       {
         "id": "allure-trend",
         "retriever": "allure-trend-retriever",
+        "class": "io.kabassu.results.retriever.main.reports.AllureTrendRetriever",
+        "reportDir": "/build/allure-results",
+        "startItem": "index.html",
         "type": "single"
       },
       {
         "id": "cucumber",
         "retriever": "cucumber-retriever",
+        "class": "io.kabassu.results.retriever.main.reports.SimpleDownloadRetriever",
+        "reportDir": "/build/cucumber-html-report",
+        "startItem": "index.html",
         "type": "multi"
       },
       {
         "id": "generic",
         "retriever": "generic-retriever",
+        "class": "io.kabassu.results.retriever.main.reports.SimpleDownloadRetriever",
         "type": "multi"
       },
       {
         "id": "aet",
         "retriever": "aet-retriever",
+        "class": "io.kabassu.results.retriever.main.reports.AETRetriever",
         "type": "multi"
       }
     ],

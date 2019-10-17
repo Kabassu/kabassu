@@ -19,6 +19,7 @@ package io.kabassu.results.retriever.main.reports;
 
 import io.kabassu.commons.constants.CommandLines;
 import io.kabassu.commons.constants.Structure;
+import io.kabassu.results.retriever.main.configuration.ReportRetrieverConfiguration;
 import java.io.File;
 import java.io.IOException;
 import org.apache.commons.io.FileUtils;
@@ -29,17 +30,16 @@ public class AllureTrendRetriever extends ReportsRetriever {
 
   private String path;
 
-  protected AllureTrendRetriever(String reportType, String name, String reportDir,
-    String reportConfiguration) {
-    super(reportType, name, reportDir, reportConfiguration);
+  protected AllureTrendRetriever(ReportRetrieverConfiguration configuration) {
+    super(configuration);
   }
 
   @Override
   public String retrieveReport() throws IOException, InterruptedException {
     File[] directories = prepareDirectories();
-    FileUtils.copyDirectory(new File(reportDir), directories[0]);
+    FileUtils.copyDirectory(new File(configuration.getReportDir()), directories[0]);
     path = directories[1].getCanonicalPath();
-    if(new File(directories[1], Structure.HISTORY).exists()){
+    if (new File(directories[1], Structure.HISTORY).exists()) {
       prepareHistory(directories);
     }
     generateReport(directories[2]);
@@ -47,13 +47,15 @@ public class AllureTrendRetriever extends ReportsRetriever {
   }
 
   public String retrieveLink() throws IOException {
-    return StringUtils.substringAfterLast(path,new File(reportDownload).getCanonicalPath()) + "/index.html";
+    return StringUtils
+      .substringAfterLast(path, new File(configuration.getReportDownload()).getCanonicalPath())
+      + "/index.html";
   }
 
   private void generateReport(File directory) throws IOException, InterruptedException {
     ProcessBuilder processBuilder = new ProcessBuilder();
     processBuilder.directory(directory);
-    if(SystemUtils.IS_OS_WINDOWS){
+    if (SystemUtils.IS_OS_WINDOWS) {
       processBuilder.command(CommandLines.CMD, "/c", "allure generate --clean");
     } else {
       processBuilder.command(CommandLines.BASH, "-c", "allure generate --clean");
@@ -63,13 +65,14 @@ public class AllureTrendRetriever extends ReportsRetriever {
   }
 
   private void prepareHistory(File[] directories) throws IOException {
-    File history = new File(directories[0],Structure.HISTORY);
+    File history = new File(directories[0], Structure.HISTORY);
     FileUtils.forceMkdir(history);
-    FileUtils.copyDirectory(new File(directories[1], Structure.HISTORY),history);
+    FileUtils.copyDirectory(new File(directories[1], Structure.HISTORY), history);
   }
 
   private File[] prepareDirectories() throws IOException {
-    File reportDirectory = new File(reportDownload, name + "-" + reportType);
+    File reportDirectory = new File(configuration.getReportDownload(),
+      configuration.getName() + "-" + configuration.getReportType());
     FileUtils.forceMkdir(reportDirectory);
     File[] directories = new File[3];
     directories[0] = new File(reportDirectory, "allure-results");
@@ -84,7 +87,6 @@ public class AllureTrendRetriever extends ReportsRetriever {
     directories[2] = reportDirectory;
     return directories;
   }
-
 
 
 }
