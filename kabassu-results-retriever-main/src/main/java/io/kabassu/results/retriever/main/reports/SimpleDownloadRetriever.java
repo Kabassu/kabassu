@@ -17,6 +17,7 @@
 
 package io.kabassu.results.retriever.main.reports;
 
+import io.kabassu.results.retriever.main.configuration.ReportRetrieverConfiguration;
 import java.io.File;
 import java.io.IOException;
 import org.apache.commons.io.FileUtils;
@@ -26,26 +27,24 @@ public class SimpleDownloadRetriever extends ReportsRetriever {
 
   private String path;
 
-  protected SimpleDownloadRetriever(String reportType, String name, String reportDir,
-    String reportDownload, String startItem) {
-    super(reportType, name, reportDir, reportDownload, startItem);
-  }
-
-  protected SimpleDownloadRetriever(String reportType, String name, String reportDir,
-      String reportDownload) {
-    super(reportType, name, reportDir, reportDownload);
+  protected SimpleDownloadRetriever(ReportRetrieverConfiguration configuration) {
+    super(configuration);
   }
 
   @Override
   public String retrieveReport() throws IOException {
-    File directory = new DirectoryCreator().prepareDirectory(reportDownload, name, reportType);
-    FileUtils.copyDirectory(new File(reportDir), directory);
+    File directory = new DirectoryCreator()
+      .prepareDirectory(configuration.getReportDownload(), configuration.getName(),
+        configuration.getReportType());
+    FileUtils.copyDirectory(new File(configuration.getReportDir()), directory);
     path = directory.getCanonicalPath();
     return path;
   }
 
   public String retrieveLink() throws IOException {
-      return StringUtils.substringAfterLast(path,new File(reportDownload).getCanonicalPath()) + "/" + startItem;
+    return StringUtils
+      .substringAfterLast(path, new File(configuration.getReportDownload()).getCanonicalPath())
+      + "/" + configuration.getStartItem();
   }
 
 

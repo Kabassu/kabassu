@@ -19,48 +19,64 @@ package io.kabassu.results.retriever.main.reports;
 
 import io.kabassu.commons.configuration.ConfigurationRetriever;
 import io.kabassu.commons.constants.JsonFields;
+import io.kabassu.results.retriever.main.configuration.KabassuResultsRetrieverMainConfiguration;
+import io.kabassu.results.retriever.main.configuration.ReportRetrieverConfiguration;
+import io.kabassu.results.retriever.main.configuration.ReportRetrieverConfigurationBuilder;
 import io.vertx.core.json.JsonObject;
+import java.lang.reflect.InvocationTargetException;
 import org.apache.commons.lang3.StringUtils;
 
 public class ReportsRetrieverFactory {
 
-  private final String downloadDir;
+  private final KabassuResultsRetrieverMainConfiguration retrieverMainConfiguration;
 
-  public ReportsRetrieverFactory(String downloadDir) {
-    this.downloadDir = downloadDir;
+  public ReportsRetrieverFactory(
+    KabassuResultsRetrieverMainConfiguration retrieverMainConfiguration) {
+    this.retrieverMainConfiguration = retrieverMainConfiguration;
   }
 
-  public ReportsRetriever getReportsRetriever(String reportType, JsonObject testData) {
+  public ReportsRetriever getReportsRetriever(String reportType, JsonObject testData)  {
+
+    if (retrieverMainConfiguration.getReportsTypes().containsKey(reportType)) {
+      ReportRetrieverConfiguration configuration = mergeReportRetrieverConfiguration(reportType,
+        retrieverMainConfiguration.getDefaultReportsDir(), testData,
+        retrieverMainConfiguration.getReportsTypes().get(reportType));
+      try {
+        return (ReportsRetriever) Class
+          .forName(retrieverMainConfiguration.getReportsTypes().get(reportType).getString("class"))
+          .getDeclaredConstructor(ReportRetrieverConfiguration.class).newInstance(configuration);
+      } catch (InstantiationException | ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        throw new IllegalArgumentException("Problems with report retrievers configuration", e);
+      }
+    }
+    throw new IllegalArgumentException("Unknown type of report:" + reportType);
+
+  }
+
+  private ReportRetrieverConfiguration mergeReportRetrieverConfiguration(String reportType,
+    String defaultReportsDir, JsonObject testData, JsonObject entries) {
+
     String name = testData.getJsonObject(JsonFields.TEST_REQUEST).getString("_id");
     String reportDir =
       ConfigurationRetriever.getParameter(testData.getJsonObject(JsonFields.DEFINITION), "location")
         + formatReportDir(ConfigurationRetriever
-        .getParameter(testData.getJsonObject(JsonFields.DEFINITION), "reportDir"));
+          .getParameter(testData.getJsonObject(JsonFields.DEFINITION), "reportDir"),
+        entries.getString("reportDir", StringUtils.EMPTY));
     String startItem = ConfigurationRetriever
       .getParameter(testData.getJsonObject(JsonFields.DEFINITION), "startHtml");
 
-    if (reportType.equals("allure")) {
-      return new SimpleDownloadRetriever(reportType, name,
-        reportDir + "/build/reports/allure-report", downloadDir);
-    }
-    if (reportType.equals("allure-trend")) {
-      return new AllureTrendRetriever(reportType, name, reportDir + "/build/allure-results",
-        downloadDir);
-    }
-    if (reportType.equals("cucumber")) {
-      return new SimpleDownloadRetriever(reportType, name,
-        reportDir + "/build/cucumber-html-report", downloadDir);
-    }
-    if (reportType.equals("generic")) {
-      return new SimpleDownloadRetriever(reportType, name, reportDir, downloadDir, startItem);
-    }
-    if (reportType.equals("aet")) {
-      return new AETRetriever(reportType, name, reportDir, downloadDir,testData);
-    }
-    throw new IllegalArgumentException("Unknown type of report:" + reportType);
+    return new ReportRetrieverConfigurationBuilder()
+      .setAdditionalData(testData)
+      .setName(name)
+      .setReportType(reportType)
+      .setReportDir(reportDir)
+      .setReportDownload(defaultReportsDir)
+      .setStartItem(StringUtils.isNotBlank(reportDir) ? startItem
+        : entries.getString("startItem", "index.html"))
+      .createReportRetrieverConfiguration();
   }
 
-  private String formatReportDir(String reportDir) {
-    return StringUtils.isNotBlank(reportDir) ? "/" + reportDir : StringUtils.EMPTY;
+  private String formatReportDir(String reportDir, String dirFromConfig) {
+    return StringUtils.isNotBlank(reportDir) ? "/" + reportDir : dirFromConfig;
   }
 }

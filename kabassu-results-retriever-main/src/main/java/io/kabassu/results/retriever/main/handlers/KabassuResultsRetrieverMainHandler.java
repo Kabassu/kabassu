@@ -47,7 +47,7 @@ public class KabassuResultsRetrieverMainHandler implements Handler<Message<JsonO
     KabassuResultsRetrieverMainConfiguration configuration) {
     this.vertx = vertx;
     this.configuration = configuration;
-    reportsRetrieverFactory = new ReportsRetrieverFactory(configuration.getDefaultReportsDir());
+    reportsRetrieverFactory = new ReportsRetrieverFactory(configuration);
   }
 
   @Override
