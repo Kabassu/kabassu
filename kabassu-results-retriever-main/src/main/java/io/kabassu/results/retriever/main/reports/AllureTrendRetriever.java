@@ -42,7 +42,7 @@ public class AllureTrendRetriever extends ReportsRetriever {
     if (new File(directories[1], Structure.HISTORY).exists()) {
       prepareHistory(directories);
     }
-    generateReport(directories[2]);
+    generateReport(directories[1].getParentFile());
     return path;
   }
 
@@ -74,7 +74,7 @@ public class AllureTrendRetriever extends ReportsRetriever {
     File reportDirectory = new File(configuration.getReportDownload(),
       configuration.getName() + "-" + configuration.getReportType());
     FileUtils.forceMkdir(reportDirectory);
-    File[] directories = new File[3];
+    File[] directories = new File[2];
     directories[0] = new File(reportDirectory, "allure-results");
     if (directories[0].exists()) {
       FileUtils.forceDelete(directories[0]);
@@ -84,7 +84,6 @@ public class AllureTrendRetriever extends ReportsRetriever {
     if (!directories[1].exists()) {
       FileUtils.forceMkdir(directories[1]);
     }
-    directories[2] = reportDirectory;
     return directories;
   }
 

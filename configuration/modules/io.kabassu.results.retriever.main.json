@@ -20,8 +20,10 @@
         "type": "multi"
       },
       {
-        "id": "allure-trend-junit-xml",
-        "retriever": "allure-trend-junit-xml-retriever",
+        "id": "allure-junit-xml-trend",
+        "retriever": "allure-junit-xml-retriever-trend",
+        "class": "io.kabassu.results.retriever.main.reports.AllureTrendJUnitXMLRetriever",
+        "startItem": "index.html",
         "type": "single"
       },
       {

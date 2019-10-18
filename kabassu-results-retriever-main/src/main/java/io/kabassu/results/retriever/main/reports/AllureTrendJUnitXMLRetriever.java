@@ -18,6 +18,7 @@
 package io.kabassu.results.retriever.main.reports;
 
 import io.kabassu.commons.constants.CommandLines;
+import io.kabassu.commons.constants.Structure;
 import io.kabassu.results.retriever.main.configuration.ReportRetrieverConfiguration;
 import io.kabassu.results.retriever.main.reports.utils.XMLFileFilter;
 import java.io.File;
@@ -26,11 +27,11 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 
-public class AllureJUnitXMLRetriever extends ReportsRetriever {
+public class AllureTrendJUnitXMLRetriever extends ReportsRetriever {
 
   private String path;
 
-  protected AllureJUnitXMLRetriever(ReportRetrieverConfiguration configuration) {
+  protected AllureTrendJUnitXMLRetriever(ReportRetrieverConfiguration configuration) {
     super(configuration);
   }
 
@@ -40,7 +41,10 @@ public class AllureJUnitXMLRetriever extends ReportsRetriever {
     FileUtils
       .copyDirectory(new File(configuration.getReportDir()), directories[0], new XMLFileFilter());
     path = directories[1].getCanonicalPath();
-    generateReport(directories[1]);
+    if (new File(directories[1], Structure.HISTORY).exists()) {
+      prepareHistory(directories);
+    }
+    generateReport(directories[0]);
     return path;
   }
 
@@ -50,14 +54,20 @@ public class AllureJUnitXMLRetriever extends ReportsRetriever {
       + "/index.html";
   }
 
+  private void prepareHistory(File[] directories) throws IOException {
+    File history = new File(directories[0], Structure.HISTORY);
+    FileUtils.forceMkdir(history);
+    FileUtils.copyDirectory(new File(directories[1], Structure.HISTORY), history);
+  }
+
   private void generateReport(File directory)
     throws IOException, InterruptedException {
     ProcessBuilder processBuilder = new ProcessBuilder();
     processBuilder.directory(directory.getParentFile());
     if (SystemUtils.IS_OS_WINDOWS) {
-      processBuilder.command(CommandLines.CMD, "/c", "allure generate temporary-results --clean -o " + directory.getName());
+      processBuilder.command(CommandLines.CMD, "/c", "allure generate "+directory.getName()+" --clean");
     } else {
-      processBuilder.command(CommandLines.BASH, "-c", "allure generate temporary-results --clean -o " + directory.getName());
+      processBuilder.command(CommandLines.BASH, "-c", "allure generate "+directory.getName()+" --clean");
     }
     Process process = processBuilder.start();
     process.waitFor();
@@ -67,15 +77,13 @@ public class AllureJUnitXMLRetriever extends ReportsRetriever {
     File reportDirectory = new File(configuration.getReportDownload(),
       configuration.getName() + "-" + configuration.getReportType());
     FileUtils.forceMkdir(reportDirectory);
-    File[] directories = new File[3];
+    File[] directories = new File[2];
     directories[0] = new File(reportDirectory, "temporary-results");
     if (directories[0].exists()) {
       FileUtils.forceDelete(directories[0]);
     }
     FileUtils.forceMkdir(directories[0]);
-    directories[1] = new DirectoryCreator()
-      .prepareDirectory(configuration.getReportDownload(), configuration.getName(),
-        configuration.getReportType());
+    directories[1] = new File(reportDirectory, "allure-report");
     if (!directories[1].exists()) {
       FileUtils.forceMkdir(directories[1]);
     }
