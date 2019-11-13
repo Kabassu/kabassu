@@ -19,6 +19,9 @@ package io.kabassu.commons.configuration;
 
 import io.kabassu.commons.constants.JsonFields;
 import io.vertx.core.json.JsonObject;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 public final class ConfigurationRetriever {
@@ -41,4 +44,15 @@ public final class ConfigurationRetriever {
       StringUtils.EMPTY);
   }
 
+  public static Map<String,String> getAllParameters(JsonObject dataWithConfig){
+    Map<String, String> allParameters = new HashMap<>();
+    if(dataWithConfig.containsKey(JsonFields.CONFIGURATION_PARAMETERS)){
+      dataWithConfig
+        .getJsonObject(JsonFields.CONFIGURATION_PARAMETERS).stream().forEach(entry -> allParameters.put(entry.getKey(),entry.getValue().toString()));
+    }
+      dataWithConfig
+        .getJsonObject(JsonFields.ADDITIONAL_PARAMETERS).stream().forEach(entry -> allParameters.put(entry.getKey(),entry.getValue().toString()));
+
+    return allParameters;
+  }
 }

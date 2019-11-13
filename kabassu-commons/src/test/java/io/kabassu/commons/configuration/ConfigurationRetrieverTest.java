@@ -32,7 +32,7 @@ class ConfigurationRetrieverTest {
   private JsonObject testJson = prepareTestJson();
 
   @Test
-  void containsParameter() {
+  void containsParameterTest() {
     assertTrue(ConfigurationRetriever.containsParameter(testJson,"firstParameter"));
     assertTrue(ConfigurationRetriever.containsParameter(testJson,"mirrorParameter"));
     assertTrue(ConfigurationRetriever.containsParameter(testJson,"secondParameter"));
@@ -40,10 +40,15 @@ class ConfigurationRetrieverTest {
   }
 
   @Test
-  void getParameter() {
+  void getParameterTest() {
     assertThat(ConfigurationRetriever.getParameter(testJson,"firstParameter"),is("first"));
     assertThat(ConfigurationRetriever.getParameter(testJson,"mirrorParameter"),is("additional"));
     assertThat(ConfigurationRetriever.getParameter(testJson,"secondParameter"),is("second"));
+  }
+
+  @Test
+  void getAllParametersTest(){
+    assertThat(ConfigurationRetriever.getAllParameters(prepareTestJson()).entrySet().size(),is(3));
   }
 
   private JsonObject prepareTestJson() {

@@ -1,0 +1,7 @@
+{
+  "name": "longworker:io.kabassu.runner.lighthouse",
+  "config": {
+    "verticle": "io.kabassu.runner.lighthouse.KabassuRunnerLighthouseVerticle",
+    "address": "kabassu.runner.lighthouse"
+  }
+}

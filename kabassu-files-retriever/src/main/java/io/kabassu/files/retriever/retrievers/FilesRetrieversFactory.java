@@ -32,6 +32,9 @@ public class FilesRetrieversFactory {
     if (locationType.equals("git")) {
       return new GitFilesRetriever(request, downloadDirectory);
     }
+    if (locationType.equals("none")) {
+      return new NoFilesRetriever(request, downloadDirectory);
+    }
     throw new IllegalArgumentException("Unknown file location type " + locationType);
   }
 }
