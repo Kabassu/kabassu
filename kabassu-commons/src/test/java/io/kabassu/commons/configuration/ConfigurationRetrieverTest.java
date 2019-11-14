@@ -49,7 +49,15 @@ class ConfigurationRetrieverTest {
   @Test
   void getAllParametersTest(){
     assertThat(ConfigurationRetriever.getAllParameters(prepareTestJson()).entrySet().size(),is(3));
+    assertThat(ConfigurationRetriever.getAllParameters(prepareTestJson()).get("mirrorParameter"),is("additional"));
   }
+
+  @Test
+  void mergeParametersToMapTest(){
+    assertThat(ConfigurationRetriever.mergeParametersToMap(prepareTestJson(), prepareSecondTestJson()).entrySet().size(),is(4));
+    assertThat(ConfigurationRetriever.mergeParametersToMap(prepareTestJson(), prepareSecondTestJson()).get("mirrorParameter"),is("should be this"));
+  }
+
 
   private JsonObject prepareTestJson() {
     return new JsonObject()
@@ -59,5 +67,15 @@ class ConfigurationRetrieverTest {
         .put(JsonFields.ADDITIONAL_PARAMETERS, new JsonObject()
             .put("secondParameter", "second")
             .put("mirrorParameter", "additional"));
+  }
+
+  private JsonObject prepareSecondTestJson() {
+    return new JsonObject()
+      .put(JsonFields.CONFIGURATION_PARAMETERS, new JsonObject()
+        .put("mirrorParameter", "configuration"))
+      .put(JsonFields.ADDITIONAL_PARAMETERS, new JsonObject()
+        .put("secondParameter", "try")
+        .put("thirdParameter", "third")
+        .put("mirrorParameter", "should be this"));
   }
 }

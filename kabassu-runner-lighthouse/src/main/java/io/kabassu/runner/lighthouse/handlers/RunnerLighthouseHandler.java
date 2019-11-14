@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Date;
+import java.util.Map;
 import org.apache.commons.lang3.SystemUtils;
 
 public class RunnerLighthouseHandler extends AbstractRunner {
@@ -42,7 +43,8 @@ public class RunnerLighthouseHandler extends AbstractRunner {
 
   protected void runTest(JsonObject fullRequest) {
 
-    final String result = runCommand(fullRequest.getJsonObject(JsonFields.DEFINITION), prepareLighthouseCommand(fullRequest));
+    final String result = runCommand(fullRequest.getJsonObject(JsonFields.DEFINITION),
+      prepareLighthouseCommand(fullRequest));
     JsonObject updateHistory = updateHistory(fullRequest.getJsonObject(JsonFields.TEST_REQUEST),
       result);
     vertx.eventBus().rxRequest("kabassu.database.mongo.replacedocument", updateHistory)
@@ -59,10 +61,18 @@ public class RunnerLighthouseHandler extends AbstractRunner {
 
   private String prepareLighthouseCommand(JsonObject fullRequest) {
     JsonObject definition = fullRequest.getJsonObject(JsonFields.DEFINITION);
+    Map<String, String> allParameters = ConfigurationRetriever
+      .mergeParametersToMap(definition, fullRequest.getJsonObject(JsonFields.TEST_REQUEST));
     StringBuilder command = new StringBuilder("lighthouse ");
-    command.append(definition.getString("url"));
+    command.append(ConfigurationRetriever.getParameter(definition,"url"));
 
-
+    allParameters.entrySet().stream().filter(parameter -> parameter.getKey().startsWith("--")).forEach(parameter ->
+      command
+        .append(" ")
+        .append(parameter.getKey())
+        .append(" ")
+        .append(parameter.getValue())
+    );
 
     return command.toString();
   }

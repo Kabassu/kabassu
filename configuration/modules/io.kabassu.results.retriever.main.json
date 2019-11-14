@@ -53,6 +53,12 @@
         "retriever": "aet-retriever",
         "class": "io.kabassu.results.retriever.main.reports.AETRetriever",
         "type": "multi"
+      },
+      {
+        "id": "lighthouse",
+        "retriever": "lighthouse-retriever",
+        "class": "io.kabassu.results.retriever.main.reports.LighthouseRetriever",
+        "type": "multi"
       }
     ],
     "defaultReports": "allure",
