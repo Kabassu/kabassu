@@ -66,14 +66,14 @@ public class RunnerLighthouseHandler extends AbstractRunner {
     StringBuilder command = new StringBuilder("lighthouse ");
     command.append(ConfigurationRetriever.getParameter(definition,"url"));
 
-    allParameters.entrySet().stream().filter(parameter -> parameter.getKey().startsWith("--")).forEach(parameter ->
+    allParameters.entrySet().stream().filter(parameter -> parameter.getKey().startsWith("--") && !parameter.getKey().equals("--quiet")).forEach(parameter ->
       command
         .append(" ")
         .append(parameter.getKey())
         .append(" ")
         .append(parameter.getValue())
     );
-
+    command.append(" --quiet");
     return command.toString();
   }
 
