@@ -19,16 +19,11 @@ package io.kabassu.mongo.handlers;
 
 import io.kabassu.commons.constants.JsonFields;
 import io.kabassu.mongo.configuration.KabassuMongoConfiguration;
-import io.vertx.core.AsyncResult;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.eventbus.Message;
 
-public class MongoReplaceDocumentHandler extends AbstractMongoHandler<JsonObject> {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(MongoReplaceDocumentHandler.class);
+public class MongoReplaceDocumentHandler extends AbstractUpdateMongoHandler<JsonObject> {
 
   public MongoReplaceDocumentHandler(Vertx vertx, KabassuMongoConfiguration configuration) {
     super(vertx, configuration);
@@ -38,22 +33,8 @@ public class MongoReplaceDocumentHandler extends AbstractMongoHandler<JsonObject
   public void handle(Message<JsonObject> event) {
     JsonObject request = event.body();
     request.getJsonObject("new").remove("_id");
-    client.findOneAndReplace(request.getString(JsonFields.COLLECTION), new JsonObject().put("_id", request.getString("id")), request.getJsonObject("new"), res -> {
-      if (res.succeeded()) {
-        validateResult(event, res);
-      } else {
-        event.reply(new JsonObject().put("error", res.cause().getMessage()));
-        LOGGER.error("Problem during replacing data", res.cause());
-      }
-    });
+    client.findOneAndReplace(request.getString(JsonFields.COLLECTION),
+      new JsonObject().put("_id", request.getString("id")), request.getJsonObject("new"),
+      res -> responseHandler(res, event));
   }
-
-  private void validateResult(Message<JsonObject> event, AsyncResult<JsonObject> res) {
-    if (res.result() != null) {
-      event.reply(res.result());
-    } else {
-      event.reply(new JsonObject().put("error", "Data not found"));
-    }
-  }
-
 }
