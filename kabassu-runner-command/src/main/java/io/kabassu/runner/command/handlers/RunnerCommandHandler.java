@@ -18,80 +18,26 @@
 package io.kabassu.runner.command.handlers;
 
 import io.kabassu.commons.configuration.ConfigurationRetriever;
-import io.kabassu.commons.constants.CommandLines;
 import io.kabassu.commons.constants.JsonFields;
 import io.kabassu.runner.AbstractRunner;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
 import io.vertx.reactivex.core.Vertx;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Date;
-import org.apache.commons.lang3.SystemUtils;
 
 public class RunnerCommandHandler extends AbstractRunner {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(RunnerCommandHandler.class);
 
   public RunnerCommandHandler(Vertx vertx) {
     super(vertx);
   }
 
   protected void runTest(JsonObject fullRequest) {
-    String testResult = "Success";
+    String testResult = "Failure";
     JsonObject testDefinition = fullRequest.getJsonObject(JsonFields.DEFINITION);
     if (ConfigurationRetriever.containsParameter(testDefinition, "runnerOptions")) {
       String runnerOptions = ConfigurationRetriever
         .getParameter(testDefinition, "runnerOptions");
 
-      ProcessBuilder processBuilder = new ProcessBuilder();
-      processBuilder
-        .directory(new File(ConfigurationRetriever.getParameter(testDefinition, "location")));
-      if (SystemUtils.IS_OS_WINDOWS) {
-        processBuilder.command(CommandLines.CMD, "/c", runnerOptions);
-      } else {
-        processBuilder.command(CommandLines.BASH, "-c", runnerOptions);
-      }
-      try {
-        Process process = processBuilder.start();
-        BufferedReader in = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-        if (in.ready()) {
-          testResult = "Failure";
-        }
-
-        process.waitFor();
-      } catch (IOException ex) {
-        LOGGER.error(ex);
-        testResult = "Failure";
-      } catch (InterruptedException ex) {
-        LOGGER.error(ex);
-        Thread.currentThread().interrupt();
-      }
+      testResult = runCommand(runnerOptions, testDefinition);
     }
-
-    final String result = testResult;
-    JsonObject updateHistory = updateHistory(fullRequest.getJsonObject(JsonFields.TEST_REQUEST),
-      testResult);
-    vertx.eventBus().rxRequest("kabassu.database.mongo.replacedocument", updateHistory)
-      .toObservable()
-      .doOnNext(
-        eventResponse ->
-          vertx.eventBus().send("kabassu.results.dispatcher",
-            fullRequest.put("result", result)
-              .put(JsonFields.TEST_REQUEST, updateHistory.getJsonObject("new")))
-
-      ).subscribe();
-
+    finishRun(fullRequest, testResult);
   }
-
-  private JsonObject updateHistory(JsonObject testRequest, String testResult) {
-    testRequest.getJsonArray("history").add(new JsonObject().put("date", new Date().getTime())
-      .put("event", "Test finished with: " + testResult));
-    return new JsonObject().put("new", testRequest)
-      .put(JsonFields.COLLECTION, "kabassu-requests").put("id", testRequest.getString("_id"));
-  }
-
 }

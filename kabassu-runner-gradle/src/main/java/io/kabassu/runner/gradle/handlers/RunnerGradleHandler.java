@@ -27,7 +27,6 @@ import io.vertx.core.logging.LoggerFactory;
 import io.vertx.reactivex.core.Vertx;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.util.Date;
 import org.gradle.tooling.BuildException;
 import org.gradle.tooling.BuildLauncher;
 import org.gradle.tooling.GradleConnector;
@@ -71,26 +70,8 @@ public class RunnerGradleHandler extends AbstractRunner {
     } catch (BuildException e) {
       LOGGER.error(e);
     } finally {
-      final String result = testResult;
-      JsonObject updateHistory = updateHistory(fullRequest.getJsonObject(JsonFields.TEST_REQUEST),
-        testResult);
-      vertx.eventBus().rxRequest("kabassu.database.mongo.replacedocument", updateHistory)
-        .toObservable()
-        .doOnNext(
-          eventResponse ->
-            vertx.eventBus().send("kabassu.results.dispatcher",
-              fullRequest.put("result", result)
-                .put(JsonFields.TEST_REQUEST, updateHistory.getJsonObject("new")))
-
-        ).subscribe();
+      finishRun(fullRequest, testResult);
     }
-  }
-
-  private JsonObject updateHistory(JsonObject testRequest, String testResult) {
-    testRequest.getJsonArray("history").add(new JsonObject().put("date", new Date().getTime())
-      .put("event", "Test finished with: " + testResult));
-    return new JsonObject().put("new", testRequest)
-      .put(JsonFields.COLLECTION, "kabassu-requests").put("id", testRequest.getString("_id"));
   }
 
 }

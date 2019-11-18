@@ -30,7 +30,6 @@ import io.vertx.reactivex.ext.web.multipart.MultipartForm;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Date;
 import org.apache.commons.io.FileUtils;
 
 public class RunnerAETHandler extends AbstractRunner {
@@ -102,7 +101,6 @@ public class RunnerAETHandler extends AbstractRunner {
         finishRun(fullRequest, FAILURE);
       }
 
-
     } else {
       finishRun(fullRequest, FAILURE);
     }
@@ -129,28 +127,6 @@ public class RunnerAETHandler extends AbstractRunner {
           finishRun(fullRequest, FAILURE);
         }
       });
-  }
-
-  private void finishRun(JsonObject fullRequest, String testResult) {
-    JsonObject updateHistory = updateHistory(fullRequest.getJsonObject(JsonFields.TEST_REQUEST),
-      testResult);
-    vertx.eventBus().rxRequest("kabassu.database.mongo.replacedocument", updateHistory)
-      .toObservable()
-      .doOnNext(
-        eventResponse ->
-          vertx.eventBus().send("kabassu.results.dispatcher",
-            fullRequest.put("result", testResult)
-              .put(JsonFields.TEST_REQUEST, updateHistory.getJsonObject("new")))
-
-      ).subscribe();
-  }
-
-
-  private JsonObject updateHistory(JsonObject testRequest, String testResult) {
-    testRequest.getJsonArray("history").add(new JsonObject().put("date", new Date().getTime())
-      .put("event", "Test finished with: " + testResult));
-    return new JsonObject().put("new", testRequest)
-      .put(JsonFields.COLLECTION, "kabassu-requests").put("id", testRequest.getString("_id"));
   }
 
 }
