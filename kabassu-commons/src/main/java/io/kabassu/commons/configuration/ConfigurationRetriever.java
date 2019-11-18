@@ -19,6 +19,8 @@ package io.kabassu.commons.configuration;
 
 import io.kabassu.commons.constants.JsonFields;
 import io.vertx.core.json.JsonObject;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
 public final class ConfigurationRetriever {
@@ -35,10 +37,34 @@ public final class ConfigurationRetriever {
   public static String getParameter(JsonObject dataWithConfig, String parameter) {
     if (dataWithConfig.containsKey(JsonFields.CONFIGURATION_PARAMETERS) && !dataWithConfig
       .getJsonObject(JsonFields.ADDITIONAL_PARAMETERS).containsKey(parameter)) {
-      return dataWithConfig.getJsonObject(JsonFields.CONFIGURATION_PARAMETERS).getString(parameter, StringUtils.EMPTY);
+      return dataWithConfig.getJsonObject(JsonFields.CONFIGURATION_PARAMETERS)
+        .getString(parameter, StringUtils.EMPTY);
     }
     return dataWithConfig.getJsonObject(JsonFields.ADDITIONAL_PARAMETERS).getString(parameter,
       StringUtils.EMPTY);
   }
 
+  public static Map<String, String> getAllParameters(JsonObject dataWithConfig) {
+    Map<String, String> allParameters = new HashMap<>();
+    if (dataWithConfig.containsKey(JsonFields.CONFIGURATION_PARAMETERS)) {
+      dataWithConfig
+        .getJsonObject(JsonFields.CONFIGURATION_PARAMETERS).stream()
+        .forEach(entry -> allParameters.put(entry.getKey(), entry.getValue().toString()));
+    }
+    dataWithConfig
+      .getJsonObject(JsonFields.ADDITIONAL_PARAMETERS).stream()
+      .forEach(entry -> allParameters.put(entry.getKey(), entry.getValue().toString()));
+
+    return allParameters;
+  }
+
+  public static Map<String, String> mergeParametersToMap(JsonObject dataWithConfig,
+    JsonObject secondDataWithConfig) {
+
+    Map<String, String> allParameters = ConfigurationRetriever.getAllParameters(dataWithConfig);
+    ConfigurationRetriever.getAllParameters(secondDataWithConfig).entrySet()
+      .forEach(entry -> allParameters.put(entry.getKey(), entry.getValue()));
+
+    return allParameters;
+  }
 }

@@ -14,6 +14,10 @@
       {
         "runner": "aet",
         "address": "kabassu.runner.aet"
+      },
+      {
+        "runner": "lighthouse",
+        "address": "kabassu.runner.lighthouse"
       }
     ]
   }
