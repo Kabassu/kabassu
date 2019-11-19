@@ -1,6 +1,5 @@
 package io.kabassu.runner;
 
-import io.kabassu.commons.checks.FilesDownloadChecker;
 import io.kabassu.commons.configuration.ConfigurationRetriever;
 import io.kabassu.commons.constants.CommandLines;
 import io.kabassu.commons.constants.JsonFields;
@@ -34,18 +33,12 @@ public abstract class AbstractRunner implements Handler<Message<JsonObject>> {
   }
 
   protected void runTestWithFilesValidation(Message<JsonObject> event) {
-    if (FilesDownloadChecker
-      .checkIfFilesRetrieveIsRequired(
-        event.body().getJsonObject(JsonFields.DEFINITION).getString("locationType"))) {
-      vertx.eventBus().rxRequest("kabassu.filesretriever",
-        event.body()).toObservable()
-        .doOnNext(
-          eventResponse ->
-            runTest((JsonObject) eventResponse.body())
-        ).subscribe();
-    } else {
-      runTest(event.body());
-    }
+    vertx.eventBus().rxRequest("kabassu.filesretriever",
+      event.body()).toObservable()
+      .doOnNext(
+        eventResponse ->
+          runTest((JsonObject) eventResponse.body())
+      ).subscribe();
   }
 
   protected String runCommand(String command, JsonObject testDefinition) {

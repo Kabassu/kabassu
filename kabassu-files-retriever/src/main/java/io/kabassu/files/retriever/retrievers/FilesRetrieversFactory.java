@@ -35,6 +35,9 @@ public class FilesRetrieversFactory {
     if (locationType.equals("none")) {
       return new NoFilesRetriever(request, downloadDirectory);
     }
+    if (locationType.equals("filesystem")) {
+      return new FileSystemRetriever(request, downloadDirectory);
+    }
     throw new IllegalArgumentException("Unknown file location type " + locationType);
   }
 }

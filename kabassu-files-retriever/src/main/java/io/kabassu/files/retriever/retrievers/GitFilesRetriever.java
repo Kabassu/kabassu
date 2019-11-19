@@ -25,14 +25,12 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 
 public class GitFilesRetriever extends AbstractFileRetriever {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(GitFilesRetriever.class);
 
-  private File requestDirectory;
   private File checkoutDirectory;
 
   public GitFilesRetriever(JsonObject request, String downloadDirectory) {
@@ -44,14 +42,19 @@ public class GitFilesRetriever extends AbstractFileRetriever {
     try {
       prepareDirectory();
       cloneRepository();
-      if (ConfigurationRetriever.containsParameter(request.getJsonObject(JsonFields.TEST_REQUEST),"branch")) {
+      if (ConfigurationRetriever
+        .containsParameter(request.getJsonObject(JsonFields.TEST_REQUEST), "branch")) {
         switchBranch(
-          ConfigurationRetriever.getParameter(request.getJsonObject(JsonFields.TEST_REQUEST),"branch"));
+          ConfigurationRetriever
+            .getParameter(request.getJsonObject(JsonFields.TEST_REQUEST), "branch"));
       }
-      if(!this.request.getJsonObject(JsonFields.DEFINITION).containsKey(JsonFields.ADDITIONAL_PARAMETERS)){
-        this.request.getJsonObject(JsonFields.DEFINITION).put(JsonFields.ADDITIONAL_PARAMETERS, new JsonObject());
+      if (!this.request.getJsonObject(JsonFields.DEFINITION)
+        .containsKey(JsonFields.ADDITIONAL_PARAMETERS)) {
+        this.request.getJsonObject(JsonFields.DEFINITION)
+          .put(JsonFields.ADDITIONAL_PARAMETERS, new JsonObject());
       }
-      this.request.getJsonObject(JsonFields.DEFINITION).getJsonObject(JsonFields.ADDITIONAL_PARAMETERS)
+      this.request.getJsonObject(JsonFields.DEFINITION)
+        .getJsonObject(JsonFields.ADDITIONAL_PARAMETERS)
         .put("location", checkoutDirectory.getCanonicalPath());
     } catch (IOException e) {
       LOGGER.error("Problem with getting files from GIT", e);
@@ -84,7 +87,9 @@ public class GitFilesRetriever extends AbstractFileRetriever {
   }
 
   private void cloneRepository() throws IOException, InterruptedException {
-    String repository = ConfigurationRetriever.getParameter(request.getJsonObject(JsonFields.DEFINITION),"repository");
+    String repository = ConfigurationRetriever
+      .getParameter(request.getJsonObject(JsonFields.DEFINITION), "repository");
+    File requestDirectory = prepareDirectory();
     ProcessBuilder processBuilder = new ProcessBuilder();
     processBuilder.directory(requestDirectory);
     if (SystemUtils.IS_OS_WINDOWS) {
@@ -97,12 +102,5 @@ public class GitFilesRetriever extends AbstractFileRetriever {
     checkoutDirectory = requestDirectory.listFiles()[0];
   }
 
-  private void prepareDirectory() throws IOException {
-    requestDirectory = new File(this.downloadDirectory,
-      this.request.getJsonObject(JsonFields.TEST_REQUEST).getString("_id"));
-    if (requestDirectory.exists()) {
-      FileUtils.forceDelete(requestDirectory);
-    }
-    FileUtils.forceMkdir(requestDirectory);
-  }
+
 }
