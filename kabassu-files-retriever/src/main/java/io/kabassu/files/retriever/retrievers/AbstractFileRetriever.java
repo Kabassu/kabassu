@@ -17,7 +17,11 @@
 
 package io.kabassu.files.retriever.retrievers;
 
+import io.kabassu.commons.constants.JsonFields;
 import io.vertx.core.json.JsonObject;
+import java.io.File;
+import java.io.IOException;
+import org.apache.commons.io.FileUtils;
 
 public abstract class AbstractFileRetriever {
 
@@ -30,4 +34,14 @@ public abstract class AbstractFileRetriever {
   }
 
    public abstract JsonObject getFiles();
+
+  protected File prepareDirectory() throws IOException {
+    File requestDirectory = new File(this.downloadDirectory,
+      this.request.getJsonObject(JsonFields.TEST_REQUEST).getString("_id"));
+    if (requestDirectory.exists()) {
+      FileUtils.forceDelete(requestDirectory);
+    }
+    FileUtils.forceMkdir(requestDirectory);
+    return requestDirectory;
+  }
 }
