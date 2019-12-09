@@ -24,6 +24,7 @@ import io.kabassu.results.retriever.main.configuration.ReportRetrieverConfigurat
 import io.kabassu.results.retriever.main.configuration.ReportRetrieverConfigurationBuilder;
 import io.vertx.core.json.JsonObject;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
 public class ReportsRetrieverFactory {
@@ -35,7 +36,7 @@ public class ReportsRetrieverFactory {
     this.retrieverMainConfiguration = retrieverMainConfiguration;
   }
 
-  public ReportsRetriever getReportsRetriever(String reportType, JsonObject testData)  {
+  public ReportsRetriever getReportsRetriever(String reportType, JsonObject testData) {
 
     if (retrieverMainConfiguration.getReportsTypes().containsKey(reportType)) {
       ReportRetrieverConfiguration configuration = mergeReportRetrieverConfiguration(reportType,
@@ -55,15 +56,15 @@ public class ReportsRetrieverFactory {
 
   private ReportRetrieverConfiguration mergeReportRetrieverConfiguration(String reportType,
     String defaultReportsDir, JsonObject testData, JsonObject entries) {
-
+    Map<String, String> allParameters = ConfigurationRetriever
+      .mergeParametersToMap(testData.getJsonObject(JsonFields.DEFINITION),
+        testData.getJsonObject(JsonFields.TEST_REQUEST));
     String name = testData.getJsonObject(JsonFields.TEST_REQUEST).getString("_id");
     String reportDir =
-      ConfigurationRetriever.getParameter(testData.getJsonObject(JsonFields.DEFINITION), "location")
-        + formatReportDir(ConfigurationRetriever
-          .getParameter(testData.getJsonObject(JsonFields.DEFINITION), "reportDir"),
+      allParameters.getOrDefault("location", StringUtils.EMPTY)
+        + formatReportDir(allParameters.getOrDefault("reportDir", StringUtils.EMPTY),
         entries.getString("reportDir", StringUtils.EMPTY));
-    String startItem = ConfigurationRetriever
-      .getParameter(testData.getJsonObject(JsonFields.DEFINITION), "startHtml");
+    String startItem = allParameters.getOrDefault("startHtml", StringUtils.EMPTY);
 
     return new ReportRetrieverConfigurationBuilder()
       .setAdditionalData(testData)

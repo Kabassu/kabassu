@@ -25,6 +25,8 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 
 public class GitFilesRetriever extends AbstractFileRetriever {
@@ -40,13 +42,14 @@ public class GitFilesRetriever extends AbstractFileRetriever {
   @Override
   public JsonObject getFiles() {
     try {
+      Map<String, String> allParameters = ConfigurationRetriever
+        .mergeParametersToMap(request.getJsonObject(JsonFields.DEFINITION),
+          request.getJsonObject(JsonFields.TEST_REQUEST));
       prepareDirectory();
-      cloneRepository();
-      if (ConfigurationRetriever
-        .containsParameter(request.getJsonObject(JsonFields.TEST_REQUEST), "branch")) {
+      cloneRepository(allParameters.getOrDefault("repository", StringUtils.EMPTY));
+      if (allParameters.containsKey("branch")) {
         switchBranch(
-          ConfigurationRetriever
-            .getParameter(request.getJsonObject(JsonFields.TEST_REQUEST), "branch"));
+          allParameters.getOrDefault("branch", StringUtils.EMPTY));
       }
       if (!this.request.getJsonObject(JsonFields.DEFINITION)
         .containsKey(JsonFields.ADDITIONAL_PARAMETERS)) {
@@ -86,9 +89,7 @@ public class GitFilesRetriever extends AbstractFileRetriever {
     process.waitFor();
   }
 
-  private void cloneRepository() throws IOException, InterruptedException {
-    String repository = ConfigurationRetriever
-      .getParameter(request.getJsonObject(JsonFields.DEFINITION), "repository");
+  private void cloneRepository(String repository) throws IOException, InterruptedException {
     File requestDirectory = prepareDirectory();
     ProcessBuilder processBuilder = new ProcessBuilder();
     processBuilder.directory(requestDirectory);

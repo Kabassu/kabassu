@@ -27,6 +27,7 @@ import io.vertx.core.logging.LoggerFactory;
 import io.vertx.reactivex.core.Vertx;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.util.Map;
 import org.gradle.tooling.BuildException;
 import org.gradle.tooling.BuildLauncher;
 import org.gradle.tooling.GradleConnector;
@@ -45,24 +46,22 @@ public class RunnerGradleHandler extends AbstractRunner {
 
   protected void runTest(JsonObject fullRequest) {
     String testResult = "Failure";
-    JsonObject testDefinition = fullRequest.getJsonObject(JsonFields.DEFINITION);
+    Map<String, String> allParameters = ConfigurationRetriever
+      .mergeParametersToMap(fullRequest.getJsonObject(JsonFields.DEFINITION),
+        fullRequest.getJsonObject(JsonFields.TEST_REQUEST));
     try (ProjectConnection connection = GradleConnector.newConnector()
       .forProjectDirectory(
-        new File(ConfigurationRetriever.getParameter(testDefinition, "location"))).connect()) {
+        new File(allParameters.get("location"))).connect()) {
       BuildLauncher buildLauncher = connection.newBuild();
-      if (ConfigurationRetriever.containsParameter(testDefinition, "runnerOptions")) {
-        String[] runnerOptions = ConfigurationRetriever
-          .getParameter(testDefinition, "runnerOptions").split(" ");
+      if (allParameters.containsKey("runnerOptions")) {
+        String[] runnerOptions = allParameters.get("runnerOptions").split(" ");
         buildLauncher.forTasks(runnerOptions);
       } else {
         buildLauncher.forTasks(new String[1]);
       }
-      if (ConfigurationRetriever
-        .containsParameter(fullRequest.getJsonObject(JsonFields.TEST_REQUEST)
-          , "jvm")) {
+      if (allParameters.containsKey("jvm")) {
         buildLauncher.setJavaHome(new File(configuration.getJvmsMap()
-          .get(ConfigurationRetriever
-            .getParameter(fullRequest.getJsonObject(JsonFields.TEST_REQUEST), "jvm"))));
+          .get(allParameters.get("jvm"))));
       }
       buildLauncher.setStandardInput(new ByteArrayInputStream("consume this!".getBytes()));
       buildLauncher.run();

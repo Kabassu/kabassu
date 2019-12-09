@@ -7,6 +7,7 @@ import io.vertx.core.json.JsonObject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -56,12 +57,12 @@ public class AETRetriever extends ReportsRetriever {
         Charset.defaultCharset());
       JsonObject aetResponse = testData.getJsonObject(JsonFields.TEST_REQUEST)
         .getJsonObject(AET_RESPONSE);
+      Map<String, String> allParameters = ConfigurationRetriever
+        .mergeParametersToMap(testData.getJsonObject(JsonFields.DEFINITION),
+          testData.getJsonObject(JsonFields.TEST_REQUEST));
       String server =
-        ConfigurationRetriever.getParameter(testData.getJsonObject(JsonFields.DEFINITION), "server")
-          + ":" + (ConfigurationRetriever
-          .containsParameter(testData.getJsonObject(JsonFields.DEFINITION), "port")
-          ? ConfigurationRetriever
-          .getParameter(testData.getJsonObject(JsonFields.DEFINITION), "port") : "8181");
+        allParameters.getOrDefault("server", StringUtils.EMPTY)
+          + ":" + allParameters.getOrDefault("port" ,"8181");
       report = StringUtils.replaceEach(template,
         new String[]{"{" + CORRELATION_ID + "}", "{statusUrl}", "{htmlReportUrl}",
           "{xunitReportUrl}"},

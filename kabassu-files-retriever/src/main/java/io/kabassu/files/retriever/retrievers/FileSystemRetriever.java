@@ -7,7 +7,6 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import org.apache.commons.io.FileUtils;
 
 public class FileSystemRetriever extends AbstractFileRetriever {
@@ -23,7 +22,8 @@ public class FileSystemRetriever extends AbstractFileRetriever {
     try {
       File requestDirectory = prepareDirectory();
       File oryginalDirectory = new File(ConfigurationRetriever
-        .getParameter(this.request.getJsonObject(JsonFields.DEFINITION), "location"));
+        .mergeParametersToMap(request.getJsonObject(JsonFields.DEFINITION),
+          request.getJsonObject(JsonFields.TEST_REQUEST)).get("location"));
       FileUtils.copyDirectory(oryginalDirectory, requestDirectory);
       this.request.getJsonObject(JsonFields.DEFINITION)
         .getJsonObject(JsonFields.ADDITIONAL_PARAMETERS)
