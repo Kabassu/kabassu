@@ -22,6 +22,7 @@ import io.kabassu.commons.constants.JsonFields;
 import io.kabassu.runner.AbstractRunner;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.Vertx;
+import java.util.Map;
 
 public class RunnerCommandHandler extends AbstractRunner {
 
@@ -31,12 +32,13 @@ public class RunnerCommandHandler extends AbstractRunner {
 
   protected void runTest(JsonObject fullRequest) {
     String testResult = "Failure";
-    JsonObject testDefinition = fullRequest.getJsonObject(JsonFields.DEFINITION);
-    if (ConfigurationRetriever.containsParameter(testDefinition, "runnerOptions")) {
-      String runnerOptions = ConfigurationRetriever
-        .getParameter(testDefinition, "runnerOptions");
+    Map<String, String> allParameters = ConfigurationRetriever
+      .mergeParametersToMap(fullRequest.getJsonObject(JsonFields.DEFINITION),
+        fullRequest.getJsonObject(JsonFields.TEST_REQUEST));
+    if (allParameters.containsKey("runnerOptions")) {
+      String runnerOptions = allParameters.get("runnerOptions");
 
-      testResult = runCommand(runnerOptions, testDefinition);
+      testResult = runCommand(runnerOptions, fullRequest);
     }
     finishRun(fullRequest, testResult);
   }

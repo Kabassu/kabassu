@@ -41,11 +41,13 @@ public abstract class AbstractRunner implements Handler<Message<JsonObject>> {
       ).subscribe();
   }
 
-  protected String runCommand(String command, JsonObject testDefinition) {
+  protected String runCommand(String command, JsonObject fullRequest) {
     String testResult = "Success";
     ProcessBuilder processBuilder = new ProcessBuilder();
     processBuilder
-      .directory(new File(ConfigurationRetriever.getParameter(testDefinition, "location")));
+      .directory(new File(ConfigurationRetriever
+        .mergeParametersToMap(fullRequest.getJsonObject(JsonFields.DEFINITION),
+          fullRequest.getJsonObject(JsonFields.TEST_REQUEST)).get("location")));
     if (SystemUtils.IS_OS_WINDOWS) {
       processBuilder.command(CommandLines.CMD, "/c", command);
     } else {

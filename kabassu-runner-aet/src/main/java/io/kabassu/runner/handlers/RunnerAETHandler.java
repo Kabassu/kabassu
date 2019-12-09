@@ -30,7 +30,9 @@ import io.vertx.reactivex.ext.web.multipart.MultipartForm;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Map;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class RunnerAETHandler extends AbstractRunner {
 
@@ -50,53 +52,39 @@ public class RunnerAETHandler extends AbstractRunner {
   }
 
   protected void runTest(JsonObject fullRequest) {
-    JsonObject testDefinition = fullRequest.getJsonObject(JsonFields.DEFINITION);
-    if (ConfigurationRetriever.containsParameter(testDefinition, "server") && ConfigurationRetriever
-      .containsParameter(testDefinition, SUITE)) {
-      String server = ConfigurationRetriever
-        .getParameter(testDefinition, "server");
-      String suite = ConfigurationRetriever
-        .getParameter(testDefinition, SUITE);
-      String port = "8181";
-      if (ConfigurationRetriever.containsParameter(testDefinition, "port")) {
-        port = ConfigurationRetriever
-          .getParameter(testDefinition, "port");
-      }
+    Map<String, String> allParameters = ConfigurationRetriever
+      .mergeParametersToMap(fullRequest.getJsonObject(JsonFields.DEFINITION),
+        fullRequest.getJsonObject(JsonFields.TEST_REQUEST));
+    if (allParameters.containsKey("server") && allParameters.containsKey(SUITE)) {
+      String server = allParameters.getOrDefault("server", StringUtils.EMPTY);
+      String suite = allParameters.getOrDefault(SUITE, StringUtils.EMPTY);
+      String port = allParameters.getOrDefault("port", "8181");
 
       try {
         String suiteXML = FileUtils
           .readFileToString(
-            new File(ConfigurationRetriever.getParameter(testDefinition, "location"), suite),
+            new File(allParameters.getOrDefault("location", StringUtils.EMPTY), suite),
             Charset.defaultCharset());
 
         MultipartForm form = MultipartForm.create();
 
         form.attribute(SUITE, suiteXML);
-        if (ConfigurationRetriever
-          .containsParameter(fullRequest.getJsonObject(JsonFields.TEST_REQUEST),
-            DOMAIN)) {
-          form.attribute(DOMAIN, ConfigurationRetriever
-            .getParameter(fullRequest.getJsonObject(JsonFields.TEST_REQUEST), DOMAIN));
+        if (allParameters.containsKey(DOMAIN)) {
+          form.attribute(DOMAIN, allParameters.get(DOMAIN));
         }
-        if (ConfigurationRetriever
-          .containsParameter(fullRequest.getJsonObject(JsonFields.TEST_REQUEST),
-            PATTERN)) {
+        if (allParameters.containsKey(PATTERN)) {
           form.attribute(PATTERN,
-            ConfigurationRetriever.getParameter(fullRequest.getJsonObject(JsonFields.TEST_REQUEST),
-              PATTERN));
+            allParameters.get(PATTERN));
         }
-        if (ConfigurationRetriever
-          .containsParameter(fullRequest.getJsonObject(JsonFields.TEST_REQUEST),
-            NAME)) {
+        if (allParameters.containsKey(NAME)) {
           form.attribute(NAME,
-            ConfigurationRetriever.getParameter(fullRequest.getJsonObject(JsonFields.TEST_REQUEST),
-              NAME));
+            allParameters.get(NAME));
         }
         sendRequest(fullRequest, server, port, form, "/suite");
 
       } catch (IOException e) {
         LOGGER.error(
-          "Error while reading suite file: " + testDefinition.getString("location") + "/"
+          "Error while reading suite file: " + allParameters.get("location") + "/"
             + suite);
         finishRun(fullRequest, FAILURE);
       }

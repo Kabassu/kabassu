@@ -58,6 +58,8 @@ public final class ConfigurationRetriever {
     return allParameters;
   }
 
+
+
   public static Map<String, String> mergeParametersToMap(JsonObject dataWithConfig,
     JsonObject secondDataWithConfig) {
 

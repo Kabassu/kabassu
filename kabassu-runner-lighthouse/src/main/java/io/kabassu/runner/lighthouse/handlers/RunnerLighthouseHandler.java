@@ -23,6 +23,7 @@ import io.kabassu.runner.AbstractRunner;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.Vertx;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 
 public class RunnerLighthouseHandler extends AbstractRunner {
 
@@ -33,16 +34,16 @@ public class RunnerLighthouseHandler extends AbstractRunner {
   protected void runTest(JsonObject fullRequest) {
 
     finishRun(fullRequest, runCommand(prepareLighthouseCommand(fullRequest),
-      fullRequest.getJsonObject(JsonFields.DEFINITION)));
+      fullRequest));
 
   }
 
   private String prepareLighthouseCommand(JsonObject fullRequest) {
-    JsonObject definition = fullRequest.getJsonObject(JsonFields.DEFINITION);
     Map<String, String> allParameters = ConfigurationRetriever
-      .mergeParametersToMap(definition, fullRequest.getJsonObject(JsonFields.TEST_REQUEST));
+      .mergeParametersToMap(fullRequest.getJsonObject(JsonFields.DEFINITION),
+        fullRequest.getJsonObject(JsonFields.TEST_REQUEST));
     StringBuilder command = new StringBuilder("lighthouse ");
-    command.append(ConfigurationRetriever.getParameter(definition, "url"));
+    command.append(allParameters.getOrDefault("url", StringUtils.EMPTY));
 
     allParameters.entrySet().stream().filter(
       parameter -> parameter.getKey().startsWith("--") && !parameter.getKey().equals("--quiet"))
