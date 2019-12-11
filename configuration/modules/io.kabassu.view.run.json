@@ -1,0 +1,6 @@
+{
+    "name": "standard:io.kabassu.view.run",
+    "config": {
+        "verticle": "io.kabassu.view.run.KabassuViewRunVerticle"
+    }
+}

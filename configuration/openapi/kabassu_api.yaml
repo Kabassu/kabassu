@@ -55,20 +55,6 @@ paths:
       responses:
         '200':
           description: Retrieved object        
-  /kabassu/getsuite/{id}:
-    get:
-      operationId: getsuite
-      summary: get test suite by id
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-           type: string
-          description: Test Suite ID
-      responses:
-        '200':
-          description: Retrieved object
   /kabassu/getview/{id}:
     get:
       operationId: getview
@@ -97,20 +83,6 @@ paths:
       responses:
         '200':
           description: Retrieved object        
-  /kabassu/getsuiterun/{id}:
-    get:
-      operationId: getsuiterun
-      summary: get test suite run by id
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-           type: string
-          description: Test Suite Run ID
-      responses:
-        '200':
-          description: Retrieved object
   /kabassu/getdefinition/{id}:
     get:
       operationId: getdefinition
@@ -330,21 +302,6 @@ paths:
       responses:
         '200':
           description: Test is running
-  /kabassu/suite/run:
-    post:
-      operationId: suiterun
-      summary: Run suite 
-      requestBody:
-        description: JSON File containing suite run data
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SuiteRun'
-      responses:
-        '200':
-          description: Suite is running
-
   /kabassu/test/rerun:
     post:
       operationId: testrerun
@@ -359,17 +316,17 @@ paths:
       responses:
         '200':
           description: Test is running
-  /kabassu/suite/rerun:
+  /kabassu/view/run:
     post:
-      operationId: suitererun
+      operationId: viewrun
       summary: ReRun suite 
       requestBody:
-        description: JSON File containing suite id
+        description: JSON File containing view id
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SuiteReRun'
+              $ref: '#/components/schemas/ViewRun'
       responses:
         '200':
           description: Test is running
@@ -453,35 +410,15 @@ components:
           type: string
         parameters:
           type: object      
-    SuiteRun:
-      type: object
-      properties: 
-        suiteId: 
-          type: string
-        viewId: 
-          type: string    
-        definitionsData: 
-          type: array
-          items: 
-            type: object
-            properties:
-              definitionId:
-                type: string
-              configurationId:
-                type: string
-              jvm: 
-                type: string
-              additionalParameters:
-                type: object
     TestReRun:
       type: object
       properties: 
         requestId: 
           type: string
-    SuiteReRun:
+    ViewRun:
       type: object
       properties: 
-        suiterunId: 
+        viewId: 
           type: string
     Login:
       type: object

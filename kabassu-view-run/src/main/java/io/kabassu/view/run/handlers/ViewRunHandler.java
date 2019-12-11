@@ -15,7 +15,7 @@
  *
  */
 
-package io.kabassu.suite.rerun.handlers;
+package io.kabassu.view.run.handlers;
 
 import io.kabassu.commons.constants.EventBusAdresses;
 import io.kabassu.commons.constants.JsonFields;
@@ -34,13 +34,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class SuiteRerunHandler implements Handler<Message<JsonObject>> {
+public class ViewRunHandler implements Handler<Message<JsonObject>> {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(SuiteRerunHandler.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(ViewRunHandler.class);
 
   private final Vertx vertx;
 
-  public SuiteRerunHandler(Vertx vertx) {
+  public ViewRunHandler(Vertx vertx) {
     this.vertx = vertx;
   }
 
@@ -48,15 +48,12 @@ public class SuiteRerunHandler implements Handler<Message<JsonObject>> {
   public void handle(Message<JsonObject> event) {
     event.reply(new JsonObject().put("status", "in progress"));
     vertx.eventBus()
-      .rxRequest("kabassu.database.mongo.getsuiterun", event.body().getString("suiterunId"))
+      .rxRequest("kabassu.database.mongo.getview", event.body().getString("viewId"))
       .toObservable()
       .doOnNext(
-        eventResponse -> {
-          vertx.eventBus().send("kabassu.database.mongo.replacedocument",
-            updateSuiteHistory((JsonObject) eventResponse.body()));
+        eventResponse ->
+          executeTests(((JsonObject) eventResponse.body()).getJsonArray("executionId"))
 
-          executeTests(((JsonObject) eventResponse.body()).getJsonArray("requests"));
-        }
       ).subscribe();
   }
 
@@ -85,7 +82,7 @@ public class SuiteRerunHandler implements Handler<Message<JsonObject>> {
 
   private Promise<JsonObject> updateTest(JsonObject request) {
     return getPromiseWithRequest("kabassu.database.mongo.replacedocument", request,
-      "Error during updating  test request.");
+      "Error during updating  test request.", false);
   }
 
   private void runTests(List<Future> futures) {
@@ -100,11 +97,11 @@ public class SuiteRerunHandler implements Handler<Message<JsonObject>> {
 
   private Promise<JsonObject> retrieveRequest(String request) {
     return getPromiseWithRequest("kabassu.database.mongo.getrequest", request,
-      "Error during creating  test request.");
+      "Error during retrieving test request.", true);
   }
 
   private Promise<JsonObject> getPromiseWithRequest(String address, Object request,
-    String errorMessage) {
+    String errorMessage, boolean updateHistory) {
     Promise<JsonObject> promise = Promise.promise();
 
     vertx.eventBus()
@@ -112,7 +109,8 @@ public class SuiteRerunHandler implements Handler<Message<JsonObject>> {
         eventResponse -> {
           if (eventResponse.succeeded()) {
             JsonObject testRequest = (JsonObject) eventResponse.result().body();
-            promise.complete(updateHistory(testRequest));
+            promise
+              .complete(updateHistory ? updateHistory(testRequest) : runRequestQuery(testRequest));
           } else {
             promise
               .complete(new JsonObject());
@@ -128,18 +126,16 @@ public class SuiteRerunHandler implements Handler<Message<JsonObject>> {
     }
   }
 
-  private JsonObject updateSuiteHistory(JsonObject suiteRun) {
-    suiteRun.getJsonArray("history").add(new JsonObject().put("date", new Date().getTime())
-      .put("event", "Suite Execution rerun started"));
-    return new JsonObject().put("new", suiteRun)
-      .put(JsonFields.COLLECTION, "kabassu-suite-runs").put("id", suiteRun.getString("_id"));
+  private JsonObject runRequestQuery(JsonObject testRequest) {
+    return new JsonObject().put("new", testRequest)
+      .put(JsonFields.COLLECTION, "kabassu-requests").put("id", testRequest.getString("_id"));
   }
 
   private JsonObject updateHistory(JsonObject testRequest) {
     testRequest.put("status", "started");
     testRequest.getJsonArray("history").add(
       new JsonObject().put("date", new Date().getTime())
-        .put("event", "Request rerun from suite started"));
+        .put("event", "Request run from view started"));
     return new JsonObject().put("new", testRequest)
       .put(JsonFields.COLLECTION, "kabassu-requests").put("id", testRequest.getString("_id"));
   }
