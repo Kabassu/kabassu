@@ -15,21 +15,21 @@
  *
  */
 
-package io.kabassu.suitedispatcher;
+package io.kabassu.view.run;
 
-import io.kabassu.suitedispatcher.handlers.SuiteDispatcherHandler;
+import io.kabassu.view.run.handlers.ViewRunHandler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.AbstractVerticle;
 import io.vertx.reactivex.core.eventbus.MessageConsumer;
 
-public class KabassuSuiteDispatcherVerticle extends AbstractVerticle {
+public class KabassuViewRunVerticle extends AbstractVerticle {
 
   private MessageConsumer<JsonObject> consumer;
 
   @Override
   public void start() throws Exception {
     consumer = vertx.eventBus()
-      .consumer("kabassu.suiterun", new SuiteDispatcherHandler(vertx));
+      .consumer("kabassu.viewrun", new ViewRunHandler(vertx));
   }
 
   @Override

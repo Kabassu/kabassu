@@ -37,7 +37,7 @@
 /kabassu-results-server/build/
 /kabassu-test-rerun/build/
 /kabassu-suite-dispatcher/build/
-/kabassu-suite-rerun/build/
+/kabassu-view-run/build/
 /kabassu-files-retriever/build/
 /kabassu-setup/build/
 /kabassu-runner-command/build/

@@ -29,11 +29,6 @@
         "handler": "adddata"
       },
       {
-        "operationId": "addsuite",
-        "address": "kabassu.database.mongo.addsuite",
-        "handler": "adddata"
-      },
-      {
         "operationId": "testrun",
         "address": "kabassu.runtestrequest",
         "handler": "adddata"
@@ -54,18 +49,8 @@
         "handler": "getdatabyid"
       },
       {
-        "operationId": "getsuite",
-        "address": "kabassu.database.mongo.getsuite",
-        "handler": "getdatabyid"
-      },
-      {
         "operationId": "getview",
         "address": "kabassu.database.mongo.getview",
-        "handler": "getdatabyid"
-      },
-      {
-        "operationId": "getsuiterun",
-        "address": "kabassu.database.mongo.getsuiterun",
         "handler": "getdatabyid"
       },
       {
@@ -84,13 +69,8 @@
         "handler": "adddata"
       },
       {
-        "operationId": "suitererun",
-        "address": "kabassu.rerunsuite",
-        "handler": "adddata"
-      },
-      {
-        "operationId": "suiterun",
-        "address": "kabassu.suiterun",
+        "operationId": "viewrun",
+        "address": "kabassu.viewrun",
         "handler": "adddata"
       },
       {
