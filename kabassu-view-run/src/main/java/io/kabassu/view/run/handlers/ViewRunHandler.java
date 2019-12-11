@@ -82,7 +82,7 @@ public class ViewRunHandler implements Handler<Message<JsonObject>> {
 
   private Promise<JsonObject> updateTest(JsonObject request) {
     return getPromiseWithRequest("kabassu.database.mongo.replacedocument", request,
-      "Error during updating  test request.", false);
+      "Error during updating  test request.");
   }
 
   private void runTests(List<Future> futures) {
@@ -97,11 +97,11 @@ public class ViewRunHandler implements Handler<Message<JsonObject>> {
 
   private Promise<JsonObject> retrieveRequest(String request) {
     return getPromiseWithRequest("kabassu.database.mongo.getrequest", request,
-      "Error during retrieving test request.", true);
+      "Error during retrieving test request.");
   }
 
   private Promise<JsonObject> getPromiseWithRequest(String address, Object request,
-    String errorMessage, boolean updateHistory) {
+    String errorMessage) {
     Promise<JsonObject> promise = Promise.promise();
 
     vertx.eventBus()
@@ -110,7 +110,7 @@ public class ViewRunHandler implements Handler<Message<JsonObject>> {
           if (eventResponse.succeeded()) {
             JsonObject testRequest = (JsonObject) eventResponse.result().body();
             promise
-              .complete(updateHistory ? updateHistory(testRequest) : runRequestQuery(testRequest));
+              .complete(updateHistory(testRequest));
           } else {
             promise
               .complete(new JsonObject());
@@ -124,11 +124,6 @@ public class ViewRunHandler implements Handler<Message<JsonObject>> {
       promise.complete(new JsonObject());
       return promise;
     }
-  }
-
-  private JsonObject runRequestQuery(JsonObject testRequest) {
-    return new JsonObject().put("new", testRequest)
-      .put(JsonFields.COLLECTION, "kabassu-requests").put("id", testRequest.getString("_id"));
   }
 
   private JsonObject updateHistory(JsonObject testRequest) {
