@@ -449,7 +449,3 @@ components:
           type: array
           items:
             type: string
-        suiteRunId:
-          type: array
-          items:
-            type: string    
