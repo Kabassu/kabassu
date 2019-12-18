@@ -1,4 +1,4 @@
-1. Update version in _verAll_ variable in _build.gradle_ (remove "SNAPHOT" part)
+1. Update version in _verAll_ variable in _build.gradle_ (remove "SNAPSHOT" part)
 2. Update API version in _kabassu_api.yaml_
 3. Build locally
 4. Commit to Github
