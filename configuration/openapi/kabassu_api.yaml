@@ -1,4 +1,6 @@
 openapi: 3.0.0
+servers: 
+  - url: https://localhost:8080
 info:
   title: Kabassu API
   description: API for Kabassu system
@@ -9,56 +11,45 @@ paths:
   /kabassu/login:
     post:
       operationId: login
-      summary: login operation for kabassu
+      summary: Login operation
       security: []
       requestBody:
-        description: JSON File containing configuration parameters
+        description: Parameters requested to login into Kabassu
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/Login'
+            example: 
+              username: admin
+              password_hash: admin  
       responses:
         '200':
-          description: Suite is running
+          description: Json with authentication token
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+              example:
+                auth_token: $SFSD@QGFESA
   /kabassu/getrequest/{id}:
     get:
       operationId: getrequest
-      summary: get test request by id
+      summary: Gets data for single test execution by id
       parameters:
         - in: path
           name: id
           required: true
           schema:
            type: string
-          description: Test Request ID
+          description: Test Execution ID
       responses:
         '200':
-          description: Retrieved object
-  /kabassu/getoptions/{file}/{option}:
-    get:
-      operationId: getoptions
-      summary: get test request by id
-      parameters:
-        - in: path
-          name: file
-          required: true
-          schema:
-           type: string
-          description: File to read
-        - in: path
-          name: option
-          required: true
-          schema:
-           type: string
-          description: option to read
-      responses:
-        '200':
-          description: Retrieved object        
+          description: Execution data
   /kabassu/getview/{id}:
     get:
       operationId: getview
-      summary: get test suite by id
+      summary: Gets view information by id
       parameters:
         - in: path
           name: id
@@ -68,11 +59,11 @@ paths:
           description: View ID
       responses:
         '200':
-          description: Retrieved object        
+          description: View data    
   /kabassu/getconfiguration/{id}:
     get:
       operationId: getconfiguration
-      summary: get configuration by id
+      summary: Gets configuration by id
       parameters:
         - in: path
           name: id
@@ -82,11 +73,11 @@ paths:
           description: Configuration ID
       responses:
         '200':
-          description: Retrieved object        
+          description: Configuration data
   /kabassu/getdefinition/{id}:
     get:
       operationId: getdefinition
-      summary: get test definition by id
+      summary: Gets definition by id
       parameters:
         - in: path
           name: id
@@ -96,7 +87,7 @@ paths:
           description: Test Definition ID
       responses:
         '200':
-          description: Retrieved object
+          description: Definition data
           content:
             application/json:
               schema:
@@ -104,15 +95,18 @@ paths:
               examples: 
                 Local_gradle:
                   value:
+                    _id: 345324335564
                     name: test
                     runner: gradle
-                    locationType: filesystem
-                    location: '../junit5-test'  
-                    paths:
+                    locationType: git
+                    additionalParameters: 
+                      repository: git@github.com:Kabassu/kabassu-simple-test.git
+                      runnerOptions: clean test
+                    reports: [allure, allure-trend]
   /kabassu/getall/{collection}/{page}/{pagesize}:
     get:
       operationId: getall
-      summary: get all data from collection
+      summary: Get all data from selected collection
       parameters:
         - in: path
           name: collection
@@ -229,6 +223,7 @@ paths:
             examples:
               Local_gradle:
                 value:
+                  _id: 55322632534
                   name: test
                   runner: gradle
                   locationType: filesystem
@@ -424,9 +419,14 @@ components:
       type: object
       properties: 
         username: 
-          type: string      
+          type: string
         password_hash:
           type: string
+    LoginResponse:
+      type: object
+      properties: 
+        auth_token: 
+          type: string      
     EditView:
       type: object
       properties: 
