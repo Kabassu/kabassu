@@ -93,7 +93,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TestDefinition'
               examples: 
-                Local_gradle:
+                Git gradle:
                   value:
                     _id: 345324335564
                     name: test
@@ -106,7 +106,7 @@ paths:
   /kabassu/getall/{collection}/{page}/{pagesize}:
     get:
       operationId: getall
-      summary: Get all data from selected collection
+      summary: Gets all data from selected collection
       parameters:
         - in: path
           name: collection
@@ -128,13 +128,13 @@ paths:
           description: page size
       responses:
         '200':
-          description: ok
+          description: Requested number of objects from collection
   /kabassu/getbyfilters/:
     post:
       operationId: getbyfilters
-      summary: get all data from collection by filters
+      summary: Gets all data from collection by filters
       requestBody:
-        description: JSON File containing all filters data
+        description: JSON File containing all filters data and requested collection information
         required: true
         content:
           application/json:
@@ -142,7 +142,7 @@ paths:
               $ref: '#/components/schemas/RequestFilters'
       responses:
         '200':
-          description: filtered data
+          description: Filtered data from collection
   /kabassu/addview/:
     post:
       operationId: addview
@@ -338,16 +338,22 @@ components:
         properties:
           name:
             type: string
+            description: name of definition
           runner:
             type: string
+            description: What runner is used for test in this definition
           configurationId:
             type: string
+            description: Configuration Id
           locationType:
             type: string
+            description: Where test is kept
           additionalParameters:
             type: object
+            description: Additional parameters for different runners, location types etc.
           reports:
             type: array
+            description: List of reports that should be used
             items:
                 type: string
     TestSuite:
