@@ -146,9 +146,9 @@ paths:
   /kabassu/addview/:
     post:
       operationId: addview
-      summary: add execution to view
+      summary: Create view with executions
       requestBody:
-        description: JSON File containing all filters data
+        description: JSON File containing all requiered data
         required: true
         content:
           application/json:
@@ -156,13 +156,13 @@ paths:
               $ref: '#/components/schemas/AddView'
       responses:
         '200':
-          description: add view        
+          description: View added
   /kabassu/updateview/:
     post:
       operationId: updateview
-      summary: remove execution from view
+      summary: Update view (adds or removes execution)
       requestBody:
-        description: JSON File containing all filters data
+        description: JSON File containing all data
         required: true
         content:
           application/json:
@@ -170,45 +170,45 @@ paths:
               $ref: '#/components/schemas/EditView'
       responses:
         '200':
-          description: remove from view        
+          description: View updated
   /kabassu/getallbyfield/{collection}/{field}/{value}/{page}/{pagesize}:
     get:
       operationId: getallbyfield
-      summary: get all data from collection by field
+      summary: Get all data from collection by field with pagination
       parameters:
         - in: path
           name: collection
           required: true
           schema:
            type: string
-          description: collection name
+          description: Collection name
         - in: path
           name: field
           required: true
           schema:
            type: string
-          description: field name
+          description: Field name
         - in: path
           name: value
           required: true
           schema:
            type: string
-          description: value
+          description: Field value
         - in: path
           name: page
           required: true
           schema:
            type: integer
-          description: page
+          description: Page number
         - in: path
           name: pagesize
           required: true
           schema:
            type: integer
-          description: page size
+          description: Page size (how many elements on page)
       responses:
         '200':
-          description: ok
+          description: Json file with data
   /kabassu/adddefinition:
     post:
       operationId: adddefinition
@@ -260,29 +260,6 @@ paths:
                   id:
                     type: integer
                     description: Configuration Id
-  /kabassu/addsuite:
-    post:
-      operationId: addsuite
-      summary: Adds a new test suite to be run with Kabassu
-      requestBody:
-        description: JSON File containing test suite data
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TestSuite'
-      responses:
-        '201':
-          description: Added
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                    description: Test suite Id
-                    
   /kabassu/test/run:
     post:
       operationId: testrun
@@ -314,7 +291,7 @@ paths:
   /kabassu/view/run:
     post:
       operationId: viewrun
-      summary: ReRun suite 
+      summary: Runs all test in view
       requestBody:
         description: JSON File containing view id
         required: true
@@ -324,7 +301,7 @@ paths:
               $ref: '#/components/schemas/ViewRun'
       responses:
         '200':
-          description: Test is running
+          description: Tests are running
           
 components:
   securitySchemes:
@@ -335,10 +312,11 @@ components:
   schemas:
     TestDefinition:
         type: object
+        description: All data for creating definition
         properties:
           name:
             type: string
-            description: name of definition
+            description: Name of definition
           runner:
             type: string
             description: What runner is used for test in this definition
@@ -356,102 +334,127 @@ components:
             description: List of reports that should be used
             items:
                 type: string
-    TestSuite:
-        type: object
-        properties:
-          name:
-            type: string
-          description:
-            type: string
-          definitions:
-            type: array
-            items:
-                type: string
     RequestFilters:
         type: object
+        description: Filter information for getting data from collection
         properties:
           collection:
             type: string
+            description: Collection name
           page:
             type: integer
+            description: Page number
           pageSize:
             type: integer
+            description: Page size
           filters:
             type: array
+            description: Filters used for data
             items:
                 type: object
                 properties:
                   filterName:
                     type: string
+                    description: Field Name
                   filterValues:
                     type: array
+                    description: Searched values
                     items:
                       type: string
     TestRun:
       type: object
+      description: Data required to run test
       properties: 
         definitionId: 
           type: string
+          description: Definition Id
         configurationId: 
           type: string
-        viewId: 
-          type: string  
+          description: Configuration Id (optional)
         description:
           type: string
+          description: Configuration description  
+        viewId: 
+          type: string
+          description: View id if execution should be added to view
         additionalParameters:
           type: object
+          description: Additional parameters from execution
     Configuration:
       type: object
+      description: Data required to create configuration
       properties: 
         name: 
           type: string
-        description: 
+          description: Configuration Name
+        description:
           type: string
+          description: Configuration description
         suggestedType:
+          description: Suggested type (for execution or definition)
           type: string
         parameters:
-          type: object      
+          type: object 
+          description: List of parameters
     TestReRun:
       type: object
+      description: Data required to rerun test
       properties: 
         requestId: 
           type: string
+          description: Execution id
     ViewRun:
       type: object
+      description: Data required to run all tests in view
       properties: 
         viewId: 
           type: string
+          description: View id
     Login:
       type: object
+      description: Data required for login
       properties: 
         username: 
           type: string
+          description: Username
         password_hash:
           type: string
+          description: Password
     LoginResponse:
+      description: Data returned from login endpoint
       type: object
       properties: 
         auth_token: 
           type: string      
+          description: Authorization (JWT) token
     EditView:
       type: object
+      description: Data required to edit view
       properties: 
         id: 
           type: string
+          description: View id
         field:
           type: string
+          description: Name of field we want to edit 
         value:
           type: string  
+          description: Value we want to change
         operation: 
           type: string       
+          description: Choose if we want to add or remove data
     AddView:
       type: object
+      description: Data required to create view
       properties: 
         name: 
           type: string
+          description: View name
         description:
           type: string
+          description: View description
         executionId:
           type: array
+          description: List of execution in view
           items:
             type: string
