@@ -1,4 +1,6 @@
 openapi: 3.0.0
+servers: 
+  - url: https://localhost:8080
 info:
   title: Kabassu API
   description: API for Kabassu system
@@ -9,56 +11,45 @@ paths:
   /kabassu/login:
     post:
       operationId: login
-      summary: login operation for kabassu
+      summary: Login operation
       security: []
       requestBody:
-        description: JSON File containing configuration parameters
+        description: Parameters requested to login into Kabassu
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/Login'
+            example: 
+              username: admin
+              password_hash: admin  
       responses:
         '200':
-          description: Suite is running
+          description: Json with authentication token
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+              example:
+                auth_token: $SFSD@QGFESA
   /kabassu/getrequest/{id}:
     get:
       operationId: getrequest
-      summary: get test request by id
+      summary: Gets data for single test execution by id
       parameters:
         - in: path
           name: id
           required: true
           schema:
            type: string
-          description: Test Request ID
+          description: Test Execution ID
       responses:
         '200':
-          description: Retrieved object
-  /kabassu/getoptions/{file}/{option}:
-    get:
-      operationId: getoptions
-      summary: get test request by id
-      parameters:
-        - in: path
-          name: file
-          required: true
-          schema:
-           type: string
-          description: File to read
-        - in: path
-          name: option
-          required: true
-          schema:
-           type: string
-          description: option to read
-      responses:
-        '200':
-          description: Retrieved object        
+          description: Execution data
   /kabassu/getview/{id}:
     get:
       operationId: getview
-      summary: get test suite by id
+      summary: Gets view information by id
       parameters:
         - in: path
           name: id
@@ -68,11 +59,11 @@ paths:
           description: View ID
       responses:
         '200':
-          description: Retrieved object        
+          description: View data    
   /kabassu/getconfiguration/{id}:
     get:
       operationId: getconfiguration
-      summary: get configuration by id
+      summary: Gets configuration by id
       parameters:
         - in: path
           name: id
@@ -82,11 +73,11 @@ paths:
           description: Configuration ID
       responses:
         '200':
-          description: Retrieved object        
+          description: Configuration data
   /kabassu/getdefinition/{id}:
     get:
       operationId: getdefinition
-      summary: get test definition by id
+      summary: Gets definition by id
       parameters:
         - in: path
           name: id
@@ -96,23 +87,26 @@ paths:
           description: Test Definition ID
       responses:
         '200':
-          description: Retrieved object
+          description: Definition data
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TestDefinition'
               examples: 
-                Local_gradle:
+                Git gradle:
                   value:
+                    _id: 345324335564
                     name: test
                     runner: gradle
-                    locationType: filesystem
-                    location: '../junit5-test'  
-                    paths:
+                    locationType: git
+                    additionalParameters: 
+                      repository: git@github.com:Kabassu/kabassu-simple-test.git
+                      runnerOptions: clean test
+                    reports: [allure, allure-trend]
   /kabassu/getall/{collection}/{page}/{pagesize}:
     get:
       operationId: getall
-      summary: get all data from collection
+      summary: Gets all data from selected collection
       parameters:
         - in: path
           name: collection
@@ -134,13 +128,13 @@ paths:
           description: page size
       responses:
         '200':
-          description: ok
+          description: Requested number of objects from collection
   /kabassu/getbyfilters/:
     post:
       operationId: getbyfilters
-      summary: get all data from collection by filters
+      summary: Gets all data from collection by filters
       requestBody:
-        description: JSON File containing all filters data
+        description: JSON File containing all filters data and requested collection information
         required: true
         content:
           application/json:
@@ -148,13 +142,13 @@ paths:
               $ref: '#/components/schemas/RequestFilters'
       responses:
         '200':
-          description: filtered data
+          description: Filtered data from collection
   /kabassu/addview/:
     post:
       operationId: addview
-      summary: add execution to view
+      summary: Create view with executions
       requestBody:
-        description: JSON File containing all filters data
+        description: JSON File containing all requiered data
         required: true
         content:
           application/json:
@@ -162,13 +156,13 @@ paths:
               $ref: '#/components/schemas/AddView'
       responses:
         '200':
-          description: add view        
+          description: View added
   /kabassu/updateview/:
     post:
       operationId: updateview
-      summary: remove execution from view
+      summary: Update view (adds or removes execution)
       requestBody:
-        description: JSON File containing all filters data
+        description: JSON File containing all data
         required: true
         content:
           application/json:
@@ -176,45 +170,45 @@ paths:
               $ref: '#/components/schemas/EditView'
       responses:
         '200':
-          description: remove from view        
+          description: View updated
   /kabassu/getallbyfield/{collection}/{field}/{value}/{page}/{pagesize}:
     get:
       operationId: getallbyfield
-      summary: get all data from collection by field
+      summary: Get all data from collection by field with pagination
       parameters:
         - in: path
           name: collection
           required: true
           schema:
            type: string
-          description: collection name
+          description: Collection name
         - in: path
           name: field
           required: true
           schema:
            type: string
-          description: field name
+          description: Field name
         - in: path
           name: value
           required: true
           schema:
            type: string
-          description: value
+          description: Field value
         - in: path
           name: page
           required: true
           schema:
            type: integer
-          description: page
+          description: Page number
         - in: path
           name: pagesize
           required: true
           schema:
            type: integer
-          description: page size
+          description: Page size (how many elements on page)
       responses:
         '200':
-          description: ok
+          description: Json file with data
   /kabassu/adddefinition:
     post:
       operationId: adddefinition
@@ -229,6 +223,7 @@ paths:
             examples:
               Local_gradle:
                 value:
+                  _id: 55322632534
                   name: test
                   runner: gradle
                   locationType: filesystem
@@ -265,29 +260,6 @@ paths:
                   id:
                     type: integer
                     description: Configuration Id
-  /kabassu/addsuite:
-    post:
-      operationId: addsuite
-      summary: Adds a new test suite to be run with Kabassu
-      requestBody:
-        description: JSON File containing test suite data
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TestSuite'
-      responses:
-        '201':
-          description: Added
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                    description: Test suite Id
-                    
   /kabassu/test/run:
     post:
       operationId: testrun
@@ -319,7 +291,7 @@ paths:
   /kabassu/view/run:
     post:
       operationId: viewrun
-      summary: ReRun suite 
+      summary: Runs all test in view
       requestBody:
         description: JSON File containing view id
         required: true
@@ -329,7 +301,7 @@ paths:
               $ref: '#/components/schemas/ViewRun'
       responses:
         '200':
-          description: Test is running
+          description: Tests are running
           
 components:
   securitySchemes:
@@ -340,112 +312,149 @@ components:
   schemas:
     TestDefinition:
         type: object
+        description: All data for creating definition
         properties:
           name:
             type: string
+            description: Name of definition
           runner:
             type: string
+            description: What runner is used for test in this definition
           configurationId:
             type: string
+            description: Configuration Id
           locationType:
             type: string
+            description: Where test is kept
           additionalParameters:
             type: object
+            description: Additional parameters for different runners, location types etc.
           reports:
             type: array
-            items:
-                type: string
-    TestSuite:
-        type: object
-        properties:
-          name:
-            type: string
-          description:
-            type: string
-          definitions:
-            type: array
+            description: List of reports that should be used
             items:
                 type: string
     RequestFilters:
         type: object
+        description: Filter information for getting data from collection
         properties:
           collection:
             type: string
+            description: Collection name
           page:
             type: integer
+            description: Page number
           pageSize:
             type: integer
+            description: Page size
           filters:
             type: array
+            description: Filters used for data
             items:
                 type: object
                 properties:
                   filterName:
                     type: string
+                    description: Field Name
                   filterValues:
                     type: array
+                    description: Searched values
                     items:
                       type: string
     TestRun:
       type: object
+      description: Data required to run test
       properties: 
         definitionId: 
           type: string
+          description: Definition Id
         configurationId: 
           type: string
-        viewId: 
-          type: string  
+          description: Configuration Id (optional)
         description:
           type: string
+          description: Configuration description  
+        viewId: 
+          type: string
+          description: View id if execution should be added to view
         additionalParameters:
           type: object
+          description: Additional parameters from execution
     Configuration:
       type: object
+      description: Data required to create configuration
       properties: 
         name: 
           type: string
-        description: 
+          description: Configuration Name
+        description:
           type: string
+          description: Configuration description
         suggestedType:
+          description: Suggested type (for execution or definition)
           type: string
         parameters:
-          type: object      
+          type: object 
+          description: List of parameters
     TestReRun:
       type: object
+      description: Data required to rerun test
       properties: 
         requestId: 
           type: string
+          description: Execution id
     ViewRun:
       type: object
+      description: Data required to run all tests in view
       properties: 
         viewId: 
           type: string
+          description: View id
     Login:
       type: object
+      description: Data required for login
       properties: 
         username: 
-          type: string      
+          type: string
+          description: Username
         password_hash:
           type: string
+          description: Password
+    LoginResponse:
+      description: Data returned from login endpoint
+      type: object
+      properties: 
+        auth_token: 
+          type: string      
+          description: Authorization (JWT) token
     EditView:
       type: object
+      description: Data required to edit view
       properties: 
         id: 
           type: string
+          description: View id
         field:
           type: string
+          description: Name of field we want to edit 
         value:
           type: string  
+          description: Value we want to change
         operation: 
           type: string       
+          description: Choose if we want to add or remove data
     AddView:
       type: object
+      description: Data required to create view
       properties: 
         name: 
           type: string
+          description: View name
         description:
           type: string
+          description: View description
         executionId:
           type: array
+          description: List of execution in view
           items:
             type: string
