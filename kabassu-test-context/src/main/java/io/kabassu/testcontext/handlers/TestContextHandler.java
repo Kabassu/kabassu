@@ -164,7 +164,7 @@ public class TestContextHandler implements Handler<Message<JsonObject>> {
     RunnerConfig runnerConfig = runnersMap
       .get(completeTestRequest.getJsonObject(JsonFields.DEFINITION).getString(RUNNER));
     if (masterServantModeAll || runnerConfig.getServant()) {
-      vertx.eventBus().send(EventBusAdresses.KABASSU_QUEUE_CONTROLER, completeTestRequest);
+      vertx.eventBus().send(EventBusAdresses.KABASSU_QUEUE_REQUEST_SEND, completeTestRequest);
     } else {
       vertx.eventBus()
         .send(runnerConfig.getAddress(), completeTestRequest);

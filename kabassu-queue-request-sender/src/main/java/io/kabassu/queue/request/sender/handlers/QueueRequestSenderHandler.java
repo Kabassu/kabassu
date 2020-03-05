@@ -17,26 +17,48 @@
 
 package io.kabassu.queue.request.sender.handlers;
 
-import io.kabassu.commons.constants.EventBusAdresses;
-import io.kabassu.commons.constants.MessagesFields;
+import io.kabassu.queue.request.sender.configuration.KabassuQueueRequestSenderConfiguration;
 import io.vertx.core.Handler;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
+import io.vertx.rabbitmq.RabbitMQOptions;
 import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.eventbus.Message;
-import java.util.Date;
+import io.vertx.reactivex.rabbitmq.RabbitMQClient;
 
 public class QueueRequestSenderHandler implements Handler<Message<JsonObject>> {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(QueueRequestSenderHandler.class);
+
   private final Vertx vertx;
 
-  public QueueRequestSenderHandler(Vertx vertx) {
+  private RabbitMQClient rabbitMQClient;
+
+  private KabassuQueueRequestSenderConfiguration configuration;
+
+  public QueueRequestSenderHandler(Vertx vertx,
+    KabassuQueueRequestSenderConfiguration configuration) {
     this.vertx = vertx;
+    this.rabbitMQClient = createRabbitMQClient();
+    this.configuration = configuration;
   }
 
   @Override
   public void handle(Message<JsonObject> event) {
+    rabbitMQClient.basicPublish("kabassu.test_requests", "runners.all", event.body(), result -> {
+      if (!result.succeeded()) {
+        LOGGER.error("Error while sending request to servant", result.cause());
+      }
+    });
+  }
 
+  private RabbitMQClient createRabbitMQClient() {
+    return RabbitMQClient.create(vertx, new RabbitMQOptions()
+      .setUser(configuration.getRabbitMQConfig().getUsername())
+      .setPassword(configuration.getRabbitMQConfig().getPassword())
+      .setHost(configuration.getRabbitMQConfig().getHost())
+      .setPort(configuration.getRabbitMQConfig().getPort()));
   }
 
 }

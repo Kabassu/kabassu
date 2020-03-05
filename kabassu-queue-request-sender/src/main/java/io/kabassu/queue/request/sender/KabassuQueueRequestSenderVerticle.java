@@ -18,7 +18,10 @@
 package io.kabassu.queue.request.sender;
 
 import io.kabassu.commons.constants.EventBusAdresses;
+import io.kabassu.queue.request.sender.configuration.KabassuQueueRequestSenderConfiguration;
 import io.kabassu.queue.request.sender.handlers.QueueRequestSenderHandler;
+import io.vertx.core.Context;
+import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.AbstractVerticle;
 import io.vertx.reactivex.core.eventbus.MessageConsumer;
@@ -27,10 +30,19 @@ public class KabassuQueueRequestSenderVerticle extends AbstractVerticle {
 
   private MessageConsumer<JsonObject> consumer;
 
+  private KabassuQueueRequestSenderConfiguration configuration;
+
+  @Override
+  public void init(Vertx vertx, Context context) {
+    super.init(vertx, context);
+    configuration = new KabassuQueueRequestSenderConfiguration(config());
+  }
+
   @Override
   public void start() throws Exception {
     consumer = vertx.eventBus()
-      .consumer(EventBusAdresses.KABASSU_QUEUE_REQUEST_SEND, new QueueRequestSenderHandler(vertx));
+      .consumer(EventBusAdresses.KABASSU_QUEUE_REQUEST_SEND,
+        new QueueRequestSenderHandler(vertx, configuration));
   }
 
   @Override
