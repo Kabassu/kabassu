@@ -33,6 +33,8 @@ public final class EventBusAdresses {
 
   public static final String KABASSU_ADMIN_TEST_MANAGER_ADD = "kabassu.admin.test.manager.add";
 
+  public static final String KABASSU_QUEUE_CONTROLER = "kabassu.queue.controler";
+
   private EventBusAdresses() {
     //for constants
   }

@@ -2,14 +2,17 @@
   "name": "worker:io.kabassu.testcontext",
   "config": {
     "verticle": "io.kabassu.testcontext.KabassuTestContextVerticle",
+    "masterServantModeAll": "false",
     "runners": [
       {
         "runner": "gradle",
-        "address": "kabassu.runner.gradle"
+        "address": "kabassu.runner.gradle",
+        "servant": "true"
       },
       {
         "runner": "command",
-        "address": "kabassu.runner.command"
+        "address": "kabassu.runner.command",
+        "servant": "true"
       },
       {
         "runner": "aet",
@@ -17,7 +20,7 @@
       },
       {
         "runner": "lighthouse",
-        "address": "kabassu.runner.lighthouse"
+        "address": "kabassu.runner.lighthouse",
       }
     ]
   }

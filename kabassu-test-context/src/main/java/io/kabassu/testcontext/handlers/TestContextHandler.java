@@ -17,8 +17,10 @@
 
 package io.kabassu.testcontext.handlers;
 
+import io.kabassu.commons.constants.EventBusAdresses;
 import io.kabassu.commons.constants.JsonFields;
 import io.kabassu.commons.constants.MessagesFields;
+import io.kabassu.testcontext.configuration.RunnerConfig;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
@@ -37,12 +39,15 @@ public class TestContextHandler implements Handler<Message<JsonObject>> {
 
   private final Vertx vertx;
 
-  private Map<String, String> runnersMap;
+  private Map<String, RunnerConfig> runnersMap;
+
+  private boolean masterServantModeAll;
 
   public TestContextHandler(Vertx vertx,
-    Map<String, String> runnersMap) {
+    boolean masterServantModeAll, Map<String, RunnerConfig> runnersMap) {
     this.runnersMap = runnersMap;
     this.vertx = vertx;
+    this.masterServantModeAll = masterServantModeAll;
   }
 
   @Override
@@ -156,10 +161,15 @@ public class TestContextHandler implements Handler<Message<JsonObject>> {
   }
 
   private void callRunner(JsonObject completeTestRequest) {
-    vertx.eventBus()
-      .send(
-        runnersMap.get(completeTestRequest.getJsonObject(JsonFields.DEFINITION).getString(RUNNER)),
-        completeTestRequest);
+    RunnerConfig runnerConfig = runnersMap
+      .get(completeTestRequest.getJsonObject(JsonFields.DEFINITION).getString(RUNNER));
+    if (masterServantModeAll || runnerConfig.getServant()) {
+      vertx.eventBus().send(EventBusAdresses.KABASSU_QUEUE_CONTROLER, completeTestRequest);
+    } else {
+      vertx.eventBus()
+        .send(runnerConfig.getAddress(), completeTestRequest);
+    }
+
   }
 
 }

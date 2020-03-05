@@ -42,7 +42,9 @@ public class KabassuTestContextVerticle extends AbstractVerticle {
   public void start() throws Exception {
 
     consumer = vertx.eventBus()
-        .consumer(EventBusAdresses.KABASSU_TEST_CONTEXT, new TestContextHandler(vertx,configuration.getRunnersMap()));
+      .consumer(EventBusAdresses.KABASSU_TEST_CONTEXT,
+        new TestContextHandler(vertx, configuration.isMasterServantModeAll(),
+          configuration.getRunnersMap()));
   }
 
   @Override

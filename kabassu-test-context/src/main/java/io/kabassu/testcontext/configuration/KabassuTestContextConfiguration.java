@@ -24,17 +24,25 @@ import java.util.Map;
 
 public class KabassuTestContextConfiguration {
 
-  private Map<String, String> runnersMap = new HashMap<>();
+  private Map<String, RunnerConfig> runnersMap = new HashMap<>();
+
+  private boolean masterServantModeAll;
 
   public KabassuTestContextConfiguration(JsonObject configuration) {
+    masterServantModeAll = configuration.getBoolean("masterServantModeAll", false);
     JsonArray runners = configuration.getJsonArray("runners");
     runners.stream().forEach(runnerConfig -> {
       JsonObject runnerJson = (JsonObject) runnerConfig;
-      runnersMap.put(runnerJson.getString("runner"), runnerJson.getString("address"));
+      runnersMap.put(runnerJson.getString("runner"),
+        new RunnerConfig(runnerJson.getString("address"), runnerJson.getBoolean("servant", false)));
     });
   }
 
-  public Map<String, String> getRunnersMap() {
+  public Map<String, RunnerConfig> getRunnersMap() {
     return runnersMap;
+  }
+
+  public boolean isMasterServantModeAll() {
+    return masterServantModeAll;
   }
 }
