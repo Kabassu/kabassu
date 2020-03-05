@@ -1,0 +1,6 @@
+{
+  "name": "longworker:io.kabassu.queue.request.sender",
+  "config": {
+    "verticle": "io.kabassu.queue.request.sender.KabassuQueueRequestSenderVerticle"
+  }
+}

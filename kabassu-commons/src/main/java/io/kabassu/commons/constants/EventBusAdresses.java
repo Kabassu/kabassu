@@ -33,7 +33,13 @@ public final class EventBusAdresses {
 
   public static final String KABASSU_ADMIN_TEST_MANAGER_ADD = "kabassu.admin.test.manager.add";
 
-  public static final String KABASSU_QUEUE_CONTROLER = "kabassu.queue.controler";
+  public static final String KABASSU_QUEUE_REQUEST_SEND = "kabassu.queue.request.send";
+
+  public static final String KABASSU_QUEUE_REQUEST_RECEIVE = "kabassu.queue.request.receive";
+
+  public static final String KABASSU_QUEUE_RESULT_SEND = "kabassu.queue.result.send";
+
+  public static final String KABASSU_QUEUE_RESULT_RECEIVE = "kabassu.queue.result.receive";
 
   private EventBusAdresses() {
     //for constants
