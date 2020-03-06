@@ -93,7 +93,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TestDefinition'
               examples: 
-                Git gradle:
+                git_gradle:
                   value:
                     _id: 345324335564
                     name: test
