@@ -18,6 +18,7 @@
 package io.kabassu.queue.request.sender.configuration;
 
 import io.vertx.core.json.JsonObject;
+import java.util.HashMap;
 import java.util.Map;
 
 public class KabassuQueueRequestSenderConfiguration {
@@ -28,7 +29,7 @@ public class KabassuQueueRequestSenderConfiguration {
 
   private String defaultRoutingKey;
 
-  private Map<String, String> routingKeys;
+  private Map<String, String> routingKeys = new HashMap<>();
 
   public KabassuQueueRequestSenderConfiguration(JsonObject config) {
     this.rabbitMQConfig = new RabbitMQConfig(config.getJsonObject("rabbitOptions"));

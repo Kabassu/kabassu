@@ -178,6 +178,7 @@ dependencies {
     deps project(':kabassu-results-retriever-main')
     deps project(':kabassu-results-server')
     deps project(':kabassu-files-retriever')
+    deps project(':kabassu-queue-request-sender')
     deps project(':kabassu-setup')
 
 }

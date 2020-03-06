@@ -17,6 +17,7 @@
 
 package io.kabassu.queue.request.sender.handlers;
 
+import io.kabassu.commons.constants.JsonFields;
 import io.kabassu.queue.request.sender.configuration.KabassuQueueRequestSenderConfiguration;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
@@ -40,17 +41,31 @@ public class QueueRequestSenderHandler implements Handler<Message<JsonObject>> {
   public QueueRequestSenderHandler(Vertx vertx,
     KabassuQueueRequestSenderConfiguration configuration) {
     this.vertx = vertx;
-    this.rabbitMQClient = createRabbitMQClient();
     this.configuration = configuration;
+    this.rabbitMQClient = createRabbitMQClient();
+    this.rabbitMQClient.start(result -> {
+      if (result.succeeded()) {
+        LOGGER.info("Started RabbitMQClient");
+      } else {
+        LOGGER.error("Problem with RabbitMQ Server", result.cause());
+      }
+    });
   }
 
   @Override
   public void handle(Message<JsonObject> event) {
-    rabbitMQClient.basicPublish("kabassu.test_requests", "runners.all", event.body(), result -> {
-      if (!result.succeeded()) {
-        LOGGER.error("Error while sending request to servant", result.cause());
-      }
-    });
+    rabbitMQClient.basicPublish(configuration.getExchange(), retrieveRoutingKey(event.body()),
+      new JsonObject().put("body", event.body().encode()), result -> {
+        if (!result.succeeded()) {
+          LOGGER.error("Error while sending request to servant", result.cause());
+        }
+      });
+  }
+
+  private String retrieveRoutingKey(JsonObject request) {
+    String runner = request.getJsonObject(JsonFields.DEFINITION).getString("runner");
+    return configuration.getRoutingKeys().containsKey(runner) ? configuration.getRoutingKeys()
+      .get(runner) : configuration.getDefaultRoutingKey();
   }
 
   private RabbitMQClient createRabbitMQClient() {
