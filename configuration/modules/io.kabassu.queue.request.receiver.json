@@ -1,0 +1,14 @@
+{
+  "name": "longworker:io.kabassu.queue.request.receiver",
+  "config": {
+    "verticle": "io.kabassu.queue.request.receiver.KabassuQueueRequestReceiverVerticle",
+    "rabbitOptions" : {
+      "username":"kabassu",
+      "password": "kabassu",
+      "host": "localhost",
+      "port": 5672
+    },
+    "exchange": "kabassu.test_requests",
+    "routingKey": "runners.all"
+  }
+}

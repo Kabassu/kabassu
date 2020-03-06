@@ -15,11 +15,10 @@
  *
  */
 
-package io.kabassu.queue.request.sender.handlers;
+package io.kabassu.queue.request.receiver.handlers;
 
-import io.kabassu.commons.constants.JsonFields;
 import io.kabassu.queue.RabbitMQUtils;
-import io.kabassu.queue.request.sender.configuration.KabassuQueueRequestSenderConfiguration;
+import io.kabassu.queue.request.receiver.configuration.KabassuQueueRequestReceiverConfiguration;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
@@ -28,16 +27,19 @@ import io.vertx.reactivex.core.Vertx;
 import io.vertx.reactivex.core.eventbus.Message;
 import io.vertx.reactivex.rabbitmq.RabbitMQClient;
 
-public class QueueRequestSenderHandler implements Handler<Message<JsonObject>> {
+public class QueueRequestReceiverHandler implements Handler<Message<JsonObject>> {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(QueueRequestSenderHandler.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(QueueRequestReceiverHandler.class);
+
+  private final Vertx vertx;
 
   private RabbitMQClient rabbitMQClient;
 
-  private KabassuQueueRequestSenderConfiguration configuration;
+  private KabassuQueueRequestReceiverConfiguration configuration;
 
-  public QueueRequestSenderHandler(Vertx vertx,
-    KabassuQueueRequestSenderConfiguration configuration) {
+  public QueueRequestReceiverHandler(Vertx vertx,
+    KabassuQueueRequestReceiverConfiguration configuration) {
+    this.vertx = vertx;
     this.configuration = configuration;
     this.rabbitMQClient = RabbitMQUtils
       .createRabbitMQClient(vertx, configuration.getRabbitMQConfig());
@@ -52,18 +54,7 @@ public class QueueRequestSenderHandler implements Handler<Message<JsonObject>> {
 
   @Override
   public void handle(Message<JsonObject> event) {
-    rabbitMQClient.basicPublish(configuration.getExchange(), retrieveRoutingKey(event.body()),
-      new JsonObject().put("body", event.body().encode()), result -> {
-        if (!result.succeeded()) {
-          LOGGER.error("Error while sending request to servant", result.cause());
-        }
-      });
-  }
 
-  private String retrieveRoutingKey(JsonObject request) {
-    String runner = request.getJsonObject(JsonFields.DEFINITION).getString("runner");
-    return configuration.getRoutingKeys().containsKey(runner) ? configuration.getRoutingKeys()
-      .get(runner) : configuration.getDefaultRoutingKey();
   }
 
 }

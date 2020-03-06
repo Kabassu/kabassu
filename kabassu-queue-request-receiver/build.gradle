@@ -14,10 +14,13 @@
  *   limitations under the License.
  *
  */
+
 dependencies {
     implementation group: 'io.vertx', name: 'vertx-core', version: vertxVersion
     implementation group: 'io.vertx', name: 'vertx-rx-java2', version: vertxVersion
     implementation group: 'io.vertx', name: 'vertx-rabbitmq-client', version: vertxVersion
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
-
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.8'
+    implementation project(path: ':kabassu-commons')
+    testImplementation project(path: ':kabassu-commons')
 }

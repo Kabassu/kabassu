@@ -26,7 +26,7 @@ public class JsonFields {
   public static final String CONFIGURATION_ID = "configurationId";
   public static final String CONFIGURATION_PARAMETERS = "configurationParameters";
   public static final String DEFINITION = "definition";
-  public static final String SUITE_ID = "suiteId";
   public static final String TEST_REQUEST = "testRequest";
   public static final String USERNAME = "username";
+  public static final String SERVANT = "servant";
 }

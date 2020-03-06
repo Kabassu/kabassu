@@ -14,10 +14,23 @@
  *   limitations under the License.
  *
  */
-dependencies {
-    implementation group: 'io.vertx', name: 'vertx-core', version: vertxVersion
-    implementation group: 'io.vertx', name: 'vertx-rx-java2', version: vertxVersion
-    implementation group: 'io.vertx', name: 'vertx-rabbitmq-client', version: vertxVersion
-    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
 
+package io.kabassu.queue;
+
+import io.vertx.rabbitmq.RabbitMQOptions;
+import io.vertx.reactivex.core.Vertx;
+import io.vertx.reactivex.rabbitmq.RabbitMQClient;
+
+public final class RabbitMQUtils {
+
+  public static RabbitMQClient createRabbitMQClient(Vertx vertx, RabbitMQConfig rabbitMQConfig) {
+    return RabbitMQClient.create(vertx, new RabbitMQOptions()
+      .setUser(rabbitMQConfig.getUsername())
+      .setPassword(rabbitMQConfig.getPassword())
+      .setHost(rabbitMQConfig.getHost())
+      .setPort(rabbitMQConfig.getPort()));
+  }
+
+  private RabbitMQUtils() {
+  }
 }

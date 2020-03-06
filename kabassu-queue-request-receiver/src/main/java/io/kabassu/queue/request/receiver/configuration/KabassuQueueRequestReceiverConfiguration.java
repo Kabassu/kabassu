@@ -15,32 +15,23 @@
  *
  */
 
-package io.kabassu.queue.request.sender.configuration;
+package io.kabassu.queue.request.receiver.configuration;
 
 import io.kabassu.queue.RabbitMQConfig;
 import io.vertx.core.json.JsonObject;
-import java.util.HashMap;
-import java.util.Map;
 
-public class KabassuQueueRequestSenderConfiguration {
+public class KabassuQueueRequestReceiverConfiguration {
 
   private RabbitMQConfig rabbitMQConfig;
 
   private String exchange;
 
-  private String defaultRoutingKey;
+  private String routingKey;
 
-  private Map<String, String> routingKeys = new HashMap<>();
-
-  public KabassuQueueRequestSenderConfiguration(JsonObject config) {
+  public KabassuQueueRequestReceiverConfiguration(JsonObject config) {
     this.rabbitMQConfig = new RabbitMQConfig(config.getJsonObject("rabbitOptions"));
     this.exchange = config.getString("exchange");
-    this.defaultRoutingKey = config.getString("defaultRoutingKey");
-    config.getJsonArray("routingKeys").stream().forEach(routingKey -> {
-      JsonObject routingKeyConfig = (JsonObject) routingKey;
-      this.routingKeys
-        .put(routingKeyConfig.getString("runner"), routingKeyConfig.getString("routingKey"));
-    });
+    this.routingKey = config.getString("routingKey");
   }
 
   public RabbitMQConfig getRabbitMQConfig() {
@@ -51,11 +42,7 @@ public class KabassuQueueRequestSenderConfiguration {
     return exchange;
   }
 
-  public String getDefaultRoutingKey() {
-    return defaultRoutingKey;
-  }
-
-  public Map<String, String> getRoutingKeys() {
-    return routingKeys;
+  public String getRoutingKey() {
+    return routingKey;
   }
 }

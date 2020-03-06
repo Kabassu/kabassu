@@ -15,7 +15,7 @@
  *
  */
 
-package io.kabassu.queue.request.sender.configuration;
+package io.kabassu.queue;
 
 import io.vertx.core.json.JsonObject;
 import org.apache.commons.lang3.StringUtils;

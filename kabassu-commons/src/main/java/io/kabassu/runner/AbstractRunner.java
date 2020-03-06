@@ -74,21 +74,14 @@ public abstract class AbstractRunner implements Handler<Message<JsonObject>> {
   protected JsonObject updateHistory(JsonObject testRequest, String testResult) {
     testRequest.getJsonArray("history").add(new JsonObject().put("date", new Date().getTime())
       .put("event", "Test finished with: " + testResult));
-    return new JsonObject().put("new", testRequest)
-      .put(JsonFields.COLLECTION, "kabassu-requests").put("id", testRequest.getString("_id"));
+    return testRequest;
   }
 
   protected void finishRun(JsonObject fullRequest, String testResult) {
     JsonObject updateHistory = updateHistory(fullRequest.getJsonObject(JsonFields.TEST_REQUEST),
       testResult);
-    vertx.eventBus().rxRequest("kabassu.database.mongo.replacedocument", updateHistory)
-      .toObservable()
-      .doOnNext(
-        eventResponse ->
-          vertx.eventBus().send("kabassu.results.dispatcher",
-            fullRequest.put("result", testResult)
-              .put(JsonFields.TEST_REQUEST, updateHistory.getJsonObject("new")))
+    vertx.eventBus().send("kabassu.results.dispatcher",
+      fullRequest.put("result", testResult).put(JsonFields.TEST_REQUEST, updateHistory));
 
-      ).subscribe();
   }
 }

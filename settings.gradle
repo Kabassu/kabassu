@@ -35,4 +35,5 @@ include 'kabassu-setup'
 include 'kabassu-runner-aet'
 include 'kabassu-runner-lighthouse'
 include 'kabassu-queue-request-sender'
+include 'kabassu-queue-request-receiver'
 
