@@ -1,5 +1,5 @@
 {
-  "name": "longworker:io.kabassu.queue.request.sender",
+  "name": "standard:io.kabassu.queue.request.sender",
   "config": {
     "verticle": "io.kabassu.queue.request.sender.KabassuQueueRequestSenderVerticle",
     "rabbitOptions" : {

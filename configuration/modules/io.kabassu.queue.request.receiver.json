@@ -1,5 +1,5 @@
 {
-  "name": "longworker:io.kabassu.queue.request.receiver",
+  "name": "standard:io.kabassu.queue.request.receiver",
   "config": {
     "verticle": "io.kabassu.queue.request.receiver.KabassuQueueRequestReceiverVerticle",
     "rabbitOptions" : {
